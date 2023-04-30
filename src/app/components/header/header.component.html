@@ -1,0 +1,37 @@
+<div class="header-container">
+    <mat-toolbar color="primary" class="nav-bar">
+        <mat-toolbar-row fxLayoutAlign='space-between center'>
+            <div fxLayout="row">
+                <span class="title">
+                    {{ title }}
+                </span>
+            </div>
+            <div>
+                <button mat-icon-button>
+                    <mat-icon>{{ explore_icon }}</mat-icon>
+                </button>
+                <button mat-icon-button>
+                    <mat-icon>{{ users_icon }}</mat-icon>
+                </button>
+                <button mat-icon-button>
+                    <mat-icon>{{ messages_icon }}</mat-icon>
+                </button>
+                <button mat-icon-button>
+                    <mat-icon>{{ create_icon }}</mat-icon>
+                </button>
+                <!-- <button *ngIf="user" mat-icon-button>
+                    <mat-icon *ngIf="!notifications">
+                        {{ notifications_icon }}
+                    </mat-icon>
+                    <mat-icon *ngIf="notifications"
+                        color="accent">
+                        {{ notifications_icon }}
+                    </mat-icon>
+                </button> -->
+                <!-- <button *ngIf="user" mat-icon-button>
+                    <mat-icon>{{ menu_icon }}</mat-icon>
+                </button> -->
+            </div>
+        </mat-toolbar-row>
+    </mat-toolbar>
+</div>
