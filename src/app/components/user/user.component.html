@@ -1,0 +1,12 @@
+<mat-card *ngIf="user">
+    <mat-card-header>
+        <img class="header-image" *ngIf="user.picture" mat-card-avatar src="{{user.picture}}"/>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-card-title>{{user.display_name}}</mat-card-title>
+        <mat-card-subtitle>{{user.about}}</mat-card-subtitle>
+        <mat-card-subtitle><a href="{{user.website}}" target="_blank">{{user.website}}</a></mat-card-subtitle>
+        <mat-card-subtitle>NIP05: {{user.nip05}}</mat-card-subtitle>
+        <mat-card-subtitle>LUD: {{user.lud06}}</mat-card-subtitle>
+    </mat-card-content>
+</mat-card>

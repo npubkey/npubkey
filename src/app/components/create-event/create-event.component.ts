@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import {
-    relayInit,
     Event,
     UnsignedEvent,
     getEventHash,
     signEvent,
-    SimplePool,
-    verifySignature,
     getPublicKey
 } from "nostr-tools";
+
+import {NostrServiceService} from '../../services/nostr-service.service';
+import { SignerService } from 'src/app/services/signer.service';
 
 @Component({
   selector: 'app-create-event',
@@ -19,14 +19,15 @@ export class CreateEventComponent {
 
     content: string = "";
 
-    getPrivateKey() {
-        return localStorage.getItem("privateKey") || "";
-    }
+    constructor(
+        private nostrService: NostrServiceService,
+        private signerService: SignerService
+    ) {}
 
     getUnsignedEvent(kind: number, tags: any) {
         const eventUnsigned: UnsignedEvent = {
             kind: kind,
-            pubkey: getPublicKey(this.getPrivateKey()),
+            pubkey: this.signerService.getPublicKey(),
             tags: tags,
             content: this.content,
             created_at: Math.floor(Date.now() / 1000),
@@ -34,7 +35,8 @@ export class CreateEventComponent {
         return eventUnsigned
     }
 
-    getSignedEvent(eventId: string, signature: string, eventUnsigned: UnsignedEvent) {
+    getSignedEvent(eventId: string, privateKey: string, eventUnsigned: UnsignedEvent) {
+        let signature = signEvent(eventUnsigned, privateKey);
         const signedEvent: Event = {
             id: eventId,
             kind: eventUnsigned.kind,
@@ -47,31 +49,22 @@ export class CreateEventComponent {
           return signedEvent;
     }
 
-    getNewEvent() {
-        let event = this.getUnsignedEvent(1, []);
-        let eventId = getEventHash(event)
-        let signature = signEvent(event, this.getPrivateKey())
-        let signedEvent = this.getSignedEvent(eventId, signature, event)
-        return signedEvent
-    }
-
     async sendEvent() {
-        const relay = relayInit('wss://relay.damus.io')
-        relay.on('connect', () => {
-          console.log(`connected to ${relay.url}`)
-        })
-        relay.on('error', () => {
-          console.log(`failed to connect to ${relay.url}`)
-        })
-        await relay.connect()
-        let event = this.getNewEvent()
-        let pub = relay.publish(event)
-        pub.on('ok', () => {
-          console.log(`${relay.url} has accepted our event`)
-        })
-        pub.on('failed', (reason: any) => {
-          console.log(`failed to publish to ${relay.url}: ${reason}`)
-        })
-        relay.close()
+        // check for private key
+        const privateKey = this.signerService.getPrivateKey()
+        console.log("private key")
+        console.log(privateKey);
+        let unsignedEvent = this.getUnsignedEvent(1, []);
+        console.log(unsignedEvent);
+        let signedEvent: Event;
+        if (privateKey !== "") {
+            let eventId = getEventHash(unsignedEvent)
+            signedEvent = this.getSignedEvent(eventId, privateKey, unsignedEvent);
+        } else {
+            console.log('using extension');
+            signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+        }
+        console.log(signedEvent);
+        this.nostrService.sendEvent(signedEvent);
     }
 }

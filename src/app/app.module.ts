@@ -34,6 +34,10 @@ import { LoginComponent } from './components/login/login.component';
 import { RelayComponent } from './components/relay/relay.component';
 import { GenerateComponent } from './components/generate/generate.component';
 import { CreateEventComponent } from './components/create-event/create-event.component';
+import { AppRoutingModule } from './app-routing.module';
+import { UsersComponent } from './components/users/users.component';
+import { MessengerComponent } from './components/messenger/messenger.component';
+import { UserComponent } from './components/user/user.component';
 
 
 @NgModule({
@@ -49,6 +53,9 @@ import { CreateEventComponent } from './components/create-event/create-event.com
     RelayComponent,
     GenerateComponent,
     CreateEventComponent,
+    UsersComponent,
+    MessengerComponent,
+    UserComponent,
   ],
   imports: [
     BrowserModule,
@@ -73,7 +80,8 @@ import { CreateEventComponent } from './components/create-event/create-event.com
     MatGridListModule,
     FlexLayoutModule,
     MatBottomSheetModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

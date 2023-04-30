@@ -1,1 +1,5 @@
-<p>feed works!</p>
+<h1>Relay Feeds</h1>
+<div *ngFor="let event of events">
+    <app-post [post]="event"></app-post>
+    <mat-divider></mat-divider>
+</div>

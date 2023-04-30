@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {generatePrivateKey, getPublicKey, nip19} from 'nostr-tools'
-
+import { SignerService } from 'src/app/services/signer.service';
 @Component({
   selector: 'app-generate',
   templateUrl: './generate.component.html',
@@ -12,12 +12,20 @@ export class GenerateComponent {
     publicKey: string = "";
     npub: string = "";
     nsec: string = "";
-    localStoragePrivateKeyName: string = "privateKey";
-    localStoragePublicKeyName: string = "publicKey";
+
+    constructor(private signer: SignerService) {}
+
+    clearKeys() {
+        this.signer.clearKeys();
+    }
+
+    handleLoginWithExtension() {
+        this.signer.handleLoginWithExtension()
+    }
 
     saveKeyToSession() {
-        localStorage.setItem(this.localStoragePrivateKeyName, this.privateKey);
-        localStorage.setItem(this.localStoragePublicKeyName, this.publicKey);
+        this.signer.savePrivateKeyToSession(this.privateKey);
+        this.signer.savePublicKeyToSession(this.publicKey);
     }
 
     setKeys() {
@@ -29,7 +37,7 @@ export class GenerateComponent {
     }
 
     setPrivateKey() {
-        this.privateKey = generatePrivateKey() // `sk` is a hex string
+        this.privateKey = generatePrivateKey()
     }
 
     setPublicKey() {

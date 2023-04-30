@@ -8,6 +8,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 export class HeaderComponent implements OnInit {
     title: string = 'Relay Linker';
     home_icon: string = 'home';
+    key_icon: string = "key";
     explore_icon: string = 'explore';
     users_icon: string = 'people_outline';
     create_icon: string = 'add_photo_alternate';
