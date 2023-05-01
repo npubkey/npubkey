@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {Event} from 'nostr-tools';
+import { Event, Filter } from 'nostr-tools';
 import { NostrServiceService } from 'src/app/services/nostr-service.service';
+import { Post } from '../../types/post';
+
+
 @Component({
   selector: 'app-feed',
   templateUrl: './feed.component.html',
@@ -8,17 +11,18 @@ import { NostrServiceService } from 'src/app/services/nostr-service.service';
 })
 export class FeedComponent implements OnInit {
 
-    events: Event[] = [];
+    posts: Post[] = [];
 
     constructor(private nostrService: NostrServiceService) {}
 
     ngOnInit() {
-        this.getEvents();
+        this.getPosts();
     }
 
-    async getEvents() {
-        let limit = 10;
-        this.events = await this.nostrService.getKind1(limit);
-        console.log(this.events);
+    async getPosts() {
+        let filter: Filter = {limit: 20}
+        this.posts = await this.nostrService.getKind1(filter);
+        console.log("HOW")
+        console.log(this.posts)
     }
 }

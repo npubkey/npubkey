@@ -38,6 +38,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { UsersComponent } from './components/users/users.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { UserComponent } from './components/user/user.component';
+import { UserDetailComponent } from './components/user-detail/user-detail.component';
+import { Kind1Component } from './components/kind1/kind1.component';
 
 
 @NgModule({
@@ -56,6 +58,8 @@ import { UserComponent } from './components/user/user.component';
     UsersComponent,
     MessengerComponent,
     UserComponent,
+    UserDetailComponent,
+    Kind1Component,
   ],
   imports: [
     BrowserModule,

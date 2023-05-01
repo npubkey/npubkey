@@ -9,4 +9,5 @@ import { User } from '../../types/user';
 export class UserComponent {
 
     @Input() user?: User;
+
 }

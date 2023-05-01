@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NostrServiceService } from 'src/app/services/nostr-service.service';
-import { Kind0Content, User } from "../../types/user";
+import { User } from "../../types/user";
+import { Filter} from 'nostr-tools';
 
 @Component({
   selector: 'app-users',
@@ -15,15 +16,11 @@ export class UsersComponent implements OnInit {
 
     ngOnInit(): void {
         this.getUsers();
+        console.log("getting users")
     }
 
     async getUsers() {
-        let response = await this.nostrService.getKind0(30)
-        for (let r in response) {
-            let kind0 = JSON.parse(response[r].content)
-            const user = new User(kind0);
-            console.log(user);
-            this.users.push(user);
-        }
+        let filter: Filter = {limit: 30}
+        this.users = await this.nostrService.getKind0(filter);
     }
 }

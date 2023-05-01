@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Event } from 'nostr-tools';
+import { Post } from '../../types/post';
 
 @Component({
   selector: 'app-post',
@@ -7,5 +7,5 @@ import { Event } from 'nostr-tools';
   styleUrls: ['./post.component.css']
 })
 export class PostComponent {
-    @Input() post?: Event;
+    @Input() post?: Post;
 }

@@ -6,6 +6,7 @@ import { FeedComponent } from './components/feed/feed.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { LoginComponent } from './components/login/login.component';
 import { GenerateComponent } from './components/generate/generate.component';
+import { UserDetailComponent } from './components/user-detail/user-detail.component';
 
 const routes: Routes = [
     { path: 'generate', component: GenerateComponent },
@@ -14,6 +15,7 @@ const routes: Routes = [
     { path: 'create', component: CreateEventComponent },
     { path: 'feed', component: FeedComponent },
     { path: 'messages', component: MessengerComponent },
+    { path: 'users/:publicKey', component: UserDetailComponent },
 ];
 
 
