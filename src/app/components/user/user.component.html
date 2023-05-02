@@ -1,12 +1,24 @@
-<mat-card *ngIf="user">
-    <mat-card-header routerLink="/users/{{user.publicKey}}">
-        <img class="header-image" *ngIf="user.picture" mat-card-avatar src="{{user.picture}}"/>
+<mat-card class="user-card" *ngIf="user">
+    <mat-card-header>
+        <img 
+            *ngIf="user.picture"
+            class="header-image"
+            routerLink="/users/{{user.pubkey|npub}}"
+            mat-card-avatar
+            src="{{user.picture}}"/>
+      <mat-card-title routerLink="/users/{{user.pubkey|npub}}">{{user.displayName}}</mat-card-title>
+      <mat-card-subtitle class="npub">{{user.npub}}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-        <mat-card-title>{{user.displayName}}</mat-card-title>
         <mat-card-subtitle>{{user.about}}</mat-card-subtitle>
         <mat-card-subtitle><a href="{{user.website}}" target="_blank">{{user.website}}</a></mat-card-subtitle>
-        <mat-card-subtitle>NIP05: {{user.nip05}}</mat-card-subtitle>
+        <mat-card-subtitle class="nip15">NIP05: {{user.nip05}}</mat-card-subtitle>
         <mat-card-subtitle>LUD: {{user.lud06}}</mat-card-subtitle>
+    </mat-card-content>
+    <mat-card-content *ngIf="canEdit">
+        <button mat-stroked-button color="primary" routerLink="/profile-edit">Edit Profile</button>
+    </mat-card-content>
+    <mat-card-content *ngIf="canFollow">
+        <button mat-stroked-button color="accent" (click)="followUser()">Follow</button>
     </mat-card-content>
 </mat-card>

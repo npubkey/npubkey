@@ -1,0 +1,43 @@
+mat-toolbar {
+    min-height: 20px;
+    height: 50px;
+}
+
+mat-toolbar-row {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.nav-bar {
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+}
+
+.footer-nav-bar {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.title {
+    padding-left: 1em;
+    font-weight: bold;
+    font-size: larger;
+}
+
+.title:hover {
+    cursor: pointer;
+}
+
+.title:focus {
+    outline: none;
+    border: 0;
+}

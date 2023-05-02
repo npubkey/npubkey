@@ -1,1 +1,10 @@
-<p>profile works!</p>
+<h1>Profile</h1>
+<div *ngIf="user">
+    <app-user [user]="user"></app-user>
+</div>
+<div>
+    <app-create-event></app-create-event>
+</div>
+<div *ngFor="let post of posts">
+    <app-post [post]="post"></app-post>
+</div>

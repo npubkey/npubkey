@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
 
-import { relayInit, Event, Filter } from 'nostr-tools';
+import { relayInit, Event, Filter, nip10, UnsignedEvent, signEvent } from 'nostr-tools';
 import { User } from '../types/user';
 import { Post } from '../types/post';
-
-import { nip10 } from 'nostr-tools';
+import { SignerService } from './signer.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NostrServiceService {
+export class NostrService {
 
-  constructor() { }
+  constructor(
+    private signerService: SignerService
+  ) { }
 
     async relayConnect() {
         // TODO: relay should be in settings / stored on relays
         // pull from there
-        const relay = relayInit('wss://relay.nostr.or.jp')
+        const relay = relayInit('wss://relay.damus.io/')
         relay.on('connect', () => {
             console.log(`connected to ${relay.url}`)
         })
@@ -39,13 +40,16 @@ export class NostrServiceService {
         const relay = await this.relayConnect();
         const response = await relay.list([filter])
         let users: User[] = [];
-        for (let r in response) {
-            let kind0 = JSON.parse(response[r].content)
-            let publicKey = response[r].pubkey
-            let createdAt = response[r].created_at
-            const user = new User(kind0, createdAt, publicKey);
-            users.push(user);
-        }
+        let content;
+        let user;
+        response.forEach(e => {
+            content = JSON.parse(e.content)
+            user = new User(content, e.created_at, e.pubkey)
+            users.push(user)
+            // hacky but store the data so its available in other places
+            localStorage.setItem(`${e.pubkey}`, user.displayName);
+            localStorage.setItem(`${e.pubkey}_img`, user.picture);
+        });
         return users;
     }
 
@@ -69,51 +73,65 @@ export class NostrServiceService {
         filter.kinds = [1];
         const relay = await this.relayConnect();
         const response = await relay.list([filter])
+        console.log(response);
         let posts: Post[] = [];
-        for (let r in response) {
-            console.log(response[r]);
-            let content = response[r].content
-            let noteId = response[r].id
-            let authorPubkey = response[r].pubkey
-            let createdAt = response[r].created_at
-            let nip10Result = nip10.parse(response[r]);
-            let filter = {authors: [authorPubkey], kinds: [0]}
-            let author = await this.getUser(filter)
-            if (!author) {
-                console.log("user not found");
-                return posts;
-            }
-            const post = new Post(author, content, noteId, createdAt, nip10Result);
+        response.forEach(e => {
+            let nip10Result = nip10.parse(e);
+            const post = new Post(e.pubkey, e.content, e.id, e.created_at, nip10Result);
             posts.push(post);
-        }
+        });
         return posts;
     }
 
-    async getKind2(limit: number) {
-        // recommend server / relay
+    async getFeed(filters: Filter[]): Promise<Post[]>{
+        // text notes
         const relay = await this.relayConnect();
-        return await relay.list([{kinds: [2], limit: limit}])
+        const response = await relay.list(filters)
+        console.log(response);
+        let posts: Post[] = [];
+        response.forEach(e => {
+            let nip10Result = nip10.parse(e);
+            const post = new Post(e.pubkey, e.content, e.id, e.created_at, nip10Result);
+            posts.push(post);
+        });
+        return posts;
     }
 
-    async getKind3(limit: number) {
-        // contact lists
+    async getKind2(filter: Filter) {
+        // recommend server / relay
+        filter.kinds = [2];
         const relay = await this.relayConnect();
-        return await relay.list([{kinds: [3], limit: limit}])
+        return await relay.list([filter]);
+    }
+
+    async getKind3(filter: Filter): Promise<string[]> {
+        // contact lists
+        filter.kinds = [3];
+        const relay = await this.relayConnect();
+        const response = await relay.get(filter);
+        let following: string[] = []
+        if (response) {
+            response.tags.forEach(tag => {
+                following.push(tag[1]);
+            });
+        }
+        this.signerService.setFollowingList(following);
+        return following
     }
 
     async getKind4(limit: number) {
         // direct messages
         const relay = await this.relayConnect();
-        return await relay.list([{kinds: [4], limit: limit}])
+        return await relay.list([{kinds: [4], limit: limit}]);
     }
 
     async getKind11(limit: number) {
         // server meta data (what types of NIPs a server is supporting)
         const relay = await this.relayConnect();
-        return await relay.list([{kinds: [11], limit: limit}])
+        return await relay.list([{kinds: [11], limit: limit}]);
     }
 
-    async queryRelay(filter: Filter) {
+    async queryRelay(filter: Filter): Promise<Event | null> {
         const relay = await this.relayConnect()
         // let's query for an event that exists
         let sub = relay.sub([
@@ -127,13 +145,41 @@ export class NostrServiceService {
                 search: filter.search
             }
         ])
+        let cool: Event | null = null;
         sub.on('event', (event: Event) => {
+            cool = event;
             console.log('we got the event we wanted:', event)
         })
         sub.on('eose', () => {
             sub.unsub()
         })
         relay.close();
+        return cool;
+    }
+
+    getUnsignedEvent(kind: number, tags: string[][], content: string) {
+        const eventUnsigned: UnsignedEvent = {
+            kind: kind,
+            pubkey: this.signerService.getPublicKey(),
+            tags: tags,
+            content: content,
+            created_at: Math.floor(Date.now() / 1000),
+        }
+        return eventUnsigned
+    }
+
+    getSignedEvent(eventId: string, privateKey: string, eventUnsigned: UnsignedEvent) {
+        let signature = signEvent(eventUnsigned, privateKey);
+        const signedEvent: Event = {
+            id: eventId,
+            kind: eventUnsigned.kind,
+            pubkey: eventUnsigned.pubkey,
+            tags: eventUnsigned.tags,
+            content: eventUnsigned.content,
+            created_at: eventUnsigned.created_at,
+            sig: signature,
+          };
+          return signedEvent;
     }
 
     async sendEvent(event: Event) {

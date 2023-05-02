@@ -40,6 +40,13 @@ import { MessengerComponent } from './components/messenger/messenger.component';
 import { UserComponent } from './components/user/user.component';
 import { UserDetailComponent } from './components/user-detail/user-detail.component';
 import { Kind1Component } from './components/kind1/kind1.component';
+import { ProfileEditComponent } from './components/profile-edit/profile-edit.component';
+import { UsernamePipe } from './pipes/username.pipe';
+import { SearchComponent } from './components/search/search.component';
+import { NpubPipe } from './pipes/npub.pipe';
+import { HashtagPipe } from './pipes/hashtag.pipe';
+import { SafePipe } from './pipes/safe.pipe';
+import { TruncatePipe } from './pipes/truncate.pipe';
 
 
 @NgModule({
@@ -60,6 +67,13 @@ import { Kind1Component } from './components/kind1/kind1.component';
     UserComponent,
     UserDetailComponent,
     Kind1Component,
+    ProfileEditComponent,
+    UsernamePipe,
+    SearchComponent,
+    NpubPipe,
+    HashtagPipe,
+    SafePipe,
+    TruncatePipe,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,36 @@
+.npub {
+    color: purple;
+}
+
+.replyingTo {
+    color: #2196f3;
+}
+
+.replyingTo:hover {
+    cursor: pointer;
+}
+
+.replyingTo:focus {
+    outline: none;
+    border: 0;
+}
+
+.hashtag {
+    color: purple;
+}
+
+.hashtag:hover {
+    cursor: pointer;
+}
+
+img {
+    background-size: cover;
+    border: 1px solid #2196f3;
+    max-height:100%;
+    max-width:100%;
+}
+
+.post {
+    max-width: 500px;
+    margin-bottom: 4px;
+}

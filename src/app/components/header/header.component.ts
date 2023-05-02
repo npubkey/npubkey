@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { NostrService } from 'src/app/services/nostr.service';
+import { SignerService } from 'src/app/services/signer.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -15,6 +16,20 @@ export class HeaderComponent implements OnInit {
     menu_icon: string = 'account_circle';
     messages_icon: string = 'forum';
     notifications_icon: string = 'notifications';
+    search_icon: string = 'search';
 
-    ngOnInit() {}
+    constructor(
+        private signerService: SignerService,
+        private nostrService: NostrService
+    ) {}
+
+    ngOnInit() {
+        // because the header will always be on the screen,
+        // put some stuff in here we want on start
+        let pubkey = this.signerService.getPublicKey();
+        if (pubkey) {
+            // poorly named but this will save our following list
+            this.nostrService.getKind3({authors: [pubkey], limit: 1})
+        }
+    }
 }

@@ -1,9 +1,8 @@
-<h1>Create a Post</h1>
 <div>
     <mat-form-field appearance="fill">
         <mat-label>Content</mat-label>
         <input matInput [(ngModel)]="content" placeholder="content">
     </mat-form-field>
     <br>
-    <button (click)="sendEvent()">Send</button>
+    <button mat-stroked-button (click)="sendEvent()">Send</button>
 </div>

@@ -1,3 +1,5 @@
+import { nip19 } from 'nostr-tools';
+
 // kind 0 content - nostr
 export interface Kind0Content {
     name?: string;
@@ -10,6 +12,21 @@ export interface Kind0Content {
     lud06?: string;
     nip05?: string;
     // can have other random shit in here too
+}
+
+export interface SearchUser {
+    pubkey: string,
+    picture: string
+}
+
+
+export class BaseUser {
+    pubkey: string;
+    name: string;
+    constructor(pubkey: string, name: string) {
+        this.pubkey = pubkey;
+        this.name = name;
+    }
 }
 
 /* 
@@ -25,9 +42,10 @@ export class User {
     banner: string = "";
     lud06: string = "";
     nip05: string = "";
-    publicKey: string;
+    pubkey: string;
+    npub: string;
     createdAt: number;
-    constructor(kind0: Kind0Content, createdAt: number, publicKey: string) {
+    constructor(kind0: Kind0Content, createdAt: number, pubkey: string) {
         this.name = kind0.name || "";
         this.username = kind0.username || "";
         this.displayName = kind0.displayName || this.name || this.username || "No Name";
@@ -38,7 +56,9 @@ export class User {
         this.lud06 = kind0.lud06 || "";
         this.nip05 = kind0.nip05 || "";
         this.createdAt = createdAt;
-        this.publicKey = publicKey;
+        this.pubkey = pubkey;
+        this.npub = nip19.npubEncode(this.pubkey);
+        this.cachePubkeyDisplayName()
     }
 
     getClickableWebsite(link: string) {
@@ -47,5 +67,9 @@ export class User {
             return link;
         }
         return `http://${link}`;
+    }
+
+    cachePubkeyDisplayName() {
+        localStorage.setItem(`${this.pubkey}`, this.displayName);
     }
 }

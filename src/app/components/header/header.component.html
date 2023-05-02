@@ -2,13 +2,16 @@
     <mat-toolbar color="primary" class="nav-bar">
         <mat-toolbar-row fxLayoutAlign='space-between center'>
             <div fxLayout="row">
-                <a class="title" routerLink="/feed">
+                <span class="title" routerLink="/feed">
                     {{ title }}
-                </a>
+                </span>
             </div>
             <div>
                 <button mat-icon-button routerLink="/generate">
                     <mat-icon>{{ key_icon }}</mat-icon>
+                </button>
+                <button mat-icon-button routerLink="/search">
+                    <mat-icon>{{ search_icon }}</mat-icon>
                 </button>
                 <button mat-icon-button routerLink="/feed">
                     <mat-icon>{{ explore_icon }}</mat-icon>
@@ -21,6 +24,9 @@
                 </button>
                 <button mat-icon-button routerLink='/create'>
                     <mat-icon>{{ create_icon }}</mat-icon>
+                </button>
+                <button mat-icon-button routerLink='/profile'>
+                    <mat-icon>{{ menu_icon }}</mat-icon>
                 </button>
             </div>
         </mat-toolbar-row>
