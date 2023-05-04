@@ -15,6 +15,7 @@ import { SignerService } from 'src/app/services/signer.service';
 export class CreateEventComponent {
 
     content: string = "";
+    img: string = "";
 
     constructor(
         private nostrService: NostrService,
@@ -23,7 +24,8 @@ export class CreateEventComponent {
 
     async sendEvent() {
         const privateKey = this.signerService.getPrivateKey();
-        let unsignedEvent = this.nostrService.getUnsignedEvent(1, [], this.content);
+        let finalContent: string = `${this.content} ${this.img}`;
+        let unsignedEvent = this.nostrService.getUnsignedEvent(1, [], finalContent);
         let signedEvent: Event;
         if (privateKey !== "") {
             let eventId = getEventHash(unsignedEvent)

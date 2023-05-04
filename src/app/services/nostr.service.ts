@@ -119,10 +119,11 @@ export class NostrService {
         return following
     }
 
-    async getKind4(limit: number) {
+    async getKind4(filter: Filter): Promise<Event[]> {
         // direct messages
+        filter.kinds = [4];
         const relay = await this.relayConnect();
-        return await relay.list([{kinds: [4], limit: limit}]);
+        return await relay.list([filter]);
     }
 
     async getKind11(limit: number) {

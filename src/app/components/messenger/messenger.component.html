@@ -1,1 +1,13 @@
 <h1>Direct Messages</h1>
+<div>
+    <mat-form-field appearance="fill">
+        <mat-label>Message</mat-label>
+        <input matInput [(ngModel)]="content" placeholder="content">
+    </mat-form-field>
+    <br>
+    <button mat-stroked-button (click)="sendEvent()">Send</button>
+</div>
+<h2>Messages</h2>
+<div *ngFor="let message of messages">
+    <span>{{message}}</span><br>
+</div>

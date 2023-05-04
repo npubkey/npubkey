@@ -1,4 +1,6 @@
 <h1>Relay Feeds</h1>
+<button mat-stroked-button color="primary" (click)="switchFeed()">{{buttonText}}</button>
 <div class="feed" *ngFor="let post of posts">
     <app-post [post]="post"></app-post>
 </div>
+<!-- <button mat-stroked-button (click)="morePosts()">More</button> -->

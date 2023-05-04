@@ -2,6 +2,21 @@
     color: purple;
 }
 
+.post-content {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: medium;
+    font-weight: lighter;
+}
+
+.extras {
+    color:cornflowerblue;
+    font-size: small;
+}
+
+.npub:hover {
+    cursor: pointer;
+}
+
 .replyingTo {
     color: #2196f3;
 }
@@ -24,6 +39,14 @@
 }
 
 img {
+    margin-top: 1em;
+    background-size: cover;
+    border: 1px solid #2196f3;
+    max-height:100%;
+    max-width:100%;
+}
+
+video {
     background-size: cover;
     border: 1px solid #2196f3;
     max-height:100%;
@@ -33,4 +56,8 @@ img {
 .post {
     max-width: 500px;
     margin-bottom: 4px;
+}
+
+mat-form-field {
+    width: 100%;
 }

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './components/header/header.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 // Material
 import { MatDialogModule } from '@angular/material/dialog';
@@ -47,6 +48,11 @@ import { NpubPipe } from './pipes/npub.pipe';
 import { HashtagPipe } from './pipes/hashtag.pipe';
 import { SafePipe } from './pipes/safe.pipe';
 import { TruncatePipe } from './pipes/truncate.pipe';
+import { FollowingComponent } from './components/following/following.component';
+import { PostDetailComponent } from './components/post-detail/post-detail.component';
+import { NeventPipe } from './pipes/nevent.pipe';
+import { FollowersComponent } from './components/followers/followers.component';
+import { EllipsisPipe } from './pipes/ellipsis.pipe';
 
 
 @NgModule({
@@ -74,11 +80,17 @@ import { TruncatePipe } from './pipes/truncate.pipe';
     HashtagPipe,
     SafePipe,
     TruncatePipe,
+    FollowingComponent,
+    PostDetailComponent,
+    NeventPipe,
+    FollowersComponent,
+    EllipsisPipe,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    HttpClientModule,
     MatIconModule,
     MatSliderModule,
     MatToolbarModule,

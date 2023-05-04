@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UnsignedEvent } from 'nostr-tools';
+import { UnsignedEvent, nip19 } from 'nostr-tools';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,14 @@ export class SignerService {
     clearKeys() {
         localStorage.removeItem(this.localStoragePrivateKeyName);
         localStorage.removeItem(this.localStoragePublicKeyName);
+    }
+
+    getUsername(pubkey: string) {
+        // can take a pubkey or npub
+        if (pubkey.startsWith("npub")) {
+            pubkey = nip19.decode(pubkey).data.toString()
+        }
+        return `@${(localStorage.getItem(`${pubkey}`) || nip19.npubEncode(pubkey))}`
     }
 
     getPublicKey() {
@@ -73,5 +81,15 @@ export class SignerService {
     async signEventWithExtension(unsignedEvent: UnsignedEvent) {
         if (!(window as any).nostr) return;
         return (await (window as any).nostr.signEvent(unsignedEvent)) || {}
+    }
+
+    async signDMWithExtension(pubkey: string, content: string) {
+        if (!(window as any).nostr) return;
+        return (await (window as any).nostr.nip04.encrypt(pubkey, content))
+    }
+
+    async decryptDMWithExtension(pubkey: string, ciphertext: string): Promise<string> {
+        if (!(window as any).nostr) return "";
+        return (await (window as any).nostr.nip04.decrypt(pubkey, ciphertext))
     }
 }

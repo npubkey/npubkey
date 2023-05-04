@@ -1,14 +1,16 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { nip19 } from 'nostr-tools';
+import { SignerService } from '../services/signer.service';
 
 @Pipe({
   name: 'username'
 })
 export class UsernamePipe implements PipeTransform {
 
-  transform(value: string, ...args: unknown[]): string {
-    let maxLength: number = 18;
-    return `@${(localStorage.getItem(`${value}`) || nip19.npubEncode(value))}`.substring(0, maxLength);
-  }
+    constructor(private signerService: SignerService) {}
 
+    transform(value: string, ...args: unknown[]): string {
+        let maxLength: number = 18;
+        let username = this.signerService.getUsername(value);
+        return `${username}`.substring(0, maxLength);
+    }
 }

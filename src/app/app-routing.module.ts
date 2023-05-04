@@ -10,6 +10,8 @@ import { UserDetailComponent } from './components/user-detail/user-detail.compon
 import { ProfileComponent } from './components/profile/profile.component';
 import { ProfileEditComponent } from './components/profile-edit/profile-edit.component';
 import { SearchComponent } from './components/search/search.component';
+import { FollowingComponent } from './components/following/following.component';
+import { PostDetailComponent } from './components/post-detail/post-detail.component';
 
 const routes: Routes = [
     { path: 'generate', component: GenerateComponent },
@@ -22,6 +24,8 @@ const routes: Routes = [
     { path: 'profile', component: ProfileComponent},
     { path: 'profile-edit', component: ProfileEditComponent},
     { path: 'search', component: SearchComponent},
+    { path: 'following', component: FollowingComponent},
+    { path: 'posts/:nevent', component: PostDetailComponent}
 ];
 
 

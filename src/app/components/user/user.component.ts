@@ -3,6 +3,8 @@ import { SignerService } from 'src/app/services/signer.service';
 import { User } from '../../types/user';
 import { NostrService } from 'src/app/services/nostr.service';
 import { getEventHash, Event } from 'nostr-tools';
+import {Clipboard} from '@angular/cdk/clipboard';
+
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
@@ -16,7 +18,8 @@ export class UserComponent implements OnInit {
 
     constructor(
         private signerService: SignerService,
-        private nostrService: NostrService
+        private nostrService: NostrService,
+        private clipboard: Clipboard
     ) {}
 
     ngOnInit() {
@@ -24,6 +27,12 @@ export class UserComponent implements OnInit {
         if (this.user && (pubkey === this.user?.pubkey)) {
             this.canEdit = true;
             this.canFollow = false;
+        }
+    }
+
+    copynpub() {
+        if (this.user) {
+            this.clipboard.copy(this.user.npub);
         }
     }
 

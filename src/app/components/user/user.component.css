@@ -12,6 +12,10 @@
     color: purple;
 }
 
+.npub:hover {
+    cursor: pointer;
+}
+
 .nip15 {
     color: #2196f3;
 }

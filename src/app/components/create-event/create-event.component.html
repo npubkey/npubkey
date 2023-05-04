@@ -1,8 +1,16 @@
 <div>
-    <mat-form-field appearance="fill">
-        <mat-label>Content</mat-label>
-        <input matInput [(ngModel)]="content" placeholder="content">
-    </mat-form-field>
-    <br>
+    <p>
+        <mat-form-field appearance="outline">
+            <mat-label>Content</mat-label>
+            <input matInput [(ngModel)]="content" placeholder="content">
+        </mat-form-field>
+    </p>
+
+    <p>
+        <mat-form-field appearance="outline">
+            <mat-label>Image Url</mat-label>
+            <input matInput [(ngModel)]="img" placeholder="Image Url">
+        </mat-form-field>
+    </p>
     <button mat-stroked-button (click)="sendEvent()">Send</button>
 </div>

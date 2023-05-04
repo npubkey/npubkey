@@ -18,6 +18,7 @@ export class Post {
     picture: string = "";
     replyingTo: string[] = [];
     mentions: string[] = [];
+    nevent: string = "";
     constructor(pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result) {
         this.pubkey = pubkey;
         this.npub = nip19.npubEncode(this.pubkey);
@@ -46,4 +47,11 @@ export class Post {
     setReplyingTo(): void {
         //this.replyingTo = this.nip10Result.profiles;
     }
+
+    // setNEvent(nevent: string): void {
+    //     let decodedPointer = nip19.decode(nevent);
+    //     console.log("DECODED POINTER")
+    //     console.log(decodedPointer)
+    //     this.nevent = nevent;
+    // }
 }

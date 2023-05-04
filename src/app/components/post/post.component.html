@@ -6,17 +6,45 @@
             routerLink="/users/{{post.pubkey|npub}}"
             mat-card-avatar
             src="{{post.picture}}"/>
-      <mat-card-title routerLink="/users/{{post.pubkey|npub}}">{{post.pubkey|username|truncate}}</mat-card-title>
-      <mat-card-subtitle class="npub">{{post.pubkey|npub|truncate}}</mat-card-subtitle>
+      <mat-card-title routerLink="/users/{{post.pubkey|npub}}">{{post.pubkey|username|ellipsis}}</mat-card-title>
+      <mat-card-subtitle class="npub">{{post.pubkey|npub|ellipsis}}</mat-card-subtitle>
       <mat-card-subtitle>{{post.fromNow}}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-        <div [innerHTML]="post.content"></div>
-        <div *ngFor="let profile of post.nip10Result.profiles">
-            <mat-card-subtitle routerLink="/users/{{profile.pubkey|npub}}" class="replyingTo">{{profile.pubkey|username}}</mat-card-subtitle>
+        <p class="post-content" [innerHTML]="post.content"></p>
+        <mat-divider></mat-divider>
+        <br>
+        <mat-card-subtitle routerLink="/posts/{{post.noteId|nevent}}">{{post.noteId|nevent|ellipsis}}</mat-card-subtitle>
+        <div *ngIf="post.nip10Result.profiles && post.nip10Result.profiles.length > 0">
+            <span class="extras">Replying to</span>
+            <div *ngFor="let profile of post.nip10Result.profiles">
+                <mat-card-subtitle routerLink="/users/{{profile.pubkey|npub}}" class="replyingTo">{{profile.pubkey|username}}</mat-card-subtitle>
+            </div>
+        </div>
+        <div *ngIf="post.nip10Result.mentions && post.nip10Result.mentions.length > 0">
+            <span class="extras">Mentions</span>
+            <div *ngFor="let mention of post.nip10Result.mentions">
+                <mat-card-subtitle routerLink="/posts/{{mention.id|nevent}}" class="replyingTo">{{mention.id}}</mat-card-subtitle>
+            </div>
+        </div>
+        <div *ngIf="post.nip10Result.root">
+            <mat-card-subtitle routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="replyingTo">{{post.nip10Result.root.id|nevent|ellipsis}}</mat-card-subtitle>
+        </div>
+        <div *ngIf="post.nip10Result.reply">
+            <mat-card-subtitle routerLink="/posts/{{post.nip10Result.reply.id|nevent}}" class="replyingTo">{{post.nip10Result.reply.id|nevent|ellipsis}}</mat-card-subtitle>
         </div>
     </mat-card-content>
     <mat-card-content *ngIf="canFollow">
         <button mat-stroked-button color="accent" (click)="followUser()">Follow</button>
     </mat-card-content>
+    <p>
+        <mat-card-content>
+            <mat-form-field appearance="outline">
+                <mat-label>Reply</mat-label>
+                <input matInput [(ngModel)]="replyContent" placeholder="message">
+            </mat-form-field>
+            <br>
+            <button mat-stroked-button (click)="sendReply()">Send Reply</button>
+        </mat-card-content>
+    </p>
 </mat-card>

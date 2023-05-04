@@ -7,7 +7,7 @@ import { SignerService } from 'src/app/services/signer.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-    title: string = 'Relay Linker';
+    title: string = 'npubkey';
     home_icon: string = 'home';
     key_icon: string = "key";
     explore_icon: string = 'explore';

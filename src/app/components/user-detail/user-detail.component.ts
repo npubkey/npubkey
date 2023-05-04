@@ -58,7 +58,7 @@ export class UserDetailComponent implements OnInit {
         let filter: Filter = {
             kinds: [1],
             authors: [user.pubkey],
-            limit: 10,
+            limit: 50,
         }
         this.posts = await this.nostrService.getKind1(filter);
     }
