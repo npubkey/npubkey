@@ -1,16 +1,23 @@
-<div>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>Content</mat-label>
-            <input matInput [(ngModel)]="content" placeholder="content">
-        </mat-form-field>
-    </p>
-
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>Image Url</mat-label>
-            <input matInput [(ngModel)]="img" placeholder="Image Url">
-        </mat-form-field>
-    </p>
-    <button mat-stroked-button (click)="sendEvent()">Send</button>
-</div>
+<p>
+    <mat-card>
+        <mat-card-content>
+            <mat-card-title>Post a Message</mat-card-title>
+            <p>
+                <mat-form-field appearance="outline">
+                    <mat-label>Content</mat-label>
+                    <input matInput [(ngModel)]="content" placeholder="content">
+                </mat-form-field>
+            </p>
+        
+            <p>
+                <mat-form-field appearance="outline">
+                    <mat-label>Image Url</mat-label>
+                    <input matInput [(ngModel)]="img" placeholder="Image Url">
+                </mat-form-field>
+            </p>
+            <p>
+                <button mat-stroked-button (click)="sendEvent()">Send</button>
+            </p>
+        </mat-card-content>
+    </mat-card>
+</p>

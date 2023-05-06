@@ -4,6 +4,14 @@ import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
 import { Post } from '../../types/post';
 import { EventEmitterService } from 'src/app/services/event-emitter.service';
+
+
+interface Chip {
+    color?: string;
+    selected?: string;
+    name: string;
+}
+
 @Component({
   selector: 'app-feed',
   templateUrl: './feed.component.html',
@@ -13,8 +21,12 @@ export class FeedComponent implements OnInit {
 
     loading: boolean = false; // TODO
     posts: Post[] = [];
-    followingOnly: boolean = true;
-    buttonText: string = "Following Only";
+    followingOnly: boolean = false;
+    chips: Chip[] = [
+        {color: "primary", selected: "selected", name: "Explore"},
+        {name: "Following"},
+        {name: "Trending"},
+    ]
 
     // Pagination
     currentPage = 1;
@@ -48,15 +60,13 @@ export class FeedComponent implements OnInit {
     //     this.getPosts();
     // }
 
-    switchFeed() {
-        if (this.followingOnly === true) {
+    switchFeed(chipName: string) {
+        if (chipName === "Explore") {
             this.followingOnly = false;
-            this.buttonText = "Explore";
             this.posts = []
             this.getPosts();
         } else {
             this.followingOnly = true;
-            this.buttonText = "Following Only";
             this.posts = []
             this.getPosts();
         }

@@ -31,7 +31,6 @@ export class CreateEventComponent {
             let eventId = getEventHash(unsignedEvent)
             signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
         } else {
-            console.log('using extension');
             signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
         }
         this.nostrService.sendEvent(signedEvent);

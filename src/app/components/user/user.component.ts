@@ -4,6 +4,7 @@ import { User } from '../../types/user';
 import { NostrService } from 'src/app/services/nostr.service';
 import { getEventHash, Event } from 'nostr-tools';
 import {Clipboard} from '@angular/cdk/clipboard';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-user',
@@ -14,46 +15,30 @@ export class UserComponent implements OnInit {
 
     @Input() user?: User;
     canEdit: boolean = false;
-    canFollow: boolean = true;
 
     constructor(
         private signerService: SignerService,
-        private nostrService: NostrService,
-        private clipboard: Clipboard
+        private clipboard: Clipboard,
+        private snackBar: MatSnackBar
     ) {}
 
     ngOnInit() {
         let pubkey = this.signerService.getPublicKey()
-        if (this.user && (pubkey === this.user?.pubkey)) {
-            this.canEdit = true;
-            this.canFollow = false;
+        if (this.user) {
+            if (pubkey === this.user.pubkey) {
+                this.canEdit = true;
+            }
         }
+    }
+
+    openSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {duration: 1300});
     }
 
     copynpub() {
         if (this.user) {
             this.clipboard.copy(this.user.npub);
-        }
-    }
-
-    async followUser() {
-        if (this.user) {
-            const privateKey = this.signerService.getPrivateKey();
-            let tags: string[][] = this.signerService.getFollowingListAsTags()
-            tags.push(["p", this.user.pubkey, "wss://relay.damus.io/", this.user.username]);
-            console.log(tags);
-            this.signerService.setFollowingListFromTags(tags);
-            let unsignedEvent = this.nostrService.getUnsignedEvent(3, tags, "");
-            let signedEvent: Event;
-            if (privateKey !== "") {
-                let eventId = getEventHash(unsignedEvent)
-                signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
-            } else {
-                console.log('using extension');
-                signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
-            }
-            console.log(signedEvent);
-            this.nostrService.sendEvent(signedEvent);
+            this.openSnackBar("npub copied!", "dismiss");
         }
     }
 }

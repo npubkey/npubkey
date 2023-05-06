@@ -1,0 +1,17 @@
+.message {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: medium;
+    font-weight: lighter;
+}
+
+.npub {
+    color: purple;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+.sent-message {
+    color: blue;
+}

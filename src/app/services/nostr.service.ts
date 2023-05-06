@@ -83,6 +83,19 @@ export class NostrService {
         return posts;
     }
 
+    async getPostAndReplies(filters: Filter[]): Promise<Post[]>{
+        const relay = await this.relayConnect();
+        const response = await relay.list(filters)
+        console.log(response);
+        let posts: Post[] = [];
+        response.forEach(e => {
+            let nip10Result = nip10.parse(e);
+            const post = new Post(e.pubkey, e.content, e.id, e.created_at, nip10Result);
+            posts.push(post);
+        });
+        return posts;
+    }
+
     async getFeed(filters: Filter[]): Promise<Post[]>{
         // text notes
         const relay = await this.relayConnect();
@@ -115,7 +128,6 @@ export class NostrService {
                 following.push(tag[1]);
             });
         }
-        this.signerService.setFollowingList(following);
         return following
     }
 

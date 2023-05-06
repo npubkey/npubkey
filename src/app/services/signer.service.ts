@@ -24,6 +24,21 @@ export class SignerService {
         return `@${(localStorage.getItem(`${pubkey}`) || nip19.npubEncode(pubkey))}`
     }
 
+    npub() {
+        let pubkey = this.getPublicKey();
+        return nip19.npubEncode(pubkey);
+    }
+
+    pubkey(npub: string) {
+        return nip19.decode(npub).data.toString();
+    }
+
+    encodeNoteAsEvent(note: string): string {
+        let decodedNote = nip19.decode(note).data.toString()
+        let eventP: nip19.EventPointer = {id: decodedNote}
+        return nip19.neventEncode(eventP);
+    }
+
     getPublicKey() {
         return localStorage.getItem(this.localStoragePublicKeyName) || "";
     }
@@ -55,8 +70,6 @@ export class SignerService {
     }
 
     setFollowingList(following: string[]) {
-        console.log("setting following list")
-        console.log(following);
         localStorage.setItem("following", following.filter(s => s).join(',')); 
     }
 

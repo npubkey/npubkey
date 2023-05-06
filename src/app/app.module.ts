@@ -23,6 +23,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatChipsModule } from '@angular/material/chips';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -53,6 +54,9 @@ import { PostDetailComponent } from './components/post-detail/post-detail.compon
 import { NeventPipe } from './pipes/nevent.pipe';
 import { FollowersComponent } from './components/followers/followers.component';
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
+import { ContactListComponent } from './components/contact-list/contact-list.component';
+import { HumantimePipe } from './pipes/humantime.pipe';
+import { FollowComponent } from './components/follow/follow.component';
 
 
 @NgModule({
@@ -85,6 +89,9 @@ import { EllipsisPipe } from './pipes/ellipsis.pipe';
     NeventPipe,
     FollowersComponent,
     EllipsisPipe,
+    ContactListComponent,
+    HumantimePipe,
+    FollowComponent,
   ],
   imports: [
     BrowserModule,
@@ -99,6 +106,7 @@ import { EllipsisPipe } from './pipes/ellipsis.pipe';
     MatInputModule,
     MatProgressSpinnerModule,
     MatDialogModule,
+    MatChipsModule,
     MatButtonModule,
     MatDividerModule,
     MatListModule,

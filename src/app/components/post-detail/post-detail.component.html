@@ -2,4 +2,7 @@
 <div *ngIf="post">
     <app-post [post]="post"></app-post>
 </div>
+<div *ngFor="let reply of replies">
+    <app-post [post]="reply"></app-post>
+</div>
 

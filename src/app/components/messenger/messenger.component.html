@@ -1,13 +1,37 @@
-<h1>Direct Messages</h1>
-<div>
+<h1>Direct Message</h1>
+<div *ngFor="let message of messages">
+    <mat-card>
+        <mat-card-header *ngIf="message.npub === myNPub" class="sent-message">
+                <img 
+                    *ngIf="me && me.picture"
+                    class="header-image"
+                    mat-card-avatar
+                    src="{{me.picture}}"
+                    routerLink="/users/{{message.npub}}"
+                />
+                <mat-card-subtitle class="npub">{{message.npub|username}}</mat-card-subtitle>
+                <mat-card-subtitle>{{message.createdAt|humantime}}</mat-card-subtitle>
+                <mat-card-title class="message">{{message.content}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-header *ngIf="message.npub !== myNPub">
+            <img 
+                *ngIf="friend && friend.picture"
+                class="header-image"
+                mat-card-avatar
+                src="{{friend.picture}}"
+                routerLink="/users/{{message.npub}}"
+            />
+            <mat-card-subtitle class="npub">{{message.npub|username}}</mat-card-subtitle>
+            <mat-card-subtitle>{{message.createdAt|humantime}}</mat-card-subtitle>
+            <mat-card-title class="message">{{message.content}}</mat-card-title>
+        </mat-card-header>
+    </mat-card>
+</div>
+<p>
     <mat-form-field appearance="fill">
         <mat-label>Message</mat-label>
         <input matInput [(ngModel)]="content" placeholder="content">
     </mat-form-field>
     <br>
     <button mat-stroked-button (click)="sendEvent()">Send</button>
-</div>
-<h2>Messages</h2>
-<div *ngFor="let message of messages">
-    <span>{{message}}</span><br>
-</div>
+</p>

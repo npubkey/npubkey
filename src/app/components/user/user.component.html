@@ -18,7 +18,8 @@
     <mat-card-content *ngIf="canEdit">
         <button mat-stroked-button color="primary" routerLink="/profile-edit">Edit Profile</button>
     </mat-card-content>
-    <mat-card-content *ngIf="canFollow">
-        <button mat-stroked-button color="accent" (click)="followUser()">Follow</button>
+    <app-follow [user]="user"></app-follow>
+    <mat-card-content>
+        <button mat-stroked-button routerLink="/users/{{user.npub}}/following">View who {{this.user.displayName}} is following</button>
     </mat-card-content>
 </mat-card>

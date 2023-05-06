@@ -23,4 +23,5 @@
 .user-card {
     max-width: 500px;
     margin-bottom: 4px;
+    overflow-wrap: break-word;
 }

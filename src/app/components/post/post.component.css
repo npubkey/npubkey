@@ -6,6 +6,7 @@
     font-family: 'Courier New', Courier, monospace;
     font-size: medium;
     font-weight: lighter;
+    overflow-wrap: break-word;
 }
 
 .extras {
@@ -47,6 +48,7 @@ img {
 }
 
 video {
+    margin-top: 1em;
     background-size: cover;
     border: 1px solid #2196f3;
     max-height:100%;
