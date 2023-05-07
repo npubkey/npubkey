@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UnsignedEvent, nip19 } from 'nostr-tools';
+import { UnsignedEvent, nip19, getPublicKey, nip04 } from 'nostr-tools';
 
 @Injectable({
   providedIn: 'root'
@@ -85,6 +85,13 @@ export class SignerService {
         this.savePublicKeyToSession(publicKey);
     }
 
+    handleLoginWithNsec(nsec: string) {
+        let privateKey = nip19.decode(nsec).data.toString();
+        let pubkey = getPublicKey(privateKey);
+        this.savePrivateKeyToSession(privateKey);
+        this.savePublicKeyToSession(pubkey);
+    }
+
     async handleLoginWithExtension() {
         if (!(window as any).nostr) return;
         const pubKey = await (window as any).nostr.getPublicKey();
@@ -103,6 +110,19 @@ export class SignerService {
 
     async decryptDMWithExtension(pubkey: string, ciphertext: string): Promise<string> {
         if (!(window as any).nostr) return "";
-        return (await (window as any).nostr.nip04.decrypt(pubkey, ciphertext))
+        return (
+            await (window as any).nostr.nip04.decrypt(pubkey, ciphertext)
+            .catch(() => {
+                return "*Failed to Decrypted Content*"
+            })
+        )
+    }
+
+    async decryptWithPrivateKey(pubkey: string, ciphertext: string): Promise<string> {
+        let privateKey = this.getPrivateKey()
+        return await nip04.decrypt(privateKey, pubkey, ciphertext).catch(() => {
+            console.log("FUCK OYU");
+            return "*Failed to Decrypt Content*";
+        });
     }
 }

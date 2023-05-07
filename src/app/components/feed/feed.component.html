@@ -11,4 +11,7 @@
 <div class="feed" *ngFor="let post of posts">
     <app-post [post]="post"></app-post>
 </div>
+<div *ngIf="posts.length === 0">
+    <app-loading></app-loading>
+</div>
 <!-- <button mat-stroked-button (click)="morePosts()">More</button> -->

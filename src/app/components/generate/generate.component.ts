@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {generatePrivateKey, getPublicKey, nip19} from 'nostr-tools'
 import { SignerService } from 'src/app/services/signer.service';
 @Component({
@@ -13,10 +14,26 @@ export class GenerateComponent {
     npub: string = "";
     nsec: string = "";
 
-    constructor(private signer: SignerService) {}
+    inputNsec: string = "";
+
+    constructor(
+        private signer: SignerService,
+        private snackBar: MatSnackBar
+        ) {
+    }
 
     clearKeys() {
         this.signer.clearKeys();
+    }
+
+    openSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {duration: 1300});
+    }
+
+    nsecLogin() {
+        this.signer.handleLoginWithNsec(this.inputNsec);
+        this.openSnackBar("You are Logged In!", "dismiss");
+        this.inputNsec = "";
     }
 
     handleLoginWithExtension() {

@@ -15,3 +15,8 @@ mat-form-field {
 .sent-message {
     color: blue;
 }
+
+.messages-container {
+    max-height: 500px;
+    overflow-y: scroll;
+}

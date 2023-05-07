@@ -57,6 +57,7 @@ import { EllipsisPipe } from './pipes/ellipsis.pipe';
 import { ContactListComponent } from './components/contact-list/contact-list.component';
 import { HumantimePipe } from './pipes/humantime.pipe';
 import { FollowComponent } from './components/follow/follow.component';
+import { LoadingComponent } from './components/loading/loading.component';
 
 
 @NgModule({
@@ -92,6 +93,7 @@ import { FollowComponent } from './components/follow/follow.component';
     ContactListComponent,
     HumantimePipe,
     FollowComponent,
+    LoadingComponent,
   ],
   imports: [
     BrowserModule,

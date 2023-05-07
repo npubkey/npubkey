@@ -9,8 +9,7 @@ export class UsernamePipe implements PipeTransform {
     constructor(private signerService: SignerService) {}
 
     transform(value: string, ...args: unknown[]): string {
-        let maxLength: number = 18;
         let username = this.signerService.getUsername(value);
-        return `${username}`.substring(0, maxLength);
+        return `${username}`;
     }
 }

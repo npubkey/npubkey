@@ -27,6 +27,7 @@ export class PostComponent implements OnInit {
     ngOnInit() {}
 
     copynpub() {
+        console.log("wow")
         if (this.post) {
             this.clipboard.copy(this.post.npub);
             this.openSnackBar("npub copied!", "dismiss");

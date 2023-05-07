@@ -91,7 +91,7 @@ export class Post {
             if (url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".webp") || url.endsWith(".gif") || url.endsWith(".gifv")) {
                 return `<img src="${url}" />`
             }
-            if (url.endsWith("mp4")) {
+            if (url.endsWith("mp4") || url.endsWith("mov")) {
                 return `<video controls><source src="${url}" type="video/mp4"></video>`
             }
             return `<a href="${url}" target="_blank">${url}</a>`;
