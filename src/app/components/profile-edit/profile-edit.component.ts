@@ -35,8 +35,7 @@ export class ProfileEditComponent implements OnInit {
 
     ngOnInit() {
         // need to make sure we have pubkey
-        let pubkey = this.signerService.getPublicKey()
-        if (pubkey === "") {
+        if (this.signerService.usingNostrBrowserExtension()) {
             // TODO probably make this whole thing flow better 
             // ie if not logged in dont allow this page or something
             this.signerService.handleLoginWithExtension();

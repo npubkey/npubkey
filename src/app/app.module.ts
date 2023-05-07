@@ -58,6 +58,7 @@ import { ContactListComponent } from './components/contact-list/contact-list.com
 import { HumantimePipe } from './pipes/humantime.pipe';
 import { FollowComponent } from './components/follow/follow.component';
 import { LoadingComponent } from './components/loading/loading.component';
+import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.component';
 
 
 @NgModule({
@@ -94,6 +95,7 @@ import { LoadingComponent } from './components/loading/loading.component';
     HumantimePipe,
     FollowComponent,
     LoadingComponent,
+    HashtagFeedComponent,
   ],
   imports: [
     BrowserModule,

@@ -19,6 +19,7 @@ interface Message {
 })
 export class MessengerComponent implements OnInit {
 
+    pageLogs: string[] = []; // temporary debug for phone browser
     contactSelected: boolean = false;
     friendNPub: string;
     myNPub: string;
@@ -95,16 +96,15 @@ export class MessengerComponent implements OnInit {
     }
 
     encryptContent(pubkey: string, content: string) {
-        let privateKey = this.signerService.getPrivateKey()
-        if (privateKey === "") {
+        if (this.signerService.usingNostrBrowserExtension()) {
             return this.signerService.signDMWithExtension(pubkey, content);
         }
+        let privateKey = this.signerService.getPrivateKey()
         return nip04.encrypt(privateKey, pubkey, this.content);
     }
 
     decryptCipherText(pubkey: string, content: string) {
-        let privateKey = this.signerService.getPrivateKey()
-        if (privateKey === "") {
+        if (this.signerService.usingNostrBrowserExtension()) {
             return this.signerService.decryptDMWithExtension(pubkey, content);
         }
         return this.signerService.decryptWithPrivateKey(pubkey, content);

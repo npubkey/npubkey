@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
-import {
-    Event,
-    getEventHash,
-} from "nostr-tools";
-
-import {NostrService} from '../../services/nostr.service';
+import { Event, getEventHash } from "nostr-tools";
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NostrService } from '../../services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
 
 @Component({
@@ -19,8 +16,14 @@ export class CreateEventComponent {
 
     constructor(
         private nostrService: NostrService,
-        private signerService: SignerService
+        private signerService: SignerService,
+        private snackBar: MatSnackBar
     ) {}
+
+
+    openSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {duration: 1300});
+    }
 
     async sendEvent() {
         const privateKey = this.signerService.getPrivateKey();
@@ -34,5 +37,7 @@ export class CreateEventComponent {
             signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
         }
         this.nostrService.sendEvent(signedEvent);
+        this.openSnackBar("Message Sent!", "dismiss")
+        this.content = "";
     }
 }

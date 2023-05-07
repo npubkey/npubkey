@@ -16,16 +16,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'relaylinker'`, () => {
+  it(`should have as title 'npubkey'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('relaylinker');
+    expect(app.title).toEqual('npubkey');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('relaylinker app is running!');
+    expect(compiled.querySelector('.content span')?.textContent).toContain('npubkey app is running!');
   });
 });

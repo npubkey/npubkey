@@ -1,4 +1,10 @@
 <h1>Users</h1>
+<p>
+    <mat-divider></mat-divider>
+</p>
 <div class="users-container" *ngFor="let user of users">
     <app-user [user]="user"></app-user>
+</div>
+<div *ngIf="users.length === 0">
+    <app-loading></app-loading>
 </div>

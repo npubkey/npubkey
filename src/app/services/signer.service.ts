@@ -47,6 +47,13 @@ export class SignerService {
         return localStorage.getItem(this.localStoragePrivateKeyName) || "";
     }
 
+    usingPrivateKey() {
+        if (localStorage.getItem(this.localStoragePrivateKeyName)) {
+            return true;
+        }
+        return false;
+    }
+
     getFollowingList() {
         let following = (localStorage.getItem("following") || "").split(',');
         return following;
@@ -92,24 +99,30 @@ export class SignerService {
         this.savePublicKeyToSession(pubkey);
     }
 
+    usingNostrBrowserExtension() {
+        if (this.usingPrivateKey()) {
+            return false;
+        }
+        if (!(window as any).nostr) {
+            return false;
+        }
+        return true;
+    }
+
     async handleLoginWithExtension() {
-        if (!(window as any).nostr) return;
         const pubKey = await (window as any).nostr.getPublicKey();
         this.setPublicKeyFromExtension(pubKey);
     }
 
     async signEventWithExtension(unsignedEvent: UnsignedEvent) {
-        if (!(window as any).nostr) return;
         return (await (window as any).nostr.signEvent(unsignedEvent)) || {}
     }
 
     async signDMWithExtension(pubkey: string, content: string) {
-        if (!(window as any).nostr) return;
         return (await (window as any).nostr.nip04.encrypt(pubkey, content))
     }
 
     async decryptDMWithExtension(pubkey: string, ciphertext: string): Promise<string> {
-        if (!(window as any).nostr) return "";
         return (
             await (window as any).nostr.nip04.decrypt(pubkey, ciphertext)
             .catch(() => {
@@ -120,9 +133,9 @@ export class SignerService {
 
     async decryptWithPrivateKey(pubkey: string, ciphertext: string): Promise<string> {
         let privateKey = this.getPrivateKey()
-        return await nip04.decrypt(privateKey, pubkey, ciphertext).catch(() => {
-            console.log("FUCK OYU");
-            return "*Failed to Decrypt Content*";
+        return await nip04.decrypt(privateKey, pubkey, ciphertext).catch((error) => {
+            console.log(error);
+            return `${error}`;
         });
     }
 }

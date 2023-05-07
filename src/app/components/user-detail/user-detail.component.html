@@ -1,9 +1,18 @@
 <h1>User Details</h1>
+<p>
+    <mat-divider></mat-divider>
+</p>
 <div *ngIf="user">
     <app-user [user]="user"></app-user>
     <div *ngFor="let post of posts">
         <app-post [post]="post"></app-post>
     </div>
+    <div *ngIf="posts.length === 0">
+        <app-loading></app-loading>
+    </div>
+</div>
+<div *ngIf="!user">
+    <app-loading></app-loading>
 </div>
 <div *ngIf="userNotFound">
     <mat-card>

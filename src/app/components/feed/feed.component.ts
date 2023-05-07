@@ -4,7 +4,8 @@ import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
 import { Post } from '../../types/post';
 import { EventEmitterService } from 'src/app/services/event-emitter.service';
-
+import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
 
 interface Chip {
     color?: string;
@@ -19,20 +20,64 @@ interface Chip {
 })
 export class FeedComponent implements OnInit {
 
-    loading: boolean = false; // TODO
+    loading: boolean = false;
     posts: Post[] = [];
     followingOnly: boolean = false;
     chips: Chip[] = [
-        {color: "primary", selected: "selected", name: "Explore"},
+        {name: "Explore"},
         {name: "Following"},
-        {name: "Trending"},
+        {name: "Hashtags"},
     ]
-
+    selectedChip: Chip = this.chips[0]
     // Pagination
     currentPage = 1;
     pageSize = 18;
     moreItems: boolean = false;
     minutesAgo: number = 5;
+
+    addOnBlur = true;
+    readonly separatorKeysCodes = [ENTER, COMMA] as const;
+    hashtags: Chip[] = [{name: 'bitcoin'}, {name: 'nostr'}];
+
+    add(event: MatChipInputEvent): void {
+      const value = (event.value || '').trim();
+  
+      // Add our hashtag
+      if (value) {
+        this.hashtags.push({name: value});
+      }
+  
+      // Clear the input value
+      event.chipInput!.clear();
+    }
+
+    remove(hashtag: Chip): void {
+      const index = this.hashtags.indexOf(hashtag);
+
+      if (index >= 0) {
+        this.hashtags.splice(index, 1);
+      }
+    }
+
+    edit(hashtag: Chip, event: MatChipEditedEvent) {
+      const value = event.value.trim();
+
+      // Remove hashtag if it no longer has a name
+      if (!value) {
+        this.remove(hashtag);
+        return;
+      }
+      // Edit existing hashtag
+      const index = this.hashtags.indexOf(hashtag);
+      if (index >= 0) {
+        this.hashtags[index].name = value;
+      }
+    }
+
+    searchHashtags() {
+        this.loading = true;
+        this.getPosts();
+    }
 
     constructor(
         private nostrService: NostrService,
@@ -42,7 +87,6 @@ export class FeedComponent implements OnInit {
 
     ngOnInit() {
         this.moreItems = true;
-        this.loading = true;
         this.getPosts();
         this.eventEmitterService.loadMorePosts$
         .subscribe(message => {
@@ -61,30 +105,48 @@ export class FeedComponent implements OnInit {
     // }
 
     switchFeed(chipName: string) {
-        if (chipName === "Explore") {
+        if (chipName === "Hashtags") {
+            this.followingOnly = false;
+            this.posts = [];
+            this.selectedChip = this.chips[2];
+        }
+        else if (chipName === "Explore") {
             this.followingOnly = false;
             this.posts = []
+            this.selectedChip = this.chips[0];
             this.getPosts();
         } else {
             this.followingOnly = true;
             this.posts = []
+            this.selectedChip = this.chips[1];
             this.getPosts();
         }
     }
 
     async getPosts() {
-        // could inject popular users in here too if list is too short
-        let following: string[] = this.signerService.getFollowingList();
+        this.loading = true;
         let filter: Filter = {
             kinds: [1],
             limit: 40,
             since: this.getSince(this.minutesAgo)
         }
         if (this.followingOnly) {
-            filter.authors = following
+            filter.authors = this.signerService.getFollowingList();
+        }
+        if (this.selectedChip.name == "Hashtags") {
+            this.posts = [];
+            let tags: string[] = [];
+            this.hashtags.forEach(h => {tags.push(h.name)});
+            filter = {
+                kinds: [1],
+                limit: 40,
+                since: this.getSince(this.minutesAgo),
+                "#t": tags
+            }
         }
         let waitPosts: Post[] = await this.nostrService.getKind1(filter);
         this.queryForAuthorNames(waitPosts);
+        this.loading = false;
     }
 
     async queryForAuthorNames(posts: Post[]) {

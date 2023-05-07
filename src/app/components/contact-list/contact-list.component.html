@@ -1,4 +1,7 @@
 <h1>Contact List</h1>
+<p>
+    <mat-divider></mat-divider>
+</p>
 <p *ngFor="let user of users">
     <mat-card routerLink="/messages/{{user.npub}}">
         <mat-card-header>
@@ -12,3 +15,6 @@
         </mat-card-header>
     </mat-card>
 </p>
+<div *ngIf="users.length === 0">
+    <app-loading></app-loading>
+</div>

@@ -13,6 +13,7 @@ import { SearchComponent } from './components/search/search.component';
 import { FollowingComponent } from './components/following/following.component';
 import { PostDetailComponent } from './components/post-detail/post-detail.component';
 import { ContactListComponent } from './components/contact-list/contact-list.component';
+import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.component';
 
 const routes: Routes = [
     { path: 'generate', component: GenerateComponent },
@@ -28,6 +29,7 @@ const routes: Routes = [
     { path: 'search', component: SearchComponent},
     { path: 'posts/:nevent', component: PostDetailComponent},
     { path: 'messages/:npub', component: MessengerComponent},
+    { path: 'feed/:hashtag', component: HashtagFeedComponent}
 ];
 
 

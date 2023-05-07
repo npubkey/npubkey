@@ -78,7 +78,8 @@ export class Post {
     hashtagContent(content: string): string {
         let hashtags: string[] = content.match(/#\w+/g) || []
         hashtags.forEach(tag => {
-            let textWrap: TextWrap = {text: tag}
+            let tagId = tag.substring(1);  // remove #
+            let textWrap: TextWrap = {text: tag, addLink: `href="/feed/${tagId}"`}
             content = content.replace(tag, this.wrapTextInSpan(textWrap))
         });
         return content

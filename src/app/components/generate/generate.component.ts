@@ -37,7 +37,11 @@ export class GenerateComponent {
     }
 
     handleLoginWithExtension() {
-        this.signer.handleLoginWithExtension()
+        if (this.signer.usingNostrBrowserExtension()) {
+            this.signer.handleLoginWithExtension()
+        } else {
+            this.openSnackBar("No Nostr Browser extension found!", "dismiss");
+        }
     }
 
     saveKeyToSession() {
