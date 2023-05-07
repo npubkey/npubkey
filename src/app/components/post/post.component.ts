@@ -2,10 +2,10 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { SignerService } from 'src/app/services/signer.service';
 import { Post } from '../../types/post';
 import { NostrService } from 'src/app/services/nostr.service';
-import { getEventHash, Event, nip19 } from 'nostr-tools';
+import { getEventHash, Event } from 'nostr-tools';
 import { Clipboard } from '@angular/cdk/clipboard';
-import {MatSnackBar} from '@angular/material/snack-bar';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-post',
@@ -22,12 +22,27 @@ export class PostComponent implements OnInit {
         private nostrService: NostrService,
         private clipboard: Clipboard,
         private snackBar: MatSnackBar,
+        private router: Router
     ) {}
 
     ngOnInit() {}
 
+    processLinks(e: any) {
+        // needed when we generate html from incoming text to
+        // route a link without getting a 404
+        const element: HTMLElement = e.target;
+        if (element.nodeName === 'A') {
+            e.preventDefault();
+            const link = element.getAttribute('href');
+            if (link) {
+                this.router.navigate([link]).catch((error) => {
+                    window.open(link, "_blank");
+                });
+            }
+        }
+    }
+
     copynpub() {
-        console.log("wow")
         if (this.post) {
             this.clipboard.copy(this.post.npub);
             this.openSnackBar("npub copied!", "dismiss");

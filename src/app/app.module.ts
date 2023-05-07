@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './components/header/header.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {APP_BASE_HREF} from '@angular/common';
 
 // Material
 import { MatDialogModule } from '@angular/material/dialog';
@@ -125,7 +126,7 @@ import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.com
     MatSnackBarModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [{provide: APP_BASE_HREF, useValue: '/'}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

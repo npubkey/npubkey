@@ -5,7 +5,6 @@ import * as relativeTime from 'dayjs/plugin/relativeTime';
 import { SignerService } from '../services/signer.service';
 dayjs.extend(relativeTime);
 
-
 interface TextWrap {
     text: string;
     cssClass?: string;
@@ -69,10 +68,7 @@ export class Post {
         if (textWrap.cssClass === undefined) {
             textWrap.cssClass = "hashtag"
         }
-        if (textWrap.addLink) {
-            return `<a class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</a>`
-        }
-        return `<span class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</span>`
+        return `<a class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</a>`
     }
 
     hashtagContent(content: string): string {
@@ -89,16 +85,15 @@ export class Post {
         // TODO: could be improved
         let urlRegex =/(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
         return content.replace(urlRegex, function(url) {
-            if (url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".webp") || url.endsWith(".gif") || url.endsWith(".gifv")) {
+            if (url.toLowerCase().endsWith(".png") || url.toLowerCase().endsWith(".jpg") || url.toLowerCase().endsWith(".jpeg") || url.toLowerCase().endsWith(".webp") || url.toLowerCase().endsWith(".gif") || url.toLowerCase().endsWith(".gifv")) {
                 return `<img src="${url}" />`
             }
-            if (url.endsWith("mp4") || url.endsWith("mov")) {
+            if (url.toLowerCase().endsWith("mp4") || url.toLowerCase().endsWith("mov")) {
                 return `<video controls><source src="${url}" type="video/mp4"></video>`
             }
             return `<a href="${url}" target="_blank">${url}</a>`;
         });
     }
-
 
     replaceNostrThing(content: string) {
         if (!this.hasEventPointer(content)) {

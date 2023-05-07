@@ -18,23 +18,23 @@ import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.com
 const routes: Routes = [
     { path: 'generate', component: GenerateComponent },
     { path: 'login', component: LoginComponent },
-    { path: 'users', component: UsersComponent },
     { path: 'create', component: CreateEventComponent },
+    { path: 'posts/:nevent', component: PostDetailComponent},
+    { path: 'messages/:npub', component: MessengerComponent},
+    { path: 'feed/:hashtag', component: HashtagFeedComponent},
     { path: 'feed', component: FeedComponent },
     { path: 'messages', component: ContactListComponent },
-    { path: 'users/:npub', component: UserDetailComponent },
     { path: 'users/:npub/following', component: FollowingComponent},
+    { path: 'users/:npub', component: UserDetailComponent },
+    { path: 'users', component: UsersComponent },
     { path: 'profile', component: ProfileComponent},
     { path: 'profile-edit', component: ProfileEditComponent},
     { path: 'search', component: SearchComponent},
-    { path: 'posts/:nevent', component: PostDetailComponent},
-    { path: 'messages/:npub', component: MessengerComponent},
-    { path: 'feed/:hashtag', component: HashtagFeedComponent}
 ];
 
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'top'})],
+    imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'top', useHash: true})],
     exports: [RouterModule]
 })
 

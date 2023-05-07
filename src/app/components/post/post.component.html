@@ -18,7 +18,7 @@
             <span class="extras">Replying to</span>
             <mat-card-subtitle *ngFor="let profile of post.nip10Result.profiles" routerLink="/users/{{profile.pubkey|npub}}" class="replyingTo">{{profile.pubkey|username|ellipsis}}</mat-card-subtitle>
         </div>
-        <p class="post-content" [innerHTML]="post.content"></p>
+        <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
         <mat-divider></mat-divider>
         <br>
         <mat-card-subtitle routerLink="/posts/{{post.noteId|nevent}}">{{post.noteId|nevent|ellipsis}}</mat-card-subtitle>

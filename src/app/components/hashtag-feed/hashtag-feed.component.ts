@@ -46,6 +46,7 @@ export class HashtagFeedComponent implements OnInit {
     }
 
     async getHashtagPosts() {
+        this.posts = [];
         let filter: Filter = {
             kinds: [1],
             limit: 50,
