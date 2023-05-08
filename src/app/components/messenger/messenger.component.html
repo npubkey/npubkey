@@ -1,8 +1,4 @@
-<h1>Direct Message</h1>
-<p>
-    <mat-divider></mat-divider>
-</p>
-<div class="messages-container">
+<div #messagesDiv class="messages-container">
     <div *ngFor="let message of messages">
         <mat-card>
             <mat-card-header *ngIf="message.npub === myNPub" class="sent-message">
@@ -32,12 +28,27 @@
         </mat-card>
     </div>
 </div>
-
-<p>
-    <mat-form-field appearance="fill">
-        <mat-label>Message</mat-label>
-        <input matInput [(ngModel)]="content" placeholder="content">
-    </mat-form-field>
-    <br>
-    <button mat-stroked-button (click)="sendEvent()">Send</button>
+<p class="extra-bottom">
+    <mat-divider></mat-divider>
 </p>
+<div *ngIf="smallScreen">
+    <mat-toolbar color="accent" class="small-screen-footer-nav-bar">
+        <mat-toolbar-row>
+            <input fxFlex='90' matInput [(ngModel)]="content" placeholder="content">
+            <button fxFlex="nogrow" mat-icon-button (click)="sendEvent()">
+                <mat-icon>send</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+</div>
+<div *ngIf="!smallScreen">
+    <mat-toolbar color="accent" class="footer-nav-bar">
+        <mat-toolbar-row>
+            <input fxFlex='90' matInput [(ngModel)]="content" placeholder="content">
+            <button fxFlex="nogrow" mat-icon-button (click)="sendEvent()">
+                <mat-icon>send</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+</div>
+

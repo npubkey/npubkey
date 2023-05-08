@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { distinctUntilChanged, tap } from 'rxjs/operators';
+
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -17,19 +21,54 @@ export class HeaderComponent implements OnInit {
     messages_icon: string = 'forum';
     notifications_icon: string = 'notifications';
     search_icon: string = 'search';
+    smallScreen: boolean = false;
+    Breakpoints = Breakpoints;
+    currentBreakpoint:string = '';
+
+    readonly breakpoint$ = this.breakpointObserver
+        .observe([Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, '(min-width: 500px)'])
+        .pipe(
+        tap(value => console.log(value)),
+        distinctUntilChanged()
+    );
 
     constructor(
         private signerService: SignerService,
-        private nostrService: NostrService
+        private nostrService: NostrService,
+        private breakpointObserver: BreakpointObserver
     ) {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         // because the header will always be on the screen,
         // put some stuff in here we want on start
+        this.breakpoint$.subscribe(() => {
+            console.log("what?")
+            this.breakpointChanged()
+        });
         let pubkey = this.signerService.getPublicKey();
         if (pubkey) {
             // poorly named but this will save our following list
             this.nostrService.getKind3({authors: [pubkey], limit: 1})
+        }
+    }
+
+    private breakpointChanged() {
+        console.log("breakpoints change")
+        if(this.breakpointObserver.isMatched(Breakpoints.XLarge)) {
+            this.currentBreakpoint = Breakpoints.Large;
+            this.smallScreen = false;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.Large)) {
+            this.currentBreakpoint = Breakpoints.Large;
+            this.smallScreen = false;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.Medium)) {
+            this.currentBreakpoint = Breakpoints.Medium;
+            this.smallScreen = false;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.Small)) {
+            this.currentBreakpoint = Breakpoints.Small;
+            this.smallScreen = true;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.XSmall)) {
+            this.currentBreakpoint = Breakpoints.XSmall;
+            this.smallScreen = true;
         }
     }
 }

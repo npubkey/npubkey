@@ -16,6 +16,7 @@ import { ContactListComponent } from './components/contact-list/contact-list.com
 import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.component';
 
 const routes: Routes = [
+    { path: '', component: GenerateComponent},
     { path: 'generate', component: GenerateComponent },
     { path: 'login', component: LoginComponent },
     { path: 'create', component: CreateEventComponent },

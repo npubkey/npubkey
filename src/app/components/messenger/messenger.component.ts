@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NostrService } from 'src/app/services/nostr.service';
 import { User } from "../../types/user";
 import { getEventHash, Event, nip19, nip04, Filter } from 'nostr-tools';
 import { SignerService } from 'src/app/services/signer.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { distinctUntilChanged, tap } from 'rxjs/operators';
+
 
 interface Message {
     content: string;
@@ -18,6 +21,7 @@ interface Message {
   styleUrls: ['./messenger.component.css']
 })
 export class MessengerComponent implements OnInit {
+    @ViewChild('messagesDiv') messagesDiv?: ElementRef<HTMLDivElement>;
 
     pageLogs: string[] = []; // temporary debug for phone browser
     contactSelected: boolean = false;
@@ -29,12 +33,23 @@ export class MessengerComponent implements OnInit {
     friend: User | undefined;
     me: User | undefined;
     userNotFound: boolean = false;
+    smallScreen: boolean = false;
+    Breakpoints = Breakpoints;
+    currentBreakpoint:string = '';
+
+    readonly breakpoint$ = this.breakpointObserver
+        .observe([Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, '(min-width: 500px)'])
+        .pipe(
+        tap(value => console.log(value)),
+        distinctUntilChanged()
+    );
 
     constructor(
         private nostrService: NostrService,
         private signerService: SignerService,
         private route: ActivatedRoute,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private breakpointObserver: BreakpointObserver
     ) {
         this.myNPub = this.signerService.npub();
         this.friendNPub = this.route.snapshot.paramMap.get('npub') || "";
@@ -47,7 +62,38 @@ export class MessengerComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // idk
+        this.breakpoint$.subscribe(() => {
+            console.log("what?")
+            this.breakpointChanged()
+        });
+    }
+
+    private breakpointChanged() {
+        console.log("breakpoints change")
+        if(this.breakpointObserver.isMatched(Breakpoints.XLarge)) {
+            this.currentBreakpoint = Breakpoints.Large;
+            this.smallScreen = false;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.Large)) {
+            this.currentBreakpoint = Breakpoints.Large;
+            this.smallScreen = false;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.Medium)) {
+            this.currentBreakpoint = Breakpoints.Medium;
+            this.smallScreen = false;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.Small)) {
+            this.currentBreakpoint = Breakpoints.Small;
+            this.smallScreen = true;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.XSmall)) {
+            this.currentBreakpoint = Breakpoints.XSmall;
+            this.smallScreen = true;
+        }
+    }
+
+    scrollBottom() {
+        console.log("scrooling?")
+        const maxScroll = this.messagesDiv?.nativeElement.scrollHeight;
+        console.log(maxScroll);
+        this.messagesDiv?.nativeElement.scrollTo({ top: maxScroll, behavior: 'smooth' });
+        console.log(this.messagesDiv);
     }
 
     async getMe() {
@@ -93,6 +139,7 @@ export class MessengerComponent implements OnInit {
             );
         }
         this.messages.sort((a,b) => a.createdAt - b.createdAt);
+        this.scrollBottom();
     }
 
     encryptContent(pubkey: string, content: string) {
@@ -139,5 +186,6 @@ export class MessengerComponent implements OnInit {
         this.nostrService.sendEvent(toSelfSignedEvent);
         this.openSnackBar("Message Sent!", "dismiss");
         this.content = "";
+        this.scrollBottom()
     }
 }

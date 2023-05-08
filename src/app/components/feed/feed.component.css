@@ -1,3 +1,7 @@
 .feed {
     width: 400;
 }
+
+.feed-chips {
+    margin-left: 0.5em;
+}

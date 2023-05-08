@@ -6,7 +6,7 @@
             routerLink="/users/{{post.pubkey|npub}}"
             mat-card-avatar
             src="{{post.picture}}"/>
-      <mat-card-title routerLink="/users/{{post.pubkey|npub}}">{{post.pubkey|username|truncate}}</mat-card-title>
+      <mat-card-subtitle routerLink="/users/{{post.pubkey|npub}}">{{post.pubkey|username|ellipsis}}</mat-card-subtitle>
       <mat-card-subtitle (click)="copynpub()" class="npub">
         {{post.pubkey|npub|ellipsis}}
         <mat-icon [inline]="true">content_copy</mat-icon>
