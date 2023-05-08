@@ -1,8 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SignerService } from 'src/app/services/signer.service';
 import { User } from '../../types/user';
-import { NostrService } from 'src/app/services/nostr.service';
-import { getEventHash, Event } from 'nostr-tools';
 import {Clipboard} from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -15,6 +13,9 @@ export class UserComponent implements OnInit {
 
     @Input() user?: User;
     canEdit: boolean = false;
+    nsec: string = "";
+    displaynsec: boolean = false;
+    nsecButton: string = "Show nsec";
 
     constructor(
         private signerService: SignerService,
@@ -28,6 +29,7 @@ export class UserComponent implements OnInit {
             if (pubkey === this.user.pubkey) {
                 this.canEdit = true;
             }
+            this.nsec = this.signerService.nsec();
         }
     }
 
@@ -39,6 +41,16 @@ export class UserComponent implements OnInit {
         if (this.user) {
             this.clipboard.copy(this.user.npub);
             this.openSnackBar("npub copied!", "dismiss");
+        }
+    }
+
+    showNsec() {
+        if (this.displaynsec) {
+            this.displaynsec = false;
+            this.nsecButton = "Show nsec";
+        } else {
+            this.displaynsec = true;
+            this.nsecButton = "Hide nsec";
         }
     }
 }

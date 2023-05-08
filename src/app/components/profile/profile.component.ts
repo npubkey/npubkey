@@ -1,15 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
-import { 
-    Event,
-    UnsignedEvent,
-    getEventHash,
-    signEvent,
-    Filter
- } from 'nostr-tools';
+import { Filter } from 'nostr-tools';
 import { User } from '../../types/user';
 import { Post } from '../../types/post';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-profile',
@@ -24,7 +20,8 @@ export class ProfileComponent implements OnInit {
 
     constructor(
         private signerService: SignerService,
-        private nostrService: NostrService
+        private nostrService: NostrService,
+        private router: Router
     ) {}
 
     ngOnInit() {
@@ -38,7 +35,12 @@ export class ProfileComponent implements OnInit {
     }
 
     async getUser() {
-        let filter: Filter = {authors: [this.signerService.getPublicKey()], kinds: [0], limit: 1}
+        let pubkey = this.signerService.getPublicKey()
+        console.log(pubkey)
+        if (pubkey === "") {
+            this.router.navigate(["/generate"])
+        }
+        let filter: Filter = {authors: [pubkey], kinds: [0], limit: 1}
         this.user = await this.nostrService.getUser(filter);
         this.getPosts();
     }

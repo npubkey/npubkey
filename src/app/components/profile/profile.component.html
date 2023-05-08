@@ -1,8 +1,11 @@
 <h1>Profile</h1>
+<div *ngIf="!user">
+    <button mat-stroked-button routerLink="/profile-edit">Create User Profile</button>
+</div>
 <div *ngIf="user">
     <app-user [user]="user"></app-user>
 </div>
-<div>
+<div *ngIf="user">
     <app-create-event></app-create-event>
 </div>
 <div *ngFor="let post of posts">

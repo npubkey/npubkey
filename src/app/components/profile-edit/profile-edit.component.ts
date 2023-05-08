@@ -8,6 +8,8 @@ import {
     signEvent,
     Filter
  } from 'nostr-tools';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Component({
   selector: 'app-profile-edit',
@@ -30,7 +32,8 @@ export class ProfileEditComponent implements OnInit {
 
     constructor(
         private signerService: SignerService,
-        private nostrService: NostrService
+        private nostrService: NostrService,
+        private snackBar: MatSnackBar
     ) {}
 
     ngOnInit() {
@@ -41,6 +44,10 @@ export class ProfileEditComponent implements OnInit {
             this.signerService.handleLoginWithExtension();
         }
         this.setValues();
+    }
+
+    openSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {duration: 1300});
     }
 
     async setValues() {
@@ -83,6 +90,7 @@ export class ProfileEditComponent implements OnInit {
             signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
         }
         this.nostrService.sendEvent(signedEvent);
+        this.openSnackBar("Profile Updated!", "dismiss");
     }
 
     getUnsignedEvent(kind: number, tags: any) {

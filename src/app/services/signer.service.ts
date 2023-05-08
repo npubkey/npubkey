@@ -29,6 +29,14 @@ export class SignerService {
         return nip19.npubEncode(pubkey);
     }
 
+    nsec() {
+        if (this.usingPrivateKey()) {
+            let privateKey = this.getPrivateKey();
+            return nip19.nsecEncode(privateKey);
+        }
+        return "";
+    }
+
     pubkey(npub: string) {
         return nip19.decode(npub).data.toString();
     }
