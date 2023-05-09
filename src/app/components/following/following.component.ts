@@ -19,8 +19,6 @@ export class FollowingComponent implements OnInit {
         private route: ActivatedRoute,
     ) {
         this.npub = this.route.snapshot.paramMap.get('npub') || "";
-        console.log("GOT NPUB")
-        console.log(this.npub);
         route.params.subscribe(val => {
             this.npub = val["npub"];
             this.getContactList();

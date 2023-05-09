@@ -1,0 +1,88 @@
+.whole-page {
+    position:absolute;
+    z-index: 10;
+    background-color: #673ab7;
+    height: 100vh;
+    width: 100%;
+}
+
+.title-container {
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+}
+
+.title {
+    color: inherit;
+    font-size: 45px;
+}
+
+.subtitle {
+    font-size: 20px;
+    color: inherit;
+}
+
+.login-options {
+    padding-top: 2em;
+    text-align: center;
+}
+
+.login-action-buttons {
+    padding-top: 2em;
+}
+
+.mat-extension {
+    background-color: white;
+    color: black;
+}
+
+.mat-generate {
+    background-color: cornflowerblue;
+    color: black;
+}
+
+.key {
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    font-family:'Courier New', Courier, monospace;
+    word-wrap: break-word;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.key:hover {
+    cursor: pointer;
+}
+
+.key-title {
+    color: white;
+    font-size: 30px;
+    text-align: center;
+    font-family:'Courier New', Courier, monospace;
+}
+
+.key-subtitle {
+    color: white;
+    font-size: 15px;
+    text-align: center;
+    font-family:'Courier New', Courier, monospace;
+}
+
+.nsec-form {
+    text-align: center;
+    color: white;
+    margin-left: 1em;
+    margin-right: 1em;
+    margin-top: 3em;
+}
+
+.nsec-form mat-form-field {
+    width: 100%;
+}
+
+.nsec-form .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    color: white;
+}

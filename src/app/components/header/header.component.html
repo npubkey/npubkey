@@ -1,26 +1,66 @@
-<div *ngIf="!smallScreen" class="header-container">
-    <mat-toolbar color="primary" class="nav-bar">
-        <mat-toolbar-row fxLayoutAlign='space-between center'>
-            <div fxLayout="row">
-                <span class="title" routerLink="/feed">
-                    {{ title }}
-                </span>
-            </div>
-            <div>
-                <button mat-icon-button routerLink="/generate">
-                    <mat-icon>{{ key_icon }}</mat-icon>
+<div *ngIf="showHeader">
+    <div *ngIf="!smallScreen" class="header-container">
+        <mat-toolbar color="primary" class="nav-bar">
+            <mat-toolbar-row fxLayoutAlign='space-between center'>
+                <div fxLayout="row">
+                    <span class="title" routerLink="/feed">
+                        {{ title }}
+                    </span>
+                </div>
+                <div>
+                    <button mat-icon-button routerLink="/generate">
+                        <mat-icon>{{ key_icon }}</mat-icon>
+                    </button>
+                    <button mat-icon-button routerLink="/search">
+                        <mat-icon>{{ search_icon }}</mat-icon>
+                    </button>
+                    <button mat-icon-button routerLink="/feed">
+                        <mat-icon>{{ explore_icon }}</mat-icon>
+                    </button>
+                    <button mat-icon-button routerLink='/users'>
+                        <mat-icon>{{ users_icon }}</mat-icon>
+                    </button>
+                    <button mat-icon-button routerLink="/messages">
+                        <mat-icon>{{ messages_icon }}</mat-icon>
+                    </button>
+                    <button mat-icon-button routerLink='/create'>
+                        <mat-icon>{{ create_icon }}</mat-icon>
+                    </button>
+                    <button mat-icon-button routerLink='/profile'>
+                        <mat-icon>{{ menu_icon }}</mat-icon>
+                    </button>
+                </div>
+            </mat-toolbar-row>
+        </mat-toolbar>
+    </div>
+    <div *ngIf="smallScreen">
+        <mat-toolbar color="primary" class="nav-bar">
+            <mat-toolbar-row fxLayoutAlign='space-between center'>
+                <div fxLayout="row">
+                    <span class='title' routerLink='/feed'>
+                        {{ title }}
+                    </span>
+                </div>
+                <div>
+                    <button mat-icon-button routerLink="/generate">
+                        <mat-icon>{{ key_icon }}</mat-icon>
+                    </button>
+                    <button mat-icon-button routerLink='/users'>
+                        <mat-icon>{{ users_icon }}</mat-icon>
+                    </button>
+                    <button mat-icon-button routerLink='/messages'>
+                        <mat-icon>{{ messages_icon }}</mat-icon>
+                    </button>
+                </div>
+            </mat-toolbar-row>
+        </mat-toolbar>
+        <mat-toolbar color="primary" class="footer-nav-bar">
+            <mat-toolbar-row fxLayoutAlign='space-evenly center'>
+                <button mat-icon-button routerLink='/feed'>
+                    <mat-icon>{{ explore_icon }}</mat-icon>
                 </button>
                 <button mat-icon-button routerLink="/search">
                     <mat-icon>{{ search_icon }}</mat-icon>
-                </button>
-                <button mat-icon-button routerLink="/feed">
-                    <mat-icon>{{ explore_icon }}</mat-icon>
-                </button>
-                <button mat-icon-button routerLink='/users'>
-                    <mat-icon>{{ users_icon }}</mat-icon>
-                </button>
-                <button mat-icon-button routerLink="/messages">
-                    <mat-icon>{{ messages_icon }}</mat-icon>
                 </button>
                 <button mat-icon-button routerLink='/create'>
                     <mat-icon>{{ create_icon }}</mat-icon>
@@ -28,45 +68,7 @@
                 <button mat-icon-button routerLink='/profile'>
                     <mat-icon>{{ menu_icon }}</mat-icon>
                 </button>
-            </div>
-        </mat-toolbar-row>
-    </mat-toolbar>
-</div>
-<div *ngIf="smallScreen">
-    <mat-toolbar color="primary" class="nav-bar">
-        <mat-toolbar-row fxLayoutAlign='space-between center'>
-            <div fxLayout="row">
-                <span class='title' routerLink='/feed'>
-                    {{ title }}
-                </span>
-            </div>
-            <div>
-                <button mat-icon-button routerLink="/generate">
-                    <mat-icon>{{ key_icon }}</mat-icon>
-                </button>
-                <button mat-icon-button routerLink='/users'>
-                    <mat-icon>{{ users_icon }}</mat-icon>
-                </button>
-                <button mat-icon-button routerLink='/messages'>
-                    <mat-icon>{{ messages_icon }}</mat-icon>
-                </button>
-            </div>
-        </mat-toolbar-row>
-    </mat-toolbar>
-    <mat-toolbar color="primary" class="footer-nav-bar">
-        <mat-toolbar-row fxLayoutAlign='space-evenly center'>
-            <button mat-icon-button routerLink='/feed'>
-                <mat-icon>{{ explore_icon }}</mat-icon>
-            </button>
-            <button mat-icon-button routerLink="/search">
-                <mat-icon>{{ search_icon }}</mat-icon>
-            </button>
-            <button mat-icon-button routerLink='/create'>
-                <mat-icon>{{ create_icon }}</mat-icon>
-            </button>
-            <button mat-icon-button routerLink='/profile'>
-                <mat-icon>{{ menu_icon }}</mat-icon>
-            </button>
-        </mat-toolbar-row>
-    </mat-toolbar>
+            </mat-toolbar-row>
+        </mat-toolbar>
+    </div>
 </div>

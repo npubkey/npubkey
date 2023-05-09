@@ -1,7 +1,10 @@
 <h1>Profile</h1>
-<div *ngIf="!user">
+<p *ngIf="!user">
     <button mat-stroked-button routerLink="/profile-edit">Create User Profile</button>
-</div>
+</p>
+<p>
+    <button mat-stroked-button (click)="signOut()">Sign Out</button>
+</p>
 <div *ngIf="user">
     <app-user [user]="user"></app-user>
 </div>

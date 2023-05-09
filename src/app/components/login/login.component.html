@@ -1,6 +1,102 @@
-<mat-card class="login-card">
-    <mat-card-actions>
-      <button mat-stroked-button>Login</button>
-      <button mat-stroked-button>Create</button>
-    </mat-card-actions>
-</mat-card>
+<div class="whole-page">
+    <div *ngIf="initialLoginView">
+        <div class="app-title">
+            <p class="title-container">
+                <span class="title">npubkey</span>
+                <br>
+                <small class="subtitle">a nostr client</small>
+            </p>
+        </div>
+        <div class="login-options">
+            <p>
+                <button mat-fab extended color="generate" (click)="generateNewKey()">
+                    Generate New Key
+                </button>
+            </p>
+            <p>
+                <button mat-fab extended color="warn" (click)="loginWithPrivateKey()">
+                    Login with private key
+                </button>
+            </p>
+            <p>
+                <button mat-fab extended color="extension" (click)="loginWithExtension()">
+                    Login with Extension
+                </button>
+            </p>
+        </div>
+    </div>
+    <div *ngIf="generateNewKeyView">
+        <p class="title-container">
+            <span class="title">nostr keys</span>
+            <br>
+            <small class="subtitle">store nsec in a safe place!</small>
+        </p>
+        <div class="login-info">
+            <div class="key-title">npub</div>
+            <div class="key-subtitle">(share this)</div>
+            <p class="key" (click)="copynpub()">
+                {{npub}}<mat-icon [inline]="true">content_copy</mat-icon>
+            </p>
+            <div class="key-title">nsec</div>
+            <div class="key-subtitle">(keep this secret)</div>
+            <p class="key" (click)="copynsec()">
+                {{nsec}}<mat-icon [inline]="true">content_copy</mat-icon>
+            </p>
+        </div>
+        <div class="login-action-buttons">
+            <div fxLayout="row" fxLayoutAlign="space-around center">
+                <button mat-fab extended color="warn" (click)="home()">
+                    Back
+                </button>
+                <button mat-fab extended color="extension" (click)="goToApp()">
+                    Go!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="loginWithPrivateKeyView">
+        <p class="title-container">
+            <span class="title">login with nsec</span>
+        </p>
+        <div class="login-info">
+            <div class="nsec-form">
+                <p>
+                    <mat-form-field appearance="outline">
+                        <mat-label>paste nsec here</mat-label>
+                        <input matInput [(ngModel)]="nsec">
+                    </mat-form-field>
+                </p>
+            </div>
+        </div>
+        <div class="login-action-buttons">
+            <div fxLayout="row" fxLayoutAlign="space-around center">
+                <button mat-fab extended color="warn" (click)="home()">
+                    Back
+                </button>
+                <button mat-fab extended color="extension" (click)="goToApp()">
+                    Go!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="loginWithExtensionView">
+        <p class="title-container">
+            <span class="title">login with extension</span>
+        </p>
+        <div class="login-info">
+            <div class="key-title">click go</div>
+            <br>
+            <div class="key-subtitle">(if you have a nostr browser extension if will prompt you to sign in)</div>
+        </div>
+        <div class="login-action-buttons">
+            <div fxLayout="row" fxLayoutAlign="space-around center">
+                <button mat-fab extended color="warn" (click)="home()">
+                    Back
+                </button>
+                <button mat-fab extended color="extension" (click)="goToApp()">
+                    Go!
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

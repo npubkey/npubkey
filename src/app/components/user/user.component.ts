@@ -16,6 +16,7 @@ export class UserComponent implements OnInit {
     nsec: string = "";
     displaynsec: boolean = false;
     nsecButton: string = "Show nsec";
+    isMyProfile: boolean = false;
 
     constructor(
         private signerService: SignerService,
@@ -28,6 +29,7 @@ export class UserComponent implements OnInit {
         if (this.user) {
             if (pubkey === this.user.pubkey) {
                 this.canEdit = true;
+                this.isMyProfile = true;
             }
             this.nsec = this.signerService.nsec();
         }

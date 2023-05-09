@@ -5,7 +5,7 @@ import { Filter } from 'nostr-tools';
 import { User } from '../../types/user';
 import { Post } from '../../types/post';
 import { Router } from '@angular/router';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-profile',
@@ -21,7 +21,8 @@ export class ProfileComponent implements OnInit {
     constructor(
         private signerService: SignerService,
         private nostrService: NostrService,
-        private router: Router
+        private router: Router,
+        private snackBar: MatSnackBar
     ) {}
 
     ngOnInit() {
@@ -32,6 +33,16 @@ export class ProfileComponent implements OnInit {
             this.signerService.handleLoginWithExtension();
         }
         this.getUser();
+    }
+
+    signOut() {
+        this.signerService.clearKeys();
+        this.openSnackBar("Successfully signed out", "dismiss");
+        this.router.navigate(["/login"]);
+    }
+
+    openSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {duration: 1300});
     }
 
     async getUser() {

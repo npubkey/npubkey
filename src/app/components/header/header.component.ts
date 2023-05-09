@@ -3,7 +3,7 @@ import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
-
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -23,7 +23,8 @@ export class HeaderComponent implements OnInit {
     search_icon: string = 'search';
     smallScreen: boolean = false;
     Breakpoints = Breakpoints;
-    currentBreakpoint:string = '';
+    currentBreakpoint: string = '';
+    showHeader: boolean = true;
 
     readonly breakpoint$ = this.breakpointObserver
         .observe([Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, '(min-width: 500px)'])
@@ -36,7 +37,8 @@ export class HeaderComponent implements OnInit {
         private signerService: SignerService,
         private nostrService: NostrService,
         private breakpointObserver: BreakpointObserver
-    ) {}
+    ) {
+    }
 
     ngOnInit(): void {
         // because the header will always be on the screen,

@@ -16,9 +16,9 @@ import { ContactListComponent } from './components/contact-list/contact-list.com
 import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.component';
 
 const routes: Routes = [
-    { path: '', component: GenerateComponent},
-    { path: 'generate', component: GenerateComponent },
+    { path: '', component: LoginComponent },
     { path: 'login', component: LoginComponent },
+    { path: 'generate', component: LoginComponent },
     { path: 'create', component: CreateEventComponent },
     { path: 'posts/:nevent', component: PostDetailComponent},
     { path: 'messages/:npub', component: MessengerComponent},
