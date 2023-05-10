@@ -1,0 +1,7 @@
+.profile-edit-form {
+    text-align: center;
+}
+
+.profile-edit-form mat-form-field {
+    width: 100%;
+}

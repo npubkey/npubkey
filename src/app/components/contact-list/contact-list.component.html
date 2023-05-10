@@ -1,20 +1,23 @@
-<h1>Contact List</h1>
-<p>
-    <mat-divider></mat-divider>
-</p>
-<p *ngFor="let user of users">
-    <mat-card routerLink="/messages/{{user.npub}}">
-        <mat-card-header>
-            <img 
-                *ngIf="user.picture"
-                class="header-image"
-                mat-card-avatar
-                src="{{user.picture}}"/>
-          <mat-card-title>{{user.displayName}}</mat-card-title>
-          <mat-card-subtitle class="npub" >{{user.npub|ellipsis}}</mat-card-subtitle>
-        </mat-card-header>
-    </mat-card>
-</p>
-<div *ngIf="users.length === 0">
-    <app-loading></app-loading>
+<div class="router-container">
+    <h1>Contacts</h1>
+    <p>
+        <mat-divider></mat-divider>
+    </p>
+    <p *ngFor="let user of users">
+        <mat-card routerLink="/messages/{{user.npub}}">
+            <mat-card-header>
+                <img 
+                    *ngIf="user.picture"
+                    class="header-image"
+                    mat-card-avatar
+                    src="{{user.picture}}"/>
+              <mat-card-title>{{user.displayName}}</mat-card-title>
+              <mat-card-subtitle class="npub" >{{user.npub|ellipsis}}</mat-card-subtitle>
+            </mat-card-header>
+        </mat-card>
+    </p>
+    <div *ngIf="users.length === 0">
+        <app-loading></app-loading>
+    </div>
+    
 </div>

@@ -1,16 +1,31 @@
-<h1>Profile</h1>
-<p *ngIf="!user">
-    <button mat-stroked-button routerLink="/profile-edit">Create User Profile</button>
-</p>
-<p>
-    <button mat-stroked-button (click)="signOut()">Sign Out</button>
-</p>
-<div *ngIf="user">
-    <app-user [user]="user"></app-user>
+<div class="router-container">
+    <div *ngIf="!loading">
+        <div class="no-profile-yet" *ngIf="!user">
+            <p class="title-container">
+                <small class="subtitle">{{welcomeMessage}}</small>
+            </p>
+            <p>
+                <button mat-fab extended color="primary" routerLink="/profile-edit">Create Profile</button>
+            </p>
+            <p>
+                <button mat-fab extended color="explore" routerLink="/feed">Explore Nostr</button>
+            </p>
+            <p>
+                <button mat-fab extended color="accent" (click)="signOut()">Sign Out</button>
+            </p>
+        </div>
+        <div *ngIf="user">
+            <app-user [user]="user"></app-user>
+        </div>
+        <div *ngIf="user">
+            <app-create-event></app-create-event>
+        </div>
+        <div *ngFor="let post of posts">
+            <app-post [post]="post"></app-post>
+        </div>
+    </div>
+    <div *ngIf="loading">
+        <app-loading></app-loading>
+    </div>
 </div>
-<div *ngIf="user">
-    <app-create-event></app-create-event>
-</div>
-<div *ngFor="let post of posts">
-    <app-post [post]="post"></app-post>
-</div>
+

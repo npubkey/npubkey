@@ -4,6 +4,7 @@
     background-color: #673ab7;
     height: 100vh;
     width: 100%;
+    overflow: hidden;
 }
 
 .title-container {
@@ -30,7 +31,7 @@
 }
 
 .login-action-buttons {
-    padding-top: 2em;
+    padding-top: 1em;
 }
 
 .mat-extension {
@@ -85,4 +86,8 @@
 
 .nsec-form .mat-form-field-appearance-outline .mat-form-field-outline-thick {
     color: white;
+}
+
+/deep/ .mat-input-underline {
+    background-color: white;
 }

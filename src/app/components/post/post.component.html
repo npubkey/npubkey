@@ -1,28 +1,40 @@
 <mat-card class="post" *ngIf="post">
-    <mat-card-header>
+    <mat-card-header routerLink="/posts/{{post.noteId|nevent}}">
         <img 
             *ngIf="post.picture"
             class="header-image"
             routerLink="/users/{{post.pubkey|npub}}"
             mat-card-avatar
             src="{{post.picture}}"/>
-      <mat-card-subtitle routerLink="/users/{{post.pubkey|npub}}">{{post.pubkey|username|ellipsis}}</mat-card-subtitle>
-      <mat-card-subtitle (click)="copynpub()" class="npub">
+        <mat-card-subtitle routerLink="/users/{{post.pubkey|npub}}">
+            <div class="username">{{post.pubkey|username|ellipsis}}</div>
+        </mat-card-subtitle>
+      <!-- <mat-card-subtitle (click)="copynpub()" class="npub">
         {{post.pubkey|npub|ellipsis}}
         <mat-icon [inline]="true">content_copy</mat-icon>
-      </mat-card-subtitle>
+      </mat-card-subtitle> -->
       <mat-card-subtitle>{{post.fromNow}}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
         <div *ngIf="post.nip10Result.profiles && post.nip10Result.profiles.length > 0">
-            <span class="extras">Replying to</span>
-            <mat-card-subtitle *ngFor="let profile of post.nip10Result.profiles" routerLink="/users/{{profile.pubkey|npub}}" class="replyingTo">{{profile.pubkey|username|ellipsis}}</mat-card-subtitle>
+            <span class="extras">users: </span>
+            <span 
+                *ngFor="let profile of post.nip10Result.profiles"
+                routerLink="/users/{{profile.pubkey|npub}}"
+                class="replyingTo">
+            {{profile.pubkey|username|ellipsis}}
+            </span>
+        </div>
+        <div *ngIf="post.nip10Result.reply">
+            <span class="extras">re: </span>
+            <span routerLink="/posts/{{post.nip10Result.reply.id|nevent}}" class="replyingTo">{{post.nip10Result.reply.id|nevent|ellipsis}}</span>
+        </div>
+        <div *ngIf="post.nip10Result.root">
+            <span class="extras">root: </span>
+            <span routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="replyingTo">{{post.nip10Result.root.id|nevent|ellipsis}}</span>
         </div>
         <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
-        <mat-divider></mat-divider>
-        <br>
-        <mat-card-subtitle routerLink="/posts/{{post.noteId|nevent}}">{{post.noteId|nevent|ellipsis}}</mat-card-subtitle>
-        <div *ngIf="post.nip10Result.mentions && post.nip10Result.mentions.length > 0">
+        <!-- <div *ngIf="post.nip10Result.mentions && post.nip10Result.mentions.length > 0">
             <span class="extras">Thread</span>
             <div *ngFor="let mention of post.nip10Result.mentions">
                 <mat-card-subtitle routerLink="/posts/{{mention.id|nevent}}" class="replyingTo">{{mention.id|nevent|ellipsis}}</mat-card-subtitle>
@@ -30,19 +42,33 @@
         </div>
         <div *ngIf="post.nip10Result.root">
             <mat-card-subtitle routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="replyingTo">Root: {{post.nip10Result.root.id|nevent|ellipsis}}</mat-card-subtitle>
-        </div>
-        <div *ngIf="post.nip10Result.reply">
-            <mat-card-subtitle routerLink="/posts/{{post.nip10Result.reply.id|nevent}}" class="replyingTo">Reply: {{post.nip10Result.reply.id|nevent|ellipsis}}</mat-card-subtitle>
-        </div>
+        </div> -->
     </mat-card-content>
-    <p>
-        <mat-card-content>
-            <mat-form-field appearance="outline">
-                <mat-label>Reply</mat-label>
-                <input matInput [(ngModel)]="replyContent" placeholder="message">
-            </mat-form-field>
-            <br>
-            <button mat-stroked-button (click)="sendReply()">Send Reply</button>
-        </mat-card-content>
-    </p>
+    <mat-divider></mat-divider>
+    <div fxLayout="row" fxLayoutAlign="space-around center">
+        <button mat-icon-button (click)="clickShowReplyForm()">
+            <mat-icon>mode_comment</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>autorenew</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>bolt</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>share</mat-icon>
+        </button>
+    </div>
+    <div *ngIf="showReplyForm">
+        <p>
+            <mat-card-content>
+                <mat-form-field appearance="outline">
+                    <mat-label>Reply</mat-label>
+                    <input matInput [(ngModel)]="replyContent" placeholder="message">
+                </mat-form-field>
+                <br>
+                <button mat-stroked-button (click)="sendReply()">Send Reply</button>
+            </mat-card-content>
+        </p>
+    </div>
 </mat-card>

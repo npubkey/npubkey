@@ -101,10 +101,15 @@ export class SignerService {
     }
 
     handleLoginWithNsec(nsec: string) {
-        let privateKey = nip19.decode(nsec).data.toString();
-        let pubkey = getPublicKey(privateKey);
-        this.savePrivateKeyToSession(privateKey);
-        this.savePublicKeyToSession(pubkey);
+        try {
+            let privateKey = nip19.decode(nsec).data.toString();
+            let pubkey = getPublicKey(privateKey);
+            this.savePrivateKeyToSession(privateKey);
+            this.savePublicKeyToSession(pubkey);
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 
     usingNostrBrowserExtension() {
@@ -117,9 +122,12 @@ export class SignerService {
         return true;
     }
 
-    async handleLoginWithExtension() {
-        const pubKey = await (window as any).nostr.getPublicKey();
+    async handleLoginWithExtension(): Promise<boolean> {
+        const pubKey = await (window as any).nostr.getPublicKey().catch(() => {
+            return false;
+        });
         this.setPublicKeyFromExtension(pubKey);
+        return true;
     }
 
     async signEventWithExtension(unsignedEvent: UnsignedEvent) {

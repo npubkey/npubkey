@@ -1,11 +1,13 @@
-<h1>Post</h1>
-<p>
-    <mat-divider></mat-divider>
-</p>
-<div *ngIf="post">
-    <app-post [post]="post"></app-post>
-</div>
-<div *ngFor="let reply of replies">
-    <app-post [post]="reply"></app-post>
+<div class="router-container">
+    <p>
+        <mat-divider></mat-divider>
+    </p>
+    <div *ngIf="post">
+        <app-post [post]="post"></app-post>
+    </div>
+    <div *ngFor="let reply of replies">
+        <app-post [post]="reply"></app-post>
+    </div>
+    
 </div>
 

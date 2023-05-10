@@ -14,7 +14,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class ProfileComponent implements OnInit {
 
-    // Form Fields
+    welcomeMessage: string = "Welcome to the nostr network. Create a profile or start looking around";
+    loading: boolean = true;
     user: User | null | undefined = undefined;
     posts: Post[] = [];
 
@@ -26,6 +27,7 @@ export class ProfileComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        this.loading = true;
         // need to make sure we have pubkey
         if (this.signerService.usingNostrBrowserExtension()) {
             // TODO probably make this whole thing flow better 
@@ -54,6 +56,7 @@ export class ProfileComponent implements OnInit {
         let filter: Filter = {authors: [pubkey], kinds: [0], limit: 1}
         this.user = await this.nostrService.getUser(filter);
         this.getPosts();
+        this.loading = false;
     }
 
     async getPosts() {

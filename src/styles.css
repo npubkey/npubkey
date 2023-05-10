@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: "Nexa", Roboto, "Helvetica Neue", sans-serif; }
-h1 { margin-left: 0.5em; padding-top: 1.25em;}
+body { margin: 0; font-family: 'Courier New', Courier, monospace; }
+.router-container { margin-top: 4em; margin-left: 1em; margin-right: 1em; padding-bottom: 5em;}

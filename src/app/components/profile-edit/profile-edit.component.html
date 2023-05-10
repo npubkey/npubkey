@@ -1,69 +1,70 @@
-<h1>Edit Profile</h1>
-<small>(kind 0 nostr event)</small>
-<div>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>Name</mat-label>
-            <input matInput placeholder="Name" [(ngModel)]="name">
-            <mat-hint>Name</mat-hint>
-        </mat-form-field>
-    </p>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>Username</mat-label>
-            <input matInput placeholder="Username" [(ngModel)]="username">
-            <mat-hint>Username</mat-hint>
-        </mat-form-field>
-    </p>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>Display Name</mat-label>
-            <input matInput placeholder="Display Name" [(ngModel)]="displayName">
-            <mat-hint>Display Name</mat-hint>
-        </mat-form-field>
-    </p>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>Website</mat-label>
-            <input matInput placeholder="Website" [(ngModel)]="website">
-            <mat-hint>Website</mat-hint>
-        </mat-form-field>
-    </p>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>About</mat-label>
-            <input matInput placeholder="About" [(ngModel)]="about">
-            <mat-hint>About</mat-hint>
-        </mat-form-field>
-    </p>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>Picture</mat-label>
-            <input matInput placeholder="Picture" [(ngModel)]="picture">
-            <mat-hint>Picture</mat-hint>
-        </mat-form-field>
-    </p>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>Banner</mat-label>
-            <input matInput placeholder="Banner" [(ngModel)]="banner">
-            <mat-hint>Banner</mat-hint>
-        </mat-form-field>
-    </p>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>LUD06</mat-label>
-            <input matInput placeholder="LUD06" [(ngModel)]="lud06">
-            <mat-hint>LNURL</mat-hint>
-        </mat-form-field>
-    </p>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>NIP05</mat-label>
-            <input matInput placeholder="NIP05" [(ngModel)]="nip05">
-            <mat-hint>NIP05 (shitcoin)</mat-hint>
-        </mat-form-field>
-    </p>
-    <button mat-stroked-button color="primary" (click)="submit()">Save</button>
+<div class="router-container">
+    <h3>Edit Profile</h3>
+    <small>(kind 0 nostr event)</small>
+    <div class="profile-edit-form">
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Name</mat-label>
+                <input matInput placeholder="Name" [(ngModel)]="name">
+                <mat-hint>Name</mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
+                <input matInput placeholder="Username" [(ngModel)]="username">
+                <mat-hint>Username</mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Display Name</mat-label>
+                <input matInput placeholder="Display Name" [(ngModel)]="displayName">
+                <mat-hint>Display Name</mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Website</mat-label>
+                <input matInput placeholder="Website" [(ngModel)]="website">
+                <mat-hint>Website</mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>About</mat-label>
+                <input matInput placeholder="About" [(ngModel)]="about">
+                <mat-hint>About</mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Picture</mat-label>
+                <input matInput placeholder="Picture" [(ngModel)]="picture">
+                <mat-hint>Picture</mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Banner</mat-label>
+                <input matInput placeholder="Banner" [(ngModel)]="banner">
+                <mat-hint>Banner</mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>LUD06</mat-label>
+                <input matInput placeholder="LUD06" [(ngModel)]="lud06">
+                <mat-hint>LNURL</mat-hint>
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>NIP05</mat-label>
+                <input matInput placeholder="NIP05" [(ngModel)]="nip05">
+                <mat-hint>NIP05</mat-hint>
+            </mat-form-field>
+        </p>
+        <button mat-stroked-button color="primary" (click)="submit()">Save</button>
+    </div>
 </div>
-<br>

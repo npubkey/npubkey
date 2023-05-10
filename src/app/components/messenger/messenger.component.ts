@@ -69,7 +69,6 @@ export class MessengerComponent implements OnInit {
     }
 
     private breakpointChanged() {
-        console.log("breakpoints change")
         if(this.breakpointObserver.isMatched(Breakpoints.XLarge)) {
             this.currentBreakpoint = Breakpoints.Large;
             this.smallScreen = false;
@@ -89,11 +88,11 @@ export class MessengerComponent implements OnInit {
     }
 
     scrollBottom() {
-        console.log("scrooling?")
         const maxScroll = this.messagesDiv?.nativeElement.scrollHeight;
-        console.log(maxScroll);
-        this.messagesDiv?.nativeElement.scrollTo({ top: maxScroll, behavior: 'smooth' });
-        console.log(this.messagesDiv);
+        if (maxScroll) {
+            this.messagesDiv?.nativeElement.scrollTo({ top: maxScroll, behavior: 'smooth' });
+            console.log(this.messagesDiv);
+        }
     }
 
     async getMe() {

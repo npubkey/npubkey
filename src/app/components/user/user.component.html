@@ -1,12 +1,11 @@
 <mat-card class="user-card" *ngIf="user">
-    <mat-card-header>
+    <mat-card-header routerLink="/users/{{user.pubkey|npub}}">
         <img 
             *ngIf="user.picture"
             class="header-image"
-            routerLink="/users/{{user.pubkey|npub}}"
             mat-card-avatar
             src="{{user.picture}}"/>
-      <mat-card-title routerLink="/users/{{user.pubkey|npub}}">{{user.displayName}}</mat-card-title>
+      <mat-card-title>{{user.displayName}}</mat-card-title>
       <mat-card-subtitle class="npub" (click)="copynpub()">
         {{user.npub|ellipsis}}
         <mat-icon [inline]="true">content_copy</mat-icon>

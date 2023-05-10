@@ -1,11 +1,7 @@
 
 .header-image {
     background-size: cover;
-    height: 40px;
-    width: 40px;
     border: 1px solid #2196f3;
-    max-height:100%;
-    max-width:100%;
 }
 
 .npub {

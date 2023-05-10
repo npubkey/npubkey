@@ -67,14 +67,30 @@ export class LoginComponent {
         this.initialLoginView = true;
     }
 
-    goToApp() {
+    async goToApp() {
+        let success: boolean = true;
         if (this.generateNewKeyView || this.loginWithPrivateKeyView) {
-            this.signerService.handleLoginWithNsec(this.nsec);
+            success = this.signerService.handleLoginWithNsec(this.nsec);
         } else {
-            this.signerService.handleLoginWithExtension();
+            success = await this.handleLoginWithExtension();
         }
-        this.openSnackBar("Succesfully Signed In", "dismiss");
-        this.router.navigate(['/profile']);
+        if (success) {
+            this.openSnackBar("Succesfully Signed In", "dismiss");
+            this.router.navigate(['/profile']);
+        } else {
+            this.openSnackBar("Failed Signed In", "dismiss");
+            this.signerService.clearKeys();
+            this.router.navigate(['/']);
+        }
+    }
+
+    async handleLoginWithExtension(): Promise<boolean> {
+        if (this.signerService.usingNostrBrowserExtension()) {
+            return await this.signerService.handleLoginWithExtension()
+        } else {
+            this.openSnackBar("No Nostr Browser extension", "dismiss");
+            return false;
+        }
     }
 
     openSnackBar(message: string, action: string) {

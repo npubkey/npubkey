@@ -26,7 +26,6 @@ export class Post {
     replyingTo: string[] = [];
     mentions: string[] = [];
     nevent: string = "";
-    signerService: SignerService;
     constructor(pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result) {
         this.pubkey = pubkey;
         this.npub = nip19.npubEncode(this.pubkey);
@@ -38,7 +37,6 @@ export class Post {
         this.setFromNow()
         this.setUsername(this.pubkey);
         this.setPicture(this.pubkey);
-        this.signerService = new SignerService();
     }
 
     setUsername(pubkey: string): void {
@@ -105,7 +103,7 @@ export class Post {
             try {
                 if (match.startsWith("nostr:npub")) {
                     let npub = match.substring(6)
-                    let username = this.signerService.getUsername(npub)
+                    let username = this.getUsername(npub)
                     let textWrap: TextWrap = {text: username, addLink: `href="/users/${npub}"`}
                     let htmlSpan = this.wrapTextInSpan(textWrap)
                     console.log(htmlSpan);
@@ -118,10 +116,12 @@ export class Post {
                 }
                 if (match.startsWith("nostr:note")) {
                     let note = match.substring(6);
-                    let textWrap: TextWrap = {text: note, addLink: `href="/posts/${this.signerService.encodeNoteAsEvent(note)}"`}
+                    let textWrap: TextWrap = {text: note, addLink: `href="/posts/${this.encodeNoteAsEvent(note)}"`}
                     content = content.replace(match, this.wrapTextInSpan(textWrap));
                 }
-            } catch {}
+            } catch (e) {
+                console.log(e);
+            }
         }
         return content;
     }
@@ -131,5 +131,18 @@ export class Post {
             return true;
         }
         return false;
+    }
+
+    getUsername(pubkey: string): string {
+        if (pubkey.startsWith("npub")) {
+            pubkey = nip19.decode(pubkey).data.toString()
+        }
+        return `@${(localStorage.getItem(`${pubkey}`) || nip19.npubEncode(pubkey))}`
+    }
+
+    encodeNoteAsEvent(note: string): string {
+        let decodedNote = nip19.decode(note).data.toString()
+        let eventP: nip19.EventPointer = {id: decodedNote}
+        return nip19.neventEncode(eventP);
     }
 }

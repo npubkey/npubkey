@@ -2,11 +2,27 @@
     color: purple;
 }
 
+mat-card-header img {
+    margin-bottom: 2px !important;
+    margin-top: 2px !important;
+}
+
+.header-image {
+    background-size: cover;
+    border: 1px solid #2196f3;
+}
+
+.username {
+    margin-top: 2px;
+    color: purple;
+}
+
 .post-content {
     font-family: 'Courier New', Courier, monospace;
     font-size: medium;
     font-weight: lighter;
     overflow-wrap: break-word;
+    padding-bottom: 1em;
 }
 
 .extras {

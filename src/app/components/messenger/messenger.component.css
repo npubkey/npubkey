@@ -17,7 +17,7 @@ mat-form-field {
 }
 
 .messages-container {
-    max-height: 90vh;
+    height: 90vh;
     overflow-y: scroll;
 }
 
@@ -35,8 +35,4 @@ mat-form-field {
     bottom: 0;
     width: 100%;
     z-index: 10;
-}
-
-.extra-bottom {
-    margin-bottom: 105px;
 }

@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 export class PostComponent implements OnInit {
     @Input() post?: Post;
     replyContent: string = "";
+    showReplyForm: boolean = false;
 
     constructor(
         private signerService: SignerService,
@@ -53,6 +54,14 @@ export class PostComponent implements OnInit {
         this.snackBar.open(message, action, {duration: 1300});
     }
 
+    clickShowReplyForm() {
+        if (this.showReplyForm) {
+            this.showReplyForm = false;
+        } else {
+            this.showReplyForm = true;
+        }
+    }
+
     async sendReply() {
         if (this.post) {
             const privateKey = this.signerService.getPrivateKey();
@@ -68,6 +77,7 @@ export class PostComponent implements OnInit {
             this.nostrService.sendEvent(signedEvent);
             this.replyContent = "";
             this.openSnackBar("Reply Sent!", "Dismiss");
+            this.showReplyForm = false;
         }
     }
 }
