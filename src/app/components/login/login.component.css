@@ -87,7 +87,3 @@
 .nsec-form .mat-form-field-appearance-outline .mat-form-field-outline-thick {
     color: white;
 }
-
-/deep/ .mat-input-underline {
-    background-color: white;
-}

@@ -70,7 +70,6 @@ mat-card-header img {
 img {
     margin-top: 1em;
     background-size: cover;
-    border: 1px solid #2196f3;
     max-height:100%;
     max-width:100%;
 }
@@ -78,7 +77,6 @@ img {
 video {
     margin-top: 1em;
     background-size: cover;
-    border: 1px solid #2196f3;
     max-height:100%;
     max-width:100%;
 }

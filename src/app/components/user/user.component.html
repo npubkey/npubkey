@@ -6,6 +6,9 @@
             mat-card-avatar
             src="{{user.picture}}"/>
         <div class="more-vert">
+            <button *ngIf="canEdit" mat-icon-button color="primary" routerLink="/profile-edit">
+                <mat-icon>edit</mat-icon>
+            </button>
             <button *ngIf="canEdit" mat-icon-button color="primary" routerLink="/settings">
                 <mat-icon>settings</mat-icon>
             </button>
@@ -19,31 +22,39 @@
           <mat-icon [inline]="true">content_copy</mat-icon>
         </mat-card-subtitle>
         <mat-card-subtitle>{{user.about}}</mat-card-subtitle>
-        <p *ngIf="user.website" fxLayout="row">
+        <p class="user-info" *ngIf="user.website" fxLayout="row">
             <mat-icon [inline]="true">link</mat-icon>
             <a href="{{user.website}}" target="_blank">{{user.website}}</a>
         </p>
         <!-- <mat-card-subtitle class="nip15">NIP05: {{user.nip05}}</mat-card-subtitle> -->
-        <p *ngIf="user.lud16" class="lightning-address" fxLayout="row">
-            <mat-icon [inline]="true">bolt</mat-icon>
-            {{user.lud16}}
+        <p class="user-info" *ngIf="user.lud16" class="lightning-address" fxLayout="row">
+            <mat-icon [inline]="true">bolt</mat-icon><span>{{user.lud16}}</span>
         </p>
     </mat-card-content>
     <mat-card-content>
-        <button *ngIf="canEdit" mat-icon-button color="primary" routerLink="/profile-edit">
-            <mat-icon>edit</mat-icon>
+        <button *ngIf="nsec && isMyProfile" mat-icon-button color="warn" (click)="showNsec()">
+            <mat-icon>{{nsecButton}}</mat-icon>
         </button>
-        <button *ngIf="nsec && isMyProfile" mat-stroked-button color="accent" (click)="showNsec()">{{nsecButton}}</button>
         <app-follow [user]="user"></app-follow>
         <button mat-icon-button routerLink="/users/{{user.npub}}/following">
             <mat-icon>view_list</mat-icon>
         </button>
-        <button *ngIf="user.lud16" mat-icon-button color="orange" (click)="zap()">
+        <button *ngIf="user.lud16" mat-icon-button class="orange-icon" (click)="zap()">
             <mat-icon>bolt</mat-icon>
+        </button>
+        <button mat-icon-button class="orange-icon" (click)="showUserQR()">
+            <mat-icon>qr_code_2</mat-icon>
         </button>
         <p>
             <mat-card-subtitle *ngIf="displaynsec">{{nsec}}</mat-card-subtitle>
         </p>
+        <div *ngIf="displayUserQR">
+            <p class="qrcode">
+                <span>Add me on Nostr</span>
+                <mat-divider></mat-divider>
+                <qrcode [qrdata]="userQRLink" [colorDark]="'#ff8c00'" [errorCorrectionLevel]="'M'"></qrcode>
+            </p>
+        </div>
         <div *ngIf="showZapForm">
             <p>
                 <mat-card-content fxLayout="row">

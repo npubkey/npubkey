@@ -33,15 +33,6 @@
             <span routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="extras">{{post.nip10Result.root.id|nevent|ellipsis}}</span>
         </div>
         <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
-        <!-- <div *ngIf="post.nip10Result.mentions && post.nip10Result.mentions.length > 0">
-            <span class="extras">Thread</span>
-            <div *ngFor="let mention of post.nip10Result.mentions">
-                <mat-card-subtitle routerLink="/posts/{{mention.id|nevent}}" class="replyingTo">{{mention.id|nevent|ellipsis}}</mat-card-subtitle>
-            </div>
-        </div>
-        <div *ngIf="post.nip10Result.root">
-            <mat-card-subtitle routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="replyingTo">Root: {{post.nip10Result.root.id|nevent|ellipsis}}</mat-card-subtitle>
-        </div> -->
     </mat-card-content>
     <div fxLayout="row" fxLayoutAlign="space-around center">
         <button mat-icon-button (click)="clickShowReplyForm()">

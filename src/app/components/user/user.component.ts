@@ -19,7 +19,7 @@ export class UserComponent implements OnInit {
     canEdit: boolean = false;
     nsec: string = "";
     displaynsec: boolean = false;
-    nsecButton: string = "Show nsec";
+    nsecButton: string = "key";
     isMyProfile: boolean = false;
     showZapForm: boolean = false;
     lightningResponse: LightningResponse | null = null;
@@ -28,6 +28,8 @@ export class UserComponent implements OnInit {
     paymentInvoice: string = "";
     displayQRCode: boolean = false;
     showInvoiceSection: boolean = false;
+    displayUserQR: boolean = false;
+    userQRLink: string = "";
 
     constructor(
         private signerService: SignerService,
@@ -44,19 +46,26 @@ export class UserComponent implements OnInit {
                 this.isMyProfile = true;
             }
             this.nsec = this.signerService.nsec();
+            this.userQRLink = `https://snort.social/p/${this.user.npub}`;
         }
     }
 
     async zap() {
-        if (this.user && (this.user.lud06 || this.user.lud16)) {
-            this.getLightningInfo();
+        if (this.showZapForm) {
+            this.showZapForm = false;
         } else {
-            this.openSnackBar("user can't recieve zaps", "dismiss");
+            this.showZapForm = true;
+        }
+        if (this.showZapForm) {
+            if (this.user && (this.user.lud06 || this.user.lud16)) {
+                this.getLightningInfo();
+            } else {
+                this.openSnackBar("user can't recieve zaps", "dismiss");
+            }
         }
     }
 
     sendZap() {
-        console.log("zapping user");
         this.getLightningInvoice(String(Number(5)*1000));
     }
 
@@ -78,6 +87,7 @@ export class UserComponent implements OnInit {
                     this.openSnackBar("Failed to lookup lightning address", "dismiss");
                 } else if (this.lightningResponse.callback) {
                     this.showZapForm = true;
+                    this.displayUserQR = false;
                 } else {
                     this.showZapForm = false;
                     this.openSnackBar("couldn't find users lightning address", "dismiss");
@@ -145,10 +155,19 @@ export class UserComponent implements OnInit {
     showNsec() {
         if (this.displaynsec) {
             this.displaynsec = false;
-            this.nsecButton = "Show nsec";
+            this.nsecButton = "key";
         } else {
             this.displaynsec = true;
-            this.nsecButton = "Hide nsec";
+            this.nsecButton = "key_off";
+        }
+    }
+
+    showUserQR() {
+        if (this.displayUserQR) {
+            this.displayUserQR = false;
+        } else {
+            this.displayUserQR = true;
+            this.showZapForm = false;
         }
     }
 }

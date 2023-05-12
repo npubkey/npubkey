@@ -2,6 +2,14 @@ mat-card {
     box-shadow: none !important;
 }
 
+.user-info {
+    word-wrap: break-word;
+}
+
+.orange-icon {
+    color: #ff8c00;
+}
+
 .lightning-address {
     color: orange;
 }
