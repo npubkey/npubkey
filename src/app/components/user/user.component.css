@@ -1,7 +1,21 @@
+mat-card { 
+    box-shadow: none !important;
+}
+
+.lightning-address {
+    color: orange;
+}
 
 .header-image {
     background-size: cover;
     border: 1px solid #2196f3;
+}
+
+mat-card-header img {
+    margin-bottom: 2px !important;
+    margin-top: 2px !important;
+    width: 80px;
+    height: 80px;
 }
 
 .npub {
@@ -20,4 +34,9 @@
     max-width: 500px;
     margin-bottom: 4px;
     overflow-wrap: break-word;
+}
+
+.more-vert {
+    margin-right: 0;
+    margin-left: auto;
 }

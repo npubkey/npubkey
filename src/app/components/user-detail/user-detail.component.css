@@ -1,0 +1,12 @@
+.banner-image {
+    width: 100%;
+    height: 100px;
+    overflow: hidden;
+}
+
+.banner-image img {
+    width: inherit;
+    height: 120px;
+    padding: 0;
+    margin: 0;
+}

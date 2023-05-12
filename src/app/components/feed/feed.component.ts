@@ -37,7 +37,7 @@ export class FeedComponent implements OnInit {
 
     addOnBlur = true;
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
-    hashtags: Chip[] = [{name: 'bitcoin'}, {name: 'nostr'}];
+    hashtags: Chip[] = [{name: 'bitcoin'}, {name: 'zaps'}, {name: 'nostr'}];
 
     add(event: MatChipInputEvent): void {
       const value = (event.value || '').trim();

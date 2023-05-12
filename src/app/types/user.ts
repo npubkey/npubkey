@@ -10,6 +10,7 @@ export interface Kind0Content {
     picture?: string;
     banner?: string;
     lud06?: string;
+    lud16?: string;
     nip05?: string;
     // can have other random shit in here too
 }
@@ -41,6 +42,7 @@ export class User {
     picture: string = "";
     banner: string = "";
     lud06: string = "";
+    lud16: string = "";
     nip05: string = "";
     pubkey: string;
     npub: string;
@@ -54,6 +56,7 @@ export class User {
         this.picture = kind0.picture || "https://axiumradonmitigations.com/wp-content/uploads/2015/01/icon-user-default.png";
         this.banner = kind0.banner || "";
         this.lud06 = kind0.lud06 || "";
+        this.lud16 = kind0.lud16 || "";
         this.nip05 = kind0.nip05 || "";
         this.createdAt = createdAt;
         this.pubkey = pubkey;

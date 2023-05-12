@@ -26,7 +26,8 @@ export class ProfileEditComponent implements OnInit {
     about: string = "";
     picture: string = "";
     banner: string = "";
-    lud06: string = "";
+    lud06: string = ""; // lnurl
+    lud16: string = ""; // lightning address
     nip05: string = "";
     content: string = "";
 
@@ -62,6 +63,7 @@ export class ProfileEditComponent implements OnInit {
             this.picture = kind0.picture
             this.banner = kind0.banner
             this.lud06 = kind0.lud06
+            this.lud16 = kind0.lud16
             this.nip05 = kind0.nip05
         }
     }
@@ -76,6 +78,7 @@ export class ProfileEditComponent implements OnInit {
             picture: this.picture,
             banner: this.banner,
             lud06: this.lud06,
+            lud16: this.lud16,
             nip05: this.nip05
         }
         this.content = JSON.stringify(x)

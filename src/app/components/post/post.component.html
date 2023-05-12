@@ -9,11 +9,10 @@
         <mat-card-subtitle routerLink="/users/{{post.pubkey|npub}}">
             <div class="username">{{post.pubkey|username|ellipsis}}</div>
         </mat-card-subtitle>
-      <!-- <mat-card-subtitle (click)="copynpub()" class="npub">
-        {{post.pubkey|npub|ellipsis}}
-        <mat-icon [inline]="true">content_copy</mat-icon>
-      </mat-card-subtitle> -->
-      <mat-card-subtitle>{{post.fromNow}}</mat-card-subtitle>
+        <div class="more-vert">
+            <button mat-icon-button><mat-icon>more_vert</mat-icon></button>
+        </div>
+        <mat-card-subtitle>{{post.fromNow}}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
         <div *ngIf="post.nip10Result.profiles && post.nip10Result.profiles.length > 0">
@@ -21,17 +20,17 @@
             <span 
                 *ngFor="let profile of post.nip10Result.profiles"
                 routerLink="/users/{{profile.pubkey|npub}}"
-                class="replyingTo">
+                class="extras">
             {{profile.pubkey|username|ellipsis}}
             </span>
         </div>
         <div *ngIf="post.nip10Result.reply">
             <span class="extras">re: </span>
-            <span routerLink="/posts/{{post.nip10Result.reply.id|nevent}}" class="replyingTo">{{post.nip10Result.reply.id|nevent|ellipsis}}</span>
+            <span routerLink="/posts/{{post.nip10Result.reply.id|nevent}}" class="extras">{{post.nip10Result.reply.id|nevent|ellipsis}}</span>
         </div>
-        <div *ngIf="post.nip10Result.root">
+        <div *ngIf="post.nip10Result.root && !viewingRoot">
             <span class="extras">root: </span>
-            <span routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="replyingTo">{{post.nip10Result.root.id|nevent|ellipsis}}</span>
+            <span routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="extras">{{post.nip10Result.root.id|nevent|ellipsis}}</span>
         </div>
         <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
         <!-- <div *ngIf="post.nip10Result.mentions && post.nip10Result.mentions.length > 0">
@@ -44,31 +43,69 @@
             <mat-card-subtitle routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="replyingTo">Root: {{post.nip10Result.root.id|nevent|ellipsis}}</mat-card-subtitle>
         </div> -->
     </mat-card-content>
-    <mat-divider></mat-divider>
     <div fxLayout="row" fxLayoutAlign="space-around center">
         <button mat-icon-button (click)="clickShowReplyForm()">
             <mat-icon>mode_comment</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button mat-icon-button (click)="repost()">
             <mat-icon>autorenew</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button mat-icon-button (click)="zap()">
             <mat-icon>bolt</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button mat-icon-button (click)="copyLink()">
             <mat-icon>share</mat-icon>
         </button>
     </div>
     <div *ngIf="showReplyForm">
         <p>
-            <mat-card-content>
+            <mat-card-content fxLayout="row" fxLayoutAlign="space-evenly">
                 <mat-form-field appearance="outline">
                     <mat-label>Reply</mat-label>
                     <input matInput [(ngModel)]="replyContent" placeholder="message">
                 </mat-form-field>
                 <br>
-                <button mat-stroked-button (click)="sendReply()">Send Reply</button>
+                <button mat-icon-button color="primary" (click)="sendReply()">
+                    <mat-icon>send</mat-icon>
+                </button>
             </mat-card-content>
         </p>
     </div>
+    <div *ngIf="showZapForm">
+        <p>
+            <mat-card-content fxLayout="row">
+                <mat-form-field appearance="outline" fxFlex='90'>
+                    <mat-label>Sats</mat-label>
+                    <input matInput [(ngModel)]="sats" placeholder="sats">
+                </mat-form-field>
+                <button mat-fab (click)="sendZap()">
+                    <mat-icon>bolt</mat-icon>
+                </button>
+            </mat-card-content>
+        </p>
+    </div>
+    <div *ngIf="paymentInvoice && showInvoiceSection" class="invoice">
+        <div class="invoice-title">
+            <h2>Invoice</h2>
+            <mat-divider></mat-divider>
+            <br>
+        </div>
+        <div class="lightning-buttons" fxLayoutAlign="space-evenly center">
+            <button mat-fab color="primary" (click)="copyInvoice()">
+                <mat-icon>content_copy</mat-icon>
+            </button>
+            <button mat-fab color="accent" (click)="showQRCode()">
+                <mat-icon>qr_code_2</mat-icon>
+            </button>
+            <button mat-fab color="warn" (click)="hideInvoice()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+        <p *ngIf="displayQRCode" class="qrcode" >
+            <span>Scan with phone to pay</span>
+            <mat-divider></mat-divider>
+            <qrcode [qrdata]="paymentInvoice" [colorDark]="'#800080'" [imageSrc]="'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0'" [title]="'Lightning Invoice'" [errorCorrectionLevel]="'M'"></qrcode>
+        </p>
+    </div>
+    <mat-divider></mat-divider>
 </mat-card>

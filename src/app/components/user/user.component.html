@@ -5,23 +5,80 @@
             class="header-image"
             mat-card-avatar
             src="{{user.picture}}"/>
-      <mat-card-title>{{user.displayName}}</mat-card-title>
-      <mat-card-subtitle class="npub" (click)="copynpub()">
-        {{user.npub|ellipsis}}
-        <mat-icon [inline]="true">content_copy</mat-icon>
-      </mat-card-subtitle>
+        <div class="more-vert">
+            <button *ngIf="canEdit" mat-icon-button color="primary" routerLink="/settings">
+                <mat-icon>settings</mat-icon>
+            </button>
+            <button mat-icon-button><mat-icon>more_vert</mat-icon></button>
+        </div>
     </mat-card-header>
     <mat-card-content>
+        <mat-card-title>{{user.displayName}}</mat-card-title>
+        <mat-card-subtitle class="npub" (click)="copynpub()">
+          {{user.npub|ellipsis}}
+          <mat-icon [inline]="true">content_copy</mat-icon>
+        </mat-card-subtitle>
         <mat-card-subtitle>{{user.about}}</mat-card-subtitle>
-        <mat-card-subtitle><a href="{{user.website}}" target="_blank">{{user.website}}</a></mat-card-subtitle>
-        <mat-card-subtitle class="nip15">NIP05: {{user.nip05}}</mat-card-subtitle>
-        <mat-card-subtitle>LUD: {{user.lud06}}</mat-card-subtitle>
+        <p *ngIf="user.website" fxLayout="row">
+            <mat-icon [inline]="true">link</mat-icon>
+            <a href="{{user.website}}" target="_blank">{{user.website}}</a>
+        </p>
+        <!-- <mat-card-subtitle class="nip15">NIP05: {{user.nip05}}</mat-card-subtitle> -->
+        <p *ngIf="user.lud16" class="lightning-address" fxLayout="row">
+            <mat-icon [inline]="true">bolt</mat-icon>
+            {{user.lud16}}
+        </p>
     </mat-card-content>
     <mat-card-content>
-        <button *ngIf="canEdit" mat-stroked-button color="primary" routerLink="/profile-edit">Edit Profile</button>
+        <button *ngIf="canEdit" mat-icon-button color="primary" routerLink="/profile-edit">
+            <mat-icon>edit</mat-icon>
+        </button>
         <button *ngIf="nsec && isMyProfile" mat-stroked-button color="accent" (click)="showNsec()">{{nsecButton}}</button>
         <app-follow [user]="user"></app-follow>
-        <button mat-stroked-button routerLink="/users/{{user.npub}}/following">View who {{this.user.displayName}} is following</button>
-        <mat-card-subtitle *ngIf="displaynsec">{{nsec}}</mat-card-subtitle>
+        <button mat-icon-button routerLink="/users/{{user.npub}}/following">
+            <mat-icon>view_list</mat-icon>
+        </button>
+        <button *ngIf="user.lud16" mat-icon-button color="orange" (click)="zap()">
+            <mat-icon>bolt</mat-icon>
+        </button>
+        <p>
+            <mat-card-subtitle *ngIf="displaynsec">{{nsec}}</mat-card-subtitle>
+        </p>
+        <div *ngIf="showZapForm">
+            <p>
+                <mat-card-content fxLayout="row">
+                    <mat-form-field appearance="outline" fxFlex='90'>
+                        <mat-label>Sats</mat-label>
+                        <input matInput [(ngModel)]="sats" placeholder="sats">
+                    </mat-form-field>
+                    <button mat-fab (click)="sendZap()">
+                        <mat-icon>bolt</mat-icon>
+                    </button>
+                </mat-card-content>
+            </p>
+        </div>
+        <div *ngIf="paymentInvoice && showInvoiceSection" class="invoice">
+            <div class="invoice-title">
+                <h2>Invoice</h2>
+                <mat-divider></mat-divider>
+                <br>
+            </div>
+            <div class="lightning-buttons" fxLayoutAlign="space-evenly center">
+                <button mat-fab color="primary" (click)="copyInvoice()">
+                    <mat-icon>content_copy</mat-icon>
+                </button>
+                <button mat-fab color="accent" (click)="showQRCode()">
+                    <mat-icon>qr_code_2</mat-icon>
+                </button>
+                <button mat-fab color="warn" (click)="hideInvoice()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <p *ngIf="displayQRCode" class="qrcode" >
+                <span>Scan with phone to pay</span>
+                <mat-divider></mat-divider>
+                <qrcode [qrdata]="paymentInvoice" [colorDark]="'#800080'" [imageSrc]="'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0'" [title]="'Lightning Invoice'" [errorCorrectionLevel]="'M'"></qrcode>
+            </p>
+        </div>
     </mat-card-content>
 </mat-card>

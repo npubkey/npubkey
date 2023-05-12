@@ -12,7 +12,7 @@ import { getEventHash, Event } from 'nostr-tools';
 })
 export class FollowComponent implements OnInit {
     canFollow: boolean = true;
-    buttonText: string = "Follow";
+    buttonText: string = "person_add";
     @Input() user?: User;
 
     constructor(
@@ -26,10 +26,10 @@ export class FollowComponent implements OnInit {
         if (this.user) {
             if (following.includes(this.user.pubkey)) {
                 this.canFollow = false;
-                this.buttonText = "Unfollow";
+                this.buttonText = "person_remove";
             } else {
                 this.canFollow = true;
-                this.buttonText = "Follow";
+                this.buttonText = "person_add";
             }
         }
     }

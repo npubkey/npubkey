@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit {
     showHeader: boolean = true;
 
     readonly breakpoint$ = this.breakpointObserver
-        .observe([Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, '(min-width: 500px)'])
+        .observe([Breakpoints.XLarge, Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, Breakpoints.XSmall])
         .pipe(
         tap(value => console.log(value)),
         distinctUntilChanged()
@@ -44,7 +44,6 @@ export class HeaderComponent implements OnInit {
         // because the header will always be on the screen,
         // put some stuff in here we want on start
         this.breakpoint$.subscribe(() => {
-            console.log("what?")
             this.breakpointChanged()
         });
         let pubkey = this.signerService.getPublicKey();
@@ -55,7 +54,6 @@ export class HeaderComponent implements OnInit {
     }
 
     private breakpointChanged() {
-        console.log("breakpoints change")
         if(this.breakpointObserver.isMatched(Breakpoints.XLarge)) {
             this.currentBreakpoint = Breakpoints.Large;
             this.smallScreen = false;

@@ -1,3 +1,11 @@
+mat-card {
+    box-shadow: none !important;
+}
+
+.more-vert {
+    margin-right: 0;
+    margin-left: auto;
+}
 .npub {
     color: purple;
 }
@@ -28,6 +36,10 @@ mat-card-header img {
 .extras {
     color:cornflowerblue;
     font-size: small;
+}
+
+.extras:hover {
+    cursor: pointer;
 }
 
 .npub:hover {
@@ -77,5 +89,26 @@ video {
 }
 
 mat-form-field {
-    width: 100%;
+    width: 90%;
+}
+
+.lnInvoice {
+    padding: 2em;
+    word-wrap: break-word;
+}
+
+.lnInvoice:hover {
+    cursor: pointer;
+}
+
+.qrcode {
+    text-align: center;
+}
+
+.invoice-title {
+    text-align: center;
+}
+
+.invoice {
+    margin-bottom: 1em;
 }

@@ -1,3 +1,7 @@
 
-<button *ngIf="canFollow" mat-stroked-button color="accent" (click)="followUser()">{{buttonText}}</button>
-<button *ngIf="!canFollow" mat-stroked-button color="accent" (click)="unFollowUser()">{{buttonText}}</button>
+<button *ngIf="canFollow" mat-icon-button color="accent" (click)="followUser()">
+    <mat-icon>{{buttonText}}</mat-icon>
+</button>
+<button *ngIf="!canFollow" mat-icon-button color="accent" (click)="unFollowUser()">
+    <mat-icon>{{buttonText}}</mat-icon>
+</button>

@@ -77,7 +77,22 @@ export class NostrService {
         let posts: Post[] = [];
         response.forEach(e => {
             let nip10Result = nip10.parse(e);
-            const post = new Post(e.pubkey, e.content, e.id, e.created_at, nip10Result);
+            const post = new Post(e.kind, e.pubkey, e.content, e.id, e.created_at, nip10Result);
+            posts.push(post);
+        });
+        return posts;
+    }
+
+    async getKind1and6(filter: Filter): Promise<Post[]>{
+        // text notes
+        filter.kinds = [1, 6];
+        const relay = await this.relayConnect();
+        const response = await relay.list([filter])
+        console.log(response);
+        let posts: Post[] = [];
+        response.forEach(e => {
+            let nip10Result = nip10.parse(e);
+            const post = new Post(e.kind, e.pubkey, e.content, e.id, e.created_at, nip10Result);
             posts.push(post);
         });
         return posts;
@@ -90,7 +105,7 @@ export class NostrService {
         let posts: Post[] = [];
         response.forEach(e => {
             let nip10Result = nip10.parse(e);
-            const post = new Post(e.pubkey, e.content, e.id, e.created_at, nip10Result);
+            const post = new Post(e.kind, e.pubkey, e.content, e.id, e.created_at, nip10Result);
             posts.push(post);
         });
         return posts;
@@ -104,7 +119,7 @@ export class NostrService {
         let posts: Post[] = [];
         response.forEach(e => {
             let nip10Result = nip10.parse(e);
-            const post = new Post(e.pubkey, e.content, e.id, e.created_at, nip10Result);
+            const post = new Post(e.kind, e.pubkey, e.content, e.id, e.created_at, nip10Result);
             posts.push(post);
         });
         return posts;

@@ -2,4 +2,20 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: 'Courier New', Courier, monospace; }
-.router-container { margin-top: 4em; margin-left: 1em; margin-right: 1em; padding-bottom: 5em;}
+
+@media (max-width: 400px) {
+    .router-container { 
+        width: 45%;
+        margin-top: 3.5em;
+        margin-left: auto;
+        margin-right: auto;
+        padding-bottom: 5em;
+    }
+}
+
+
+.router-container { 
+    width: 100%;
+    margin-top: 3.5em;
+    padding-bottom: 5em;
+}

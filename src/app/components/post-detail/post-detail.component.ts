@@ -12,6 +12,7 @@ import { nip19 } from 'nostr-tools';
 })
 export class PostDetailComponent implements OnInit {
 
+    loading: boolean = true;
     nevent: string;
     post: Post | undefined;
     event: nip19.EventPointer;
@@ -31,9 +32,7 @@ export class PostDetailComponent implements OnInit {
             });
     }
 
-    ngOnInit(): void {
-        
-    }
+    ngOnInit(): void {}
 
     async getPost() {
         let postFilter: Filter = {
@@ -43,7 +42,6 @@ export class PostDetailComponent implements OnInit {
             kinds: [1], "#e": [this.event.id]
         }
         let postList: Post[] = await this.nostrService.getPostAndReplies([postFilter, replyFilter]);
-        console.log(postList);
         this.replies = []
         postList.forEach(r => {
             if (r.noteId === this.event.id) {
@@ -54,5 +52,6 @@ export class PostDetailComponent implements OnInit {
             }
         })
         this.replies.sort((a,b) => a.createdAt - b.createdAt);
+        this.loading = false;
     }
 }

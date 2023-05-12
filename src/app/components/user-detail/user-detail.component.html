@@ -1,6 +1,10 @@
 <div class="router-container">
     <div *ngIf="user">
+        <div class="banner-image">
+            <img src="{{user.banner}}"/>
+        </div>
         <app-user [user]="user"></app-user>
+        <mat-divider></mat-divider>
         <div *ngFor="let post of posts">
             <app-post [post]="post"></app-post>
         </div>

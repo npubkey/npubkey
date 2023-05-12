@@ -1,13 +1,12 @@
 <div class="router-container">
-    <p>
-        <mat-divider></mat-divider>
-    </p>
+    <div *ngIf="!loading"></div>
     <div *ngIf="post">
         <app-post [post]="post"></app-post>
     </div>
     <div *ngFor="let reply of replies">
-        <app-post [post]="reply"></app-post>
+        <app-post [post]="reply" [root]="post"></app-post>
     </div>
-    
+    <div *ngIf="loading">
+        <app-loading></app-loading>
+    </div>
 </div>
-

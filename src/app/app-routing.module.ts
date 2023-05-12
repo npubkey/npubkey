@@ -14,6 +14,7 @@ import { FollowingComponent } from './components/following/following.component';
 import { PostDetailComponent } from './components/post-detail/post-detail.component';
 import { ContactListComponent } from './components/contact-list/contact-list.component';
 import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
     { path: '', component: LoginComponent },
@@ -31,6 +32,7 @@ const routes: Routes = [
     { path: 'profile', component: ProfileComponent},
     { path: 'profile-edit', component: ProfileEditComponent},
     { path: 'search', component: SearchComponent},
+    { path: 'settings', component: SettingsComponent},
 ];
 
 

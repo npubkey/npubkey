@@ -1,23 +1,65 @@
 <div class="router-container">
-    <mat-card>
-        <mat-card-content>
-            <mat-card-title>Post a Message</mat-card-title>
-            <p>
-                <mat-form-field appearance="outline">
-                    <mat-label>Content</mat-label>
-                    <input matInput [(ngModel)]="content" placeholder="content">
-                </mat-form-field>
-            </p>
-        
-            <p>
-                <mat-form-field appearance="outline">
-                    <mat-label>Image Url</mat-label>
-                    <input matInput [(ngModel)]="img" placeholder="Image Url">
-                </mat-form-field>
-            </p>
-            <p>
-                <button mat-stroked-button (click)="sendEvent()">Send</button>
-            </p>
-        </mat-card-content>
-    </mat-card>
+    <div *ngIf="user">
+        <mat-form-field appearance="fill">
+            <mat-label>Textarea</mat-label>
+            <textarea matInput [(ngModel)]="content" placeholder="content"></textarea>
+        </mat-form-field>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Image Url</mat-label>
+                <input matInput [(ngModel)]="img" placeholder="Image Url">
+            </mat-form-field>
+        </p>
+        <p>
+            <button mat-stroked-button (click)="sendEvent()">Send</button>
+        </p>
+        <div *ngIf="content || img">
+            <mat-card class="post">
+                <mat-card-header>
+                    <img 
+                        *ngIf="user.picture"
+                        class="header-image"
+                        mat-card-avatar
+                        src="{{user.picture}}"/>
+                    <mat-card-subtitle>
+                        <div class="username">{{user.pubkey|username|ellipsis}}</div>
+                    </mat-card-subtitle>
+                  <mat-card-subtitle>a few seconds ago</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div>
+                        <span class="extras">users: </span>
+                        <span 
+                            class="replyingTo">
+                        brah ladybrah
+                        </span>
+                    </div>
+                    <div>
+                        <span class="extras">re: </span>
+                        <span class="replyingTo">nevent:123</span>
+                    </div>
+                    <div>
+                        <span class="extras">root: </span>
+                        <span class="replyingTo">nevent:543632</span>
+                    </div>
+                    <p class="post-content" [innerHTML]="content | safe"></p>
+                </mat-card-content>
+                <mat-divider></mat-divider>
+                <div fxLayout="row" fxLayoutAlign="space-around center">
+                    <button mat-icon-button>
+                        <mat-icon>mode_comment</mat-icon>
+                    </button>
+                    <button mat-icon-button>
+                        <mat-icon>autorenew</mat-icon>
+                    </button>
+                    <button mat-icon-button>
+                        <mat-icon>bolt</mat-icon>
+                    </button>
+                    <button mat-icon-button>
+                        <mat-icon>share</mat-icon>
+                    </button>
+                </div>
+            </mat-card>
+        </div>
+    </div>
 </div>

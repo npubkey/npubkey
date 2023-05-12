@@ -11,8 +11,27 @@ interface TextWrap {
     addLink?: string;
 }
 
+export interface LightningResponse {
+    allowNostr?: boolean;
+    nostrPubkey?: string;
+    callback?: string; // The URL from LN SERVICE which will accept the pay request parameters
+    commentAllowed?: number;
+    maxSendable?: number; // Max millisatoshi amount LN SERVICE is willing to receive
+    minSendable?: number; // Min millisatoshi amount LN SERVICE is willing to receive, can not be less than 1 or more than `maxSendable`
+    metadata?: string; // Metadata json which must be presented as raw string here, this is required to pass signature verification at a later step
+    tag?: string;
+    status?: string;
+    reason?: string;
+}
+
+export interface LightningInvoice {
+    pr: string;
+    routes?: string[];
+}
+
 
 export class Post {
+    kind: number;
     content: string;
     pubkey: string;
     npub: string;
@@ -25,11 +44,11 @@ export class Post {
     picture: string = "";
     replyingTo: string[] = [];
     mentions: string[] = [];
-    nevent: string = "";
-    constructor(pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result) {
+    nostrNoteId: string;
+    constructor(kind: number, pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result) {
+        this.kind = kind;
         this.pubkey = pubkey;
         this.npub = nip19.npubEncode(this.pubkey);
-        this.content = this.getParsedContent(content);
         this.noteId = noteId
         this.nip10Result = nip10Result;
         this.createdAt = createdAt;
@@ -37,6 +56,8 @@ export class Post {
         this.setFromNow()
         this.setUsername(this.pubkey);
         this.setPicture(this.pubkey);
+        this.content = this.getParsedContent(kind, content);
+        this.nostrNoteId = nip19.noteEncode(this.noteId);
     }
 
     setUsername(pubkey: string): void {
@@ -55,11 +76,26 @@ export class Post {
         //this.replyingTo = this.nip10Result.profiles;
     }
 
-    getParsedContent(content: string): string {
+    getParsedContent(kind: number, content: string): string {
+        if (kind === 6) {
+            content = this.reposted();
+        }
+        content = this.nip08Replace(content);
         content = this.hashtagContent(content);
         content = this.linkify(content);
         content = this.replaceNostrThing(content);
         return content;
+    }
+
+    getNevent(ep: nip19.EventPointer): string {
+        return nip19.neventEncode(ep);
+    }
+
+    reposted(): string {
+        if (this.nip10Result.root) {
+            return `re: nostr:${this.getNevent(this.nip10Result.root)}`;
+        }
+        return "repost";
     }
 
     wrapTextInSpan(textWrap: TextWrap): string {
@@ -67,6 +103,21 @@ export class Post {
             textWrap.cssClass = "hashtag"
         }
         return `<a class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</a>`
+    }
+
+    nip08Replace(content: string): string {
+        if (this.nip10Result.profiles.length === 0) {
+            return content;
+        }
+        let userTags: string[] = content.match(/#\[\d+\]/gm) || []
+        for (let i in userTags) {
+            let userPubkey = this.nip10Result.profiles[i].pubkey
+            let npub = this.getNpub(userPubkey);
+            let username = this.getUsername(userPubkey);
+            let textWrap: TextWrap = {text: username, addLink: `href="/users/${npub}"`}
+            content = content.replace(userTags[i], this.wrapTextInSpan(textWrap))
+        }
+        return content
     }
 
     hashtagContent(content: string): string {
@@ -133,11 +184,18 @@ export class Post {
         return false;
     }
 
+    getNpub(pubkey: string): string {
+        if (pubkey.startsWith("npub")) {
+            return pubkey;
+        }
+        return nip19.npubEncode(pubkey);
+    }
+
     getUsername(pubkey: string): string {
         if (pubkey.startsWith("npub")) {
             pubkey = nip19.decode(pubkey).data.toString()
         }
-        return `@${(localStorage.getItem(`${pubkey}`) || nip19.npubEncode(pubkey))}`
+        return `@${(localStorage.getItem(`${pubkey}`) || this.getNpub(pubkey))}`
     }
 
     encodeNoteAsEvent(note: string): string {

@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { Event, getEventHash } from "nostr-tools";
+import { Event, getEventHash, Filter } from "nostr-tools";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NostrService } from '../../services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
+import { User } from 'src/app/types/user';
 
 @Component({
   selector: 'app-create-event',
@@ -11,6 +12,7 @@ import { SignerService } from 'src/app/services/signer.service';
 })
 export class CreateEventComponent {
 
+    user: User | undefined | null = undefined;
     content: string = "";
     img: string = "";
 
@@ -18,11 +20,19 @@ export class CreateEventComponent {
         private nostrService: NostrService,
         private signerService: SignerService,
         private snackBar: MatSnackBar
-    ) {}
+    ) {
+        this.getUser();
+    }
 
 
     openSnackBar(message: string, action: string) {
         this.snackBar.open(message, action, {duration: 1300});
+    }
+
+    async getUser() {
+        let pubkey = this.signerService.getPublicKey()
+        let filter: Filter = {authors: [pubkey], kinds: [0], limit: 1}
+        this.user = await this.nostrService.getUser(filter);
     }
 
     async sendEvent() {

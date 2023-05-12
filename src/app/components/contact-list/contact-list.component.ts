@@ -4,6 +4,7 @@ import { NostrService } from 'src/app/services/nostr.service';
 
 import { Filter } from 'nostr-tools';
 import { User } from 'src/app/types/user';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-contact-list',
@@ -15,6 +16,8 @@ export class ContactListComponent implements OnInit {
     contactSelected: boolean = false;
     contactList: string[] = [];
     users: User[] = [];
+    displayedUsers: User[] = [];
+    filterText: string = "";
 
     constructor(
         private signerService: SignerService,
@@ -25,9 +28,24 @@ export class ContactListComponent implements OnInit {
         this.getContactList();
     }
 
+    filterContacts() {
+        console.log(this.users);
+        if (this.filterText === "") {
+            this.displayedUsers = this.users;
+        }
+        console.log('wow')
+        this.displayedUsers = [];
+        this.users.forEach((user) => {
+            if (user.displayName.toLowerCase().includes(this.filterText.toLowerCase()) || user.npub.toLowerCase().includes(this.filterText.toLowerCase())) {
+                this.displayedUsers.push(user);
+            }
+        })
+    }
+
     async getFollowingUsers(contactList: string[]) {
         let filter: Filter = {authors: contactList}
         this.users = await this.nostrService.getKind0(filter);
+        this.displayedUsers = this.users;
     }
 
     async getContactList() {

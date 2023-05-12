@@ -60,6 +60,6 @@ export class UserDetailComponent implements OnInit {
             authors: [user.pubkey],
             limit: 50,
         }
-        this.posts = await this.nostrService.getKind1(filter);
+        this.posts = await this.nostrService.getKind1and6(filter);
     }
 }
