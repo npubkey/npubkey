@@ -27,6 +27,7 @@ const routes: Routes = [
     { path: 'feed', component: FeedComponent },
     { path: 'messages', component: ContactListComponent },
     { path: 'users/:npub/following', component: FollowingComponent},
+    { path: 'users/:npub/followers', component: FollowingComponent},
     { path: 'users/:npub', component: UserDetailComponent },
     { path: 'users', component: UsersComponent },
     { path: 'profile', component: ProfileComponent},

@@ -46,7 +46,7 @@ export class UserComponent implements OnInit {
                 this.isMyProfile = true;
             }
             this.nsec = this.signerService.nsec();
-            this.userQRLink = `https://snort.social/p/${this.user.npub}`;
+            this.userQRLink = `https://npubkey.github.io/#/users/${this.user.npub}`;
         }
     }
 
@@ -84,6 +84,7 @@ export class UserComponent implements OnInit {
             .subscribe(response => {
                 this.lightningResponse = response;
                 if (this.lightningResponse.status && this.lightningResponse.status == "Failed") {
+                    this.showZapForm = false;
                     this.openSnackBar("Failed to lookup lightning address", "dismiss");
                 } else if (this.lightningResponse.callback) {
                     this.showZapForm = true;

@@ -35,14 +35,19 @@
     <p>
         <mat-divider></mat-divider>
     </p>
-    <div class="feed" *ngFor="let post of posts">
-        <app-post [post]="post"></app-post>
+    <div
+      class="feed-posts"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="500"
+      (scrolled)="onScroll()"
+      [scrollWindow]="true"
+    >
+        <div class="feed" *ngFor="let post of posts">
+            <app-post [post]="post"></app-post>
+        </div>
     </div>
-    <div *ngIf="posts.length === 0 && loading">
+    <div *ngIf="loading">
         <app-loading></app-loading>
     </div>
-    <div *ngIf="posts.length === 0 && !loading">
-        <p>Nothing here</p>
-    </div>
-    <!-- <button mat-stroked-button (click)="morePosts()">More</button> -->
 </div>

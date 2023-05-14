@@ -46,26 +46,117 @@ export class NostrService {
             content = JSON.parse(e.content)
             user = new User(content, e.created_at, e.pubkey)
             users.push(user)
-            // hacky but store the data so its available in other places
-            localStorage.setItem(`${e.pubkey}`, user.displayName);
-            localStorage.setItem(`${e.pubkey}_img`, user.picture);
+            this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture)
         });
         return users;
     }
 
-    async getUser(filter: Filter): Promise<User | null> {
+    storeUserInLocalStorage(pubkey: string, displayName: string, picture: string) {
+        // hacky but store the data so its available in other places
+        localStorage.setItem(pubkey, displayName);
+        localStorage.setItem(`${pubkey}_img`, picture);
+    }
+
+    async getUser(pubkey: string): Promise<User | null> {
         // user metadata
-        filter.kinds = [0];  // force this regardless
-        filter.limit = 1;
+        const filter: Filter = {kinds: [0], authors: [pubkey], limit: 1}
         const relay = await this.relayConnect();
         const response = await relay.get(filter)
         if (!response) {
             return null;
         }
         let kind0 = JSON.parse(response.content)
-        let publicKey = response.pubkey
-        let createdAt = response.created_at
-        return new User(kind0, createdAt, publicKey);
+        let user = new User(kind0, response.created_at, response.pubkey);
+        this.storeUserInLocalStorage(user.pubkey, user.displayName, user.picture);
+        return user;
+    }
+
+    getSince(minutesAgo: number) {
+        let now = new Date()
+        return Math.floor(now.setMinutes(now.getMinutes() - minutesAgo) / 1000)
+    }
+
+    getPostFromResponse(response: Event) {
+        let nip10Result = nip10.parse(response);
+        return new Post(
+            response.kind,
+            response.pubkey,
+            response.content,
+            response.id,
+            response.created_at,
+            nip10Result
+        );
+    }
+
+    async getUserPosts(pubkey: string): Promise<Post[]> {
+        let kind1: Filter = {
+            kinds: [1],
+            authors: [pubkey],
+            limit: 20,
+            //since: this.getSince(10)
+        }
+        let kind6: Filter = {
+            kinds: [6],
+            authors: [pubkey],
+            limit: 20,
+            //since: this.getSince(10)
+        }
+        const relay = await this.relayConnect();
+        const response = await relay.list([kind6, kind1])
+        let posts: Post[] = [];
+        response.forEach(e => {
+            posts.push(this.getPostFromResponse(e));
+        });
+        posts.sort((a,b) => a.createdAt - b.createdAt).reverse();
+        return posts;
+    }
+
+    async getPostReplies() {}
+
+    async getFollowingCount(pubkey: string): Promise<number> {
+        // let filter: Filter = {kinds: [3], authors: [pubkey]}
+        // const relay = await this.relayConnect();
+        // const response = await relay.count([filter]);
+        let following = await this.getFollowing(pubkey)
+        return following.length
+    }
+
+    async getFollowerCount(pubkey: string): Promise<number> {
+        // let filter: Filter = {kinds: [3], "#p": [pubkey]}
+        // const relay = await this.relayConnect();
+        // const response = await relay.count([filter]);
+        // console.log(response)
+        // return 10;
+        let followers = await this.getFollowers(pubkey)
+        return followers.length
+    }
+
+    async getFollowing(pubkey: string): Promise<string[]> {
+        let filter: Filter = {kinds: [3], authors: [pubkey]}
+        const relay = await this.relayConnect();
+        const response = await relay.get(filter);
+        let following: string[] = []
+        if (response) {
+            response.tags.forEach(tag => {
+                following.push(tag[1]);
+            });
+        }
+        return following
+    }
+
+    // count do count here as well ...
+    async getFollowers(pubkey: string): Promise<string[]> {
+        let filter: Filter = {kinds: [3], "#p": [pubkey], limit: 100}
+        const relay = await this.relayConnect();
+        const response = await relay.list([filter]);
+        console.log(response)
+        let followers: string[] = []
+        if (response) {
+            response.forEach(r => {
+                followers.push(r.pubkey);
+            });
+        }
+        return followers
     }
 
     async getKind1(filter: Filter): Promise<Post[]>{
@@ -73,12 +164,9 @@ export class NostrService {
         filter.kinds = [1];
         const relay = await this.relayConnect();
         const response = await relay.list([filter])
-        console.log(response);
         let posts: Post[] = [];
         response.forEach(e => {
-            let nip10Result = nip10.parse(e);
-            const post = new Post(e.kind, e.pubkey, e.content, e.id, e.created_at, nip10Result);
-            posts.push(post);
+            posts.push(this.getPostFromResponse(e));
         });
         return posts;
     }
@@ -88,12 +176,9 @@ export class NostrService {
         filter.kinds = [1, 6];
         const relay = await this.relayConnect();
         const response = await relay.list([filter])
-        console.log(response);
         let posts: Post[] = [];
         response.forEach(e => {
-            let nip10Result = nip10.parse(e);
-            const post = new Post(e.kind, e.pubkey, e.content, e.id, e.created_at, nip10Result);
-            posts.push(post);
+            posts.push(this.getPostFromResponse(e));
         });
         return posts;
     }
@@ -101,12 +186,19 @@ export class NostrService {
     async getPostAndReplies(filters: Filter[]): Promise<Post[]>{
         const relay = await this.relayConnect();
         const response = await relay.list(filters)
-        console.log(response);
         let posts: Post[] = [];
         response.forEach(e => {
-            let nip10Result = nip10.parse(e);
-            const post = new Post(e.kind, e.pubkey, e.content, e.id, e.created_at, nip10Result);
-            posts.push(post);
+            posts.push(this.getPostFromResponse(e));
+        });
+        return posts;
+    }
+
+    async getReplyCounts(filters: Filter[]): Promise<Post[]>{
+        const relay = await this.relayConnect();
+        const response = await relay.list(filters)
+        let posts: Post[] = [];
+        response.forEach(e => {
+            posts.push(this.getPostFromResponse(e));
         });
         return posts;
     }
@@ -118,9 +210,7 @@ export class NostrService {
         console.log(response);
         let posts: Post[] = [];
         response.forEach(e => {
-            let nip10Result = nip10.parse(e);
-            const post = new Post(e.kind, e.pubkey, e.content, e.id, e.created_at, nip10Result);
-            posts.push(post);
+            posts.push(this.getPostFromResponse(e));
         });
         return posts;
     }

@@ -2,3 +2,7 @@ mat-spinner {
     margin: auto;
     width: 50%;
 }
+
+.loading-container {
+    margin-top: 5em;
+}

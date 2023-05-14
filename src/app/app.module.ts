@@ -7,6 +7,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import {APP_BASE_HREF} from '@angular/common';
 import { QRCodeModule } from 'angularx-qrcode';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 // Material
 import { MatDialogModule } from '@angular/material/dialog';
@@ -126,7 +127,8 @@ import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.com
     MatBottomSheetModule,
     MatSnackBarModule,
     AppRoutingModule,
-    QRCodeModule
+    QRCodeModule,
+    InfiniteScrollModule
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
   bootstrap: [AppComponent]

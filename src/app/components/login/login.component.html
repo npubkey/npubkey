@@ -10,17 +10,12 @@
         <div class="login-options">
             <p>
                 <button mat-fab extended color="generate" (click)="generateNewKey()">
-                    Generate New Key
+                    Create Account
                 </button>
             </p>
             <p>
-                <button mat-fab extended color="warn" (click)="loginWithPrivateKey()">
-                    Login with private key
-                </button>
-            </p>
-            <p>
-                <button mat-fab extended color="extension" (click)="loginWithExtension()">
-                    Login with Extension
+                <button mat-fab extended color="extension" (click)="loginWithPrivateKey()">
+                    Login
                 </button>
             </p>
         </div>
@@ -58,6 +53,7 @@
         <p class="title-container">
             <span class="title">login with nsec</span>
         </p>
+        <div class="key-subtitle">leave blank and hit Go to login with browser extension</div>
         <div class="login-info">
             <div class="nsec-form">
                 <p>
@@ -67,26 +63,6 @@
                     </mat-form-field>
                 </p>
             </div>
-        </div>
-        <div class="login-action-buttons">
-            <div fxLayout="row" fxLayoutAlign="space-around center">
-                <button mat-fab extended color="warn" (click)="home()">
-                    Back
-                </button>
-                <button mat-fab extended color="extension" (click)="goToApp()">
-                    Go!
-                </button>
-            </div>
-        </div>
-    </div>
-    <div *ngIf="loginWithExtensionView">
-        <p class="title-container">
-            <span class="title">login with extension</span>
-        </p>
-        <div class="login-info">
-            <div class="key-title">click go</div>
-            <br>
-            <div class="key-subtitle">(if you have a nostr browser extension if will prompt you to sign in)</div>
         </div>
         <div class="login-action-buttons">
             <div fxLayout="row" fxLayoutAlign="space-around center">

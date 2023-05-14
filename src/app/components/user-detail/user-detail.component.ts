@@ -13,10 +13,13 @@ import { nip19 } from 'nostr-tools';
 })
 export class UserDetailComponent implements OnInit {
 
-    user: User | undefined;
+    user: User | null = null;
     npub: string = "";
     posts: Post[] = [];
     userNotFound: boolean = false;
+    loadingPosts: boolean = true;
+    followingCount: number = 0;
+    followerCount: number = 0;
 
     constructor(
         private route: ActivatedRoute,
@@ -30,36 +33,60 @@ export class UserDetailComponent implements OnInit {
         }
 
     ngOnInit() {
-        this.user = undefined;
         this.getUser();
+    }
+
+    async getFollowingCount() {
+        if (this.user) {
+            this.followingCount = await this.nostrService.getFollowingCount(this.user.pubkey);
+        }
+    }
+
+    async getFollowerCount() {
+        if (this.user) {
+            this.followerCount = await this.nostrService.getFollowerCount(this.user.pubkey);
+        }
     }
 
     async getUser() {
         const pubkey: string = nip19.decode(this.npub).data.toString();
-        const filter: Filter = {authors: [pubkey], limit: 1}
-        let users = await this.nostrService.getKind0(filter);
-        if (users.length > 1) {
-            console.log("more than one user found");
-            this.user = users[0];
-        } else if (users.length === 0) {
-            console.log("user not found"); // TODO: these should output info to the user
-        } else {
-            this.user = users[0];
-        }
+        this.user = await this.nostrService.getUser(pubkey);
         if (this.user) {
-            this.user = users[0];
             this.getUserPosts(this.user);
         } else {
             this.userNotFound = true;
+            this.loadingPosts = false;
         }
     }
 
     async getUserPosts(user: User) {
-        let filter: Filter = {
-            kinds: [1],
-            authors: [user.pubkey],
-            limit: 50,
+        let posts: Post[] = await this.nostrService.getUserPosts(user.pubkey)
+        this.queryForMorePostInfo(user, posts)
+    }
+
+    async queryForMorePostInfo(user: User, posts: Post[]) {
+        let noteIds: string[] = [];
+        posts.forEach(p => {
+            noteIds.push(p.noteId)
+        })
+        let replyFilter: Filter = {
+            kinds: [1], "#e": noteIds
         }
-        this.posts = await this.nostrService.getKind1and6(filter);
+        this.posts.push(...posts);
+        let replies = await this.nostrService.getKind1(replyFilter)
+        this.patchPostsWithMoreInfo(posts, replies);
+        this.loadingPosts = false;
+    }
+
+    patchPostsWithMoreInfo(posts: Post[], replies: Post[]) {
+        let counts: {[id: string]: number} = {}
+        for (const r of replies) {
+            if (r.nip10Result?.reply?.id) {
+                counts[r.nip10Result.reply.id] = counts[r.nip10Result.reply.id] ? counts[r.nip10Result.reply.id] + 1 : 1;
+            }
+        }
+        posts.forEach(p => {
+            p.setReplyCount(counts[p.noteId]);
+        });
     }
 }

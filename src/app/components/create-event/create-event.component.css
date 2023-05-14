@@ -75,10 +75,20 @@ video {
 }
 
 .post {
-    max-width: 500px;
     margin-bottom: 4px;
 }
 
 mat-form-field {
     width: 100%;
+}
+
+.gif-preview {
+    max-height: 100px;
+    width: 100px;
+    border: 1px solid black;
+    border-radius: 5px 5px 5px 5px;
+}
+
+.gif-header {
+    text-align: center;
 }

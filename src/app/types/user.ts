@@ -47,6 +47,7 @@ export class User {
     pubkey: string;
     npub: string;
     createdAt: number;
+    apiKey: string;
     constructor(kind0: Kind0Content, createdAt: number, pubkey: string) {
         this.name = kind0.name || "";
         this.username = kind0.username || "";
@@ -62,6 +63,7 @@ export class User {
         this.pubkey = pubkey;
         this.npub = nip19.npubEncode(this.pubkey);
         this.cachePubkeyDisplayName()
+        this.apiKey = "LIVDSRZULELA" // TODO;
     }
 
     getClickableWebsite(link: string) {
@@ -74,5 +76,9 @@ export class User {
 
     cachePubkeyDisplayName() {
         localStorage.setItem(`${this.pubkey}`, this.displayName);
+    }
+
+    setLightningInfo(lud06: string, lud16: string) {
+        // decode one into the other and vice versa if only has one
     }
 }

@@ -9,4 +9,9 @@
     <div *ngIf="loading">
         <app-loading></app-loading>
     </div>
+    <mat-card class="post" *ngIf="postNotFound">
+        <mat-card-header>
+            <mat-card-title>Post Not Found</mat-card-title>
+        </mat-card-header>
+    </mat-card>
 </div>

@@ -51,6 +51,10 @@ export class PostComponent implements OnInit {
         }
     }
 
+    showEventJson() {
+        console.log(this.post);
+    }
+
     processLinks(e: any) {
         // needed when we generate html from incoming text to
         // route a link without getting a 404
@@ -74,9 +78,8 @@ export class PostComponent implements OnInit {
     }
 
     copyLink() {
-        // using snort social for now until i fix full urls
         if (this.post) {
-            let link = `https://snort.social/e/${this.post.nostrNoteId}`;
+            let link = `https://npubkey.github.io/#/posts/${this.post.nostrEventId}`;
             this.clipboard.copy(link);
             this.openSnackBar("link copied", "dismiss");
         }
@@ -84,8 +87,7 @@ export class PostComponent implements OnInit {
 
     async zap() {
         if (this.user === null && this.post) {
-            let filter: Filter = {authors: [this.post.pubkey], kinds: [0], limit: 1}
-            this.user = await this.nostrService.getUser(filter);
+            this.user = await this.nostrService.getUser(this.post.pubkey);
         }
         if (this.user && (this.user.lud06 || this.user.lud16)) {
             this.openSnackBar("user can receive zaps", "dismiss");
@@ -111,6 +113,7 @@ export class PostComponent implements OnInit {
             .subscribe(response => {
                 this.lightningResponse = response;
                 if (this.lightningResponse.status && this.lightningResponse.status == "Failed") {
+                    this.showZapForm = false;
                     this.openSnackBar("Failed to lookup lightning address", "dismiss");
                 } else if (this.lightningResponse.callback) {
                     this.showZapForm = true;

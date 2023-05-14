@@ -8,11 +8,14 @@
         <div *ngFor="let post of posts">
             <app-post [post]="post"></app-post>
         </div>
-        <div *ngIf="posts.length === 0">
+        <div *ngIf="posts.length === 0 && loadingPosts">
             <app-loading></app-loading>
         </div>
+        <div *ngIf="posts.length === 0 && !loadingPosts">
+            <p>No posts</p>
+        </div>
     </div>
-    <div *ngIf="!user">
+    <div *ngIf="!user && loadingPosts">
         <app-loading></app-loading>
     </div>
     <div *ngIf="userNotFound">
@@ -20,5 +23,4 @@
             <mat-card-content>User Not Found</mat-card-content>
         </mat-card>
     </div>
-    
 </div>

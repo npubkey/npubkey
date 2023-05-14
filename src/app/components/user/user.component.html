@@ -36,7 +36,10 @@
             <mat-icon>{{nsecButton}}</mat-icon>
         </button>
         <app-follow [user]="user"></app-follow>
-        <button mat-icon-button routerLink="/users/{{user.npub}}/following">
+        <button mat-icon-button color="primary" routerLink="/users/{{user.npub}}/following">
+            <mat-icon>view_list</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" routerLink="/users/{{user.npub}}/followers">
             <mat-icon>view_list</mat-icon>
         </button>
         <button *ngIf="user.lud16" mat-icon-button class="orange-icon" (click)="zap()">
@@ -50,7 +53,7 @@
         </p>
         <div *ngIf="displayUserQR">
             <p class="qrcode">
-                <span>Add me on Nostr</span>
+                <span>Add {{user.displayName}} on Nostr</span>
                 <mat-divider></mat-divider>
                 <qrcode [qrdata]="userQRLink" [colorDark]="'#ff8c00'" [errorCorrectionLevel]="'M'"></qrcode>
             </p>

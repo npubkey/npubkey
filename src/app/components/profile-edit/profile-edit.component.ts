@@ -52,8 +52,7 @@ export class ProfileEditComponent implements OnInit {
     }
 
     async setValues() {
-        let filter: Filter = {authors: [this.signerService.getPublicKey()], kinds: [0], limit: 1}
-        let kind0 = await this.nostrService.getUser(filter);
+        let kind0 = await this.nostrService.getUser(this.signerService.getPublicKey());
         if (kind0) {
             this.name = kind0.name
             this.username = kind0.username

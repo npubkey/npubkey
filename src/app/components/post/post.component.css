@@ -82,7 +82,6 @@ video {
 }
 
 .post {
-    max-width: 500px;
     margin-bottom: 4px;
 }
 
@@ -109,4 +108,26 @@ mat-form-field {
 
 .invoice {
     margin-bottom: 1em;
+}
+
+.icon-actions {
+    font-size: 10px;
+}
+
+.lightning-invoice {
+    padding-top: 1em;
+    border: 1px solid darkorange;
+    border-radius: 5px;
+}
+
+.lightning-invoice p {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.lightning-title {
+    
+    margin-left: 1em;
+    font-size: large;
+    font-weight: bold;;
 }

@@ -1,5 +1,5 @@
 <mat-card class="post" *ngIf="post">
-    <mat-card-header routerLink="/posts/{{post.noteId|nevent}}">
+    <mat-card-header>
         <img 
             *ngIf="post.picture"
             class="header-image"
@@ -10,7 +10,22 @@
             <div class="username">{{post.pubkey|username|ellipsis}}</div>
         </mat-card-subtitle>
         <div class="more-vert">
-            <button mat-icon-button><mat-icon>more_vert</mat-icon></button>
+            <button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="showEventJson()">
+                    <span>Event Json</span>
+                </button>
+                <!-- <button mat-menu-item disabled>
+                    <mat-icon>voicemail</mat-icon>
+                    <span>Check voice mail</span>
+                </button>
+                <button mat-menu-item>
+                    <mat-icon>notifications_off</mat-icon>
+                    <span>Disable alerts</span>
+                </button> -->
+            </mat-menu>
         </div>
         <mat-card-subtitle>{{post.fromNow}}</mat-card-subtitle>
     </mat-card-header>
@@ -32,12 +47,13 @@
             <span class="extras">root: </span>
             <span routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="extras">{{post.nip10Result.root.id|nevent|ellipsis}}</span>
         </div>
-        <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
+        <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)" routerLink="/posts/{{post.noteId|nevent}}"></p>
     </mat-card-content>
     <div fxLayout="row" fxLayoutAlign="space-around center">
-        <button mat-icon-button (click)="clickShowReplyForm()">
-            <mat-icon>mode_comment</mat-icon>
-        </button>
+        <div fxLayout="row">
+            <span *ngIf="post.replyCount > 0">{{post.replyCount}}</span>
+            <mat-icon (click)="clickShowReplyForm()">mode_comment</mat-icon>
+        </div>
         <button mat-icon-button (click)="repost()">
             <mat-icon>autorenew</mat-icon>
         </button>

@@ -21,10 +21,10 @@ export class FollowComponent implements OnInit {
         private nostrService: NostrService
     ) {}
 
-    ngOnInit() {
-        let following = this.signerService.getFollowingList();
+    async ngOnInit() {
+        let followList = this.signerService.getFollowingList();
         if (this.user) {
-            if (following.includes(this.user.pubkey)) {
+            if (followList.includes(this.user.pubkey)) {
                 this.canFollow = false;
                 this.buttonText = "person_remove";
             } else {

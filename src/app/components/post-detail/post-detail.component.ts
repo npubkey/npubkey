@@ -17,6 +17,7 @@ export class PostDetailComponent implements OnInit {
     post: Post | undefined;
     event: nip19.EventPointer;
     replies: Post[] = [];
+    postNotFound: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -51,6 +52,16 @@ export class PostDetailComponent implements OnInit {
                 this.replies.push(r);
             }
         })
+        if (this.post) {
+            let user = await this.nostrService.getUser(this.post.pubkey);
+            if (user) {
+                this.post.setPicture(user.pubkey);
+                this.post.setUsername(user.pubkey);
+            }
+            this.post.setReplyCount(this.replies.length);
+        } else {
+            this.postNotFound = true;
+        }
         this.replies.sort((a,b) => a.createdAt - b.createdAt);
         this.loading = false;
     }

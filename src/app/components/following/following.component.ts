@@ -11,13 +11,18 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./following.component.css']
 })
 export class FollowingComponent implements OnInit {
+
     npub: string;
+    followPath: string;
+    users: User[] = [];
+    contactList: string[] = [];
 
     constructor(
         private nostrService: NostrService,
         private signerService: SignerService,
         private route: ActivatedRoute,
     ) {
+        this.followPath = this.route.snapshot.url.at(-1)?.path || "following";
         this.npub = this.route.snapshot.paramMap.get('npub') || "";
         route.params.subscribe(val => {
             this.npub = val["npub"];
@@ -25,26 +30,27 @@ export class FollowingComponent implements OnInit {
         });
     }
 
-    users: User[] = [];
+
 
     ngOnInit(): void {}
 
-    async getFollowingUsers(contactList: string[]) {
+    async getContactListUsers(contactList: string[]) {
         let filter: Filter = {authors: contactList, limit: 30}
-        console.log(filter);
         this.users = await this.nostrService.getKind0(filter);
         console.log(this.users);
     }
 
     async getContactList() {
         let pubkey = this.signerService.pubkey(this.npub);
-        let filter: Filter = {kinds: [3], limit: 1, authors: [pubkey]}
-        let contactList = await this.nostrService.getKind3(filter);
-        if (pubkey === this.signerService.getPublicKey()) {
-            this.signerService.setFollowingList(contactList);
+        if (this.followPath === "following") {
+            this.contactList = await this.nostrService.getFollowing(pubkey);
+        } else {
+            this.contactList = await this.nostrService.getFollowers(pubkey);
         }
-        console.log("contact list")
-        console.log(contactList);
-        this.getFollowingUsers(contactList)
+
+        if (pubkey === this.signerService.getPublicKey()) {
+            this.signerService.setFollowingList(this.contactList);
+        }
+        this.getContactListUsers(this.contactList)
     }
 }

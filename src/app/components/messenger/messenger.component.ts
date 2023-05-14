@@ -96,8 +96,7 @@ export class MessengerComponent implements OnInit {
     }
 
     async getMe() {
-        let filter: Filter = {authors: [this.signerService.getPublicKey()], kinds: [0], limit: 1}
-        let why = await this.nostrService.getUser(filter);
+        let why = await this.nostrService.getUser(this.signerService.getPublicKey());
         if (why) {
             this.me = why;
         }

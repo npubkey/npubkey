@@ -49,18 +49,17 @@ export class ProfileComponent implements OnInit {
 
     async getUser() {
         let pubkey = this.signerService.getPublicKey()
-        console.log(pubkey)
         if (pubkey === "") {
             this.router.navigate(["/login"])
         }
-        let filter: Filter = {authors: [pubkey], kinds: [0], limit: 1}
-        this.user = await this.nostrService.getUser(filter);
+        this.user = await this.nostrService.getUser(pubkey);
         this.getPosts();
         this.loading = false;
     }
 
     async getPosts() {
-        let filter: Filter = {authors: [this.signerService.getPublicKey()], kinds: [6, 1], limit: 50}
-        this.posts = await this.nostrService.getKind1and6(filter);
+        if (this.user) {
+            this.posts = await this.nostrService.getUserPosts(this.user.pubkey);
+        }
     }
 }

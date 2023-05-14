@@ -69,7 +69,9 @@ export class LoginComponent {
 
     async goToApp() {
         let success: boolean = true;
-        if (this.generateNewKeyView || this.loginWithPrivateKeyView) {
+        if (this.generateNewKeyView) {
+            success = this.signerService.handleLoginWithNsec(this.nsec);
+        } else if (this.loginWithPrivateKeyView && this.nsec !== "") {
             success = this.signerService.handleLoginWithNsec(this.nsec);
         } else {
             success = await this.handleLoginWithExtension();

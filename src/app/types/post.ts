@@ -45,6 +45,8 @@ export class Post {
     replyingTo: string[] = [];
     mentions: string[] = [];
     nostrNoteId: string;
+    nostrEventId: string;
+    replyCount: number;
     constructor(kind: number, pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result) {
         this.kind = kind;
         this.pubkey = pubkey;
@@ -58,6 +60,8 @@ export class Post {
         this.setPicture(this.pubkey);
         this.content = this.getParsedContent(kind, content);
         this.nostrNoteId = nip19.noteEncode(this.noteId);
+        this.nostrEventId = nip19.neventEncode({id: this.noteId});
+        this.replyCount = 0;
     }
 
     setUsername(pubkey: string): void {
@@ -66,6 +70,10 @@ export class Post {
 
     setPicture(pubkey: string): void {
         this.picture = localStorage.getItem(`${pubkey}_img`) || "https://axiumradonmitigations.com/wp-content/uploads/2015/01/icon-user-default.png";
+    }
+
+    setReplyCount(count: number): void {
+        this.replyCount = count;
     }
 
     setFromNow(): void {
@@ -81,6 +89,7 @@ export class Post {
             content = this.reposted();
         }
         content = this.nip08Replace(content);
+        content = this.parseLightningInvoice(content);
         content = this.hashtagContent(content);
         content = this.linkify(content);
         content = this.replaceNostrThing(content);
@@ -106,10 +115,11 @@ export class Post {
     }
 
     nip08Replace(content: string): string {
-        if (this.nip10Result.profiles.length === 0) {
+        let userTags: string[] = content.match(/#\[\d+\]/gm) || []
+        // is this condition right?
+        if (this.nip10Result.profiles.length !== userTags.length) {
             return content;
         }
-        let userTags: string[] = content.match(/#\[\d+\]/gm) || []
         for (let i in userTags) {
             let userPubkey = this.nip10Result.profiles[i].pubkey
             let npub = this.getNpub(userPubkey);
@@ -118,6 +128,21 @@ export class Post {
             content = content.replace(userTags[i], this.wrapTextInSpan(textWrap))
         }
         return content
+    }
+
+    parseLightningInvoice(content: string): string {
+        let invoices: string[] = content.match(/(lightning|lnbc)[a-z0-9]+/gm) || []
+        console.log(invoices);
+        for (let invoice of invoices) {
+            console.log(invoice);
+            content = content.replace(invoice, this.getReplacementInvoiceHtml(invoice));
+        }
+        return content;
+    }
+
+    getReplacementInvoiceHtml(invoice: string) {
+        let r = `<div class="lightning-invoice"><span class="lightning-title">Lightning Invoice</span><mat-divider></mat-divider><p>${invoice}</p></div>`
+        return r;
     }
 
     hashtagContent(content: string): string {
@@ -134,13 +159,19 @@ export class Post {
         // TODO: could be improved
         let urlRegex =/(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
         return content.replace(urlRegex, function(url) {
-            if (url.toLowerCase().endsWith(".png") || url.toLowerCase().endsWith(".jpg") || url.toLowerCase().endsWith(".jpeg") || url.toLowerCase().endsWith(".webp") || url.toLowerCase().endsWith(".gif") || url.toLowerCase().endsWith(".gifv")) {
-                return `<img src="${url}" />`
+            if (url.toLowerCase().endsWith(".png") ||
+                url.toLowerCase().endsWith(".jpg") ||
+                url.toLowerCase().endsWith(".jpeg") ||
+                url.toLowerCase().endsWith(".webp") ||
+                url.toLowerCase().endsWith(".gif") ||
+                url.toLowerCase().endsWith(".gifv")
+            ) {
+                return `<p><img src="${url}" /></p>`
             }
             if (url.toLowerCase().endsWith("mp4") || url.toLowerCase().endsWith("mov")) {
-                return `<video controls><source src="${url}" type="video/mp4"></video>`
+                return `<p><video controls><source src="${url}" type="video/mp4"></video></p>`
             }
-            return `<a href="${url}" target="_blank">${url}</a>`;
+            return `<p><a href="${url}" target="_blank">${url}</a></p>`;
         });
     }
 

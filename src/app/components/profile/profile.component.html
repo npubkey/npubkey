@@ -1,6 +1,6 @@
 <div class="router-container">
     <div *ngIf="!loading">
-        <div class="no-profile-yet" *ngIf="!user">
+        <div *ngIf="!user" class="no-profile-yet">
             <p class="title-container">
                 <small class="subtitle">{{welcomeMessage}}</small>
             </p>
@@ -14,11 +14,11 @@
                 <button mat-fab extended color="accent" (click)="signOut()">Sign Out</button>
             </p>
         </div>
-        <div *ngIf="user">
-            <app-user [user]="user"></app-user>
+        <div *ngIf="user" class="banner-image">
+            <img src="{{user.banner}}"/>
         </div>
         <div *ngIf="user">
-            <app-create-event></app-create-event>
+            <app-user [user]="user"></app-user>
         </div>
         <div *ngFor="let post of posts">
             <app-post [post]="post"></app-post>
@@ -28,4 +28,3 @@
         <app-loading></app-loading>
     </div>
 </div>
-
