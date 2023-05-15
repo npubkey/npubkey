@@ -4,6 +4,7 @@ import { relayInit, Event, Filter, nip10, UnsignedEvent, signEvent } from 'nostr
 import { User } from '../types/user';
 import { Post } from '../types/post';
 import { SignerService } from './signer.service';
+import { S } from '@angular/cdk/keycodes';
 
 @Injectable({
   providedIn: 'root'
@@ -185,6 +186,26 @@ export class NostrService {
         return posts;
     }
 
+    async searchUsers(searchTerm: string): Promise<User[]> {
+        let filter: Filter = {
+            kinds: [0],
+        }
+        const relay = await this.relayConnect();
+        const response = await relay.list([filter])
+        let users: User[] = [];
+        let content;
+        let user;
+        response.forEach(e => {
+            content = JSON.parse(e.content)
+            user = new User(content, e.created_at, e.pubkey)
+            if (user.displayName.includes(searchTerm)) {
+                users.push(user)
+            }
+            this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture)
+        });
+        return users;
+    }
+
     async getKind1and6(filter: Filter): Promise<Post[]>{
         // text notes
         filter.kinds = [1, 6];
@@ -280,6 +301,33 @@ export class NostrService {
             });
         }
         return following
+    }
+
+    async search(searchTerm: string): Promise<Post[]> {
+        let tags = searchTerm.split(' ');
+        // recommend server / relay
+        // let filter1: Filter = {
+        //     kinds: [1],
+        //     search: searchTerm,
+        // }
+        let filter2: Filter = {
+            kinds: [1],
+            
+        }
+        let filter3: Filter = {
+            kinds: [1]
+        }
+        const relay = await this.relayConnect();
+        const response = await relay.list([filter2, filter3]);
+        console.log(response);
+        let posts: Post[] = [];
+        response.forEach(e => {
+            const post = this.getPostFromResponse(e);
+            if (post.content.includes(searchTerm)) {
+                posts.push(post);
+            }
+        });
+        return posts;
     }
 
     async queryRelay(filter: Filter): Promise<Event | null> {

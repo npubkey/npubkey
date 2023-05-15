@@ -9,19 +9,33 @@
     <p>
         <button mat-fab extended color="primary" (click)="submit()">Submit</button>
     </p>
-    <h2>Results</h2>
-    <mat-divider ></mat-divider>
-    <div *ngFor="let searchUser of searchUsers">
-        <mat-card routerLink="/users/{{searchUser.pubkey|npub}}">
-            <mat-card-header>
-                <img 
-                    *ngIf="searchUser.picture"
-                    class="header-image"
-                    mat-card-avatar
-                    src="{{searchUser.picture}}"/>
-              <mat-card-title>{{searchUser.pubkey|username}}</mat-card-title>
-              <mat-card-subtitle class="npub">{{searchUser.pubkey|npub}}</mat-card-subtitle>
-            </mat-card-header>
-        </mat-card>
+    <div *ngIf="!loading">
+        <h2>Results</h2>
+        <mat-divider></mat-divider>
+        <mat-tab-group>
+            <mat-tab label="Users">
+                <div *ngFor="let searchUser of searchUsers">
+                    <mat-card routerLink="/users/{{searchUser.pubkey|npub}}">
+                        <mat-card-header>
+                            <img 
+                                *ngIf="searchUser.picture"
+                                class="header-image"
+                                mat-card-avatar
+                                src="{{searchUser.picture}}"/>
+                          <mat-card-title>{{searchUser.pubkey|username}}</mat-card-title>
+                          <mat-card-subtitle class="npub">{{searchUser.pubkey|npub}}</mat-card-subtitle>
+                        </mat-card-header>
+                    </mat-card>
+                </div>
+            </mat-tab>
+            <mat-tab label="Posts">
+                <div *ngFor="let searchPost of searchPosts">
+                    <app-post [post]="searchPost"></app-post>>
+                </div>
+            </mat-tab>
+          </mat-tab-group>
+    </div>
+    <div *ngIf="loading">
+        <app-loading></app-loading>
     </div>
 </div>

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { SearchUser } from '../../types/user';
 import { nip19 } from 'nostr-tools';
-
+import { Post } from 'src/app/types/post';
+import { NostrService } from 'src/app/services/nostr.service';
 
 @Component({
   selector: 'app-search',
@@ -10,13 +11,23 @@ import { nip19 } from 'nostr-tools';
 })
 export class SearchComponent {
 
+    loading: boolean = false;
     search: string = "";
     searchUsers: SearchUser[] = [];
+    searchPosts: Post[] = [];
+
+    toggleLoading = () => this.loading = !this.loading;
+
+    constructor(
+        private nostrService: NostrService
+    ) {}
 
     submit() {
+        this.toggleLoading();
+        this.searchForUsers();
+        this.searchForPosts();
         this.searchUsers = [];
         const items = { ...localStorage };
-        console.log(items);
         for (let key of Object.keys(items)) {
             if (key.includes("_name")) continue;
             if (key.includes("following")) continue;
@@ -49,13 +60,21 @@ export class SearchComponent {
             picture: this.getPictureFromPublicKey(key)
         }
         if (!this.searchUsers.includes(searchUser)) {
-            console.log("found user")
-            console.log(searchUser);
             this.searchUsers.push(searchUser);
         }
     }
 
     getPictureFromPublicKey(pubkey: string): string {
         return localStorage.getItem(`${pubkey}_img`) || "";
+    }
+
+    async searchForPosts() {
+        this.searchPosts = await this.nostrService.search(this.search);
+    }
+
+    async searchForUsers() {
+        let users = await this.nostrService.searchUsers(this.search)
+        this.searchUsers.push(...users);
+        this.toggleLoading();
     }
 }
