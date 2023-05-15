@@ -37,7 +37,6 @@ export class FollowingComponent implements OnInit {
     async getContactListUsers(contactList: string[]) {
         let filter: Filter = {authors: contactList, limit: 30}
         this.users = await this.nostrService.getKind0(filter);
-        console.log(this.users);
     }
 
     async getContactList() {
@@ -47,7 +46,6 @@ export class FollowingComponent implements OnInit {
         } else {
             this.contactList = await this.nostrService.getFollowers(pubkey);
         }
-
         if (pubkey === this.signerService.getPublicKey()) {
             this.signerService.setFollowingList(this.contactList);
         }

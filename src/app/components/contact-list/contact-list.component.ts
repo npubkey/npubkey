@@ -29,14 +29,13 @@ export class ContactListComponent implements OnInit {
     }
 
     filterContacts() {
-        console.log(this.users);
         if (this.filterText === "") {
             this.displayedUsers = this.users;
         }
-        console.log('wow')
         this.displayedUsers = [];
         this.users.forEach((user) => {
-            if (user.displayName.toLowerCase().includes(this.filterText.toLowerCase()) || user.npub.toLowerCase().includes(this.filterText.toLowerCase())) {
+            if (user.displayName.toLowerCase().includes(this.filterText.toLowerCase()) ||
+                user.npub.toLowerCase().includes(this.filterText.toLowerCase())) {
                 this.displayedUsers.push(user);
             }
         })
@@ -50,8 +49,7 @@ export class ContactListComponent implements OnInit {
 
     async getContactList() {
         let pubkey = this.signerService.getPublicKey();
-        let filter: Filter = {kinds: [3], limit: 1, authors: [pubkey]}
-        let contactList = await this.nostrService.getKind3(filter);
+        let contactList = await this.nostrService.getContactList(pubkey);
         this.getFollowingUsers(contactList)
     }
 }

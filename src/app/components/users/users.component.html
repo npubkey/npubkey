@@ -3,8 +3,17 @@
     <p>
         <mat-divider></mat-divider>
     </p>
-    <div class="users-container" *ngFor="let user of users">
-        <app-user [user]="user"></app-user>
+    <div
+        class="users-container"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="500"
+        (scrolled)="onScroll()"
+        [scrollWindow]="true"
+    >
+        <div class="users-container" *ngFor="let user of users">
+            <app-user [user]="user"></app-user>
+        </div>
     </div>
     <div *ngIf="users.length === 0">
         <app-loading></app-loading>

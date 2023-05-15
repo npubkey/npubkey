@@ -141,7 +141,7 @@ export class Post {
     }
 
     getReplacementInvoiceHtml(invoice: string) {
-        let r = `<div class="lightning-invoice"><span class="lightning-title">Lightning Invoice</span><mat-divider></mat-divider><p>${invoice}</p></div>`
+        let r = `<div class="lightning-invoice"><span class="lightning-title">Lightning Invoice</span><mat-divider></mat-divider><p>${invoice}<br><br><button class="button-17" role="button">pay</button></p></div>`
         return r;
     }
 

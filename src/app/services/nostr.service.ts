@@ -159,6 +159,20 @@ export class NostrService {
         return followers
     }
 
+    async getPost(id: string): Promise<Post | undefined> {
+        let filter: Filter = {
+            kinds: [1],
+            limit: 1,
+            ids: [id]
+        }
+        const relay = await this.relayConnect();
+        const response = await relay.get(filter)
+        if (response) {
+            return this.getPostFromResponse(response);
+        }
+        return undefined;
+    }
+
     async getKind1(filter: Filter): Promise<Post[]>{
         // text notes
         filter.kinds = [1];
@@ -183,9 +197,15 @@ export class NostrService {
         return posts;
     }
 
-    async getPostAndReplies(filters: Filter[]): Promise<Post[]>{
+    async getPostAndReplies(id: string): Promise<Post[]>{
+        let postFilter: Filter = {
+            ids: [id], kinds: [1], limit: 1
+        }
+        let replyFilter: Filter = {
+            kinds: [1], "#e": [id]
+        }
         const relay = await this.relayConnect();
-        const response = await relay.list(filters)
+        const response = await relay.list([postFilter, replyFilter])
         let posts: Post[] = [];
         response.forEach(e => {
             posts.push(this.getPostFromResponse(e));
@@ -247,6 +267,19 @@ export class NostrService {
         // server meta data (what types of NIPs a server is supporting)
         const relay = await this.relayConnect();
         return await relay.list([{kinds: [11], limit: limit}]);
+    }
+
+    async getContactList(pubkey: string) {
+        let filter: Filter = {authors: [pubkey], limit: 1}
+        const relay = await this.relayConnect();
+        const response = await relay.get(filter);
+        let following: string[] = []
+        if (response) {
+            response.tags.forEach(tag => {
+                following.push(tag[1]);
+            });
+        }
+        return following
     }
 
     async queryRelay(filter: Filter): Promise<Event | null> {

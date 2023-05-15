@@ -1,7 +1,7 @@
 <div class="router-container">
     <div *ngIf="!loading"></div>
-    <div *ngIf="post">
-        <app-post [post]="post"></app-post>
+    <div *ngIf="root">
+        <app-post [post]="root"></app-post>
     </div>
     <div *ngFor="let reply of replies">
         <app-post [post]="reply" [root]="post"></app-post>

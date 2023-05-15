@@ -40,7 +40,6 @@ export class FollowComponent implements OnInit {
 
     async sendFollowEvent(unfollow=false) {
         if (this.user) {
-            const privateKey = this.signerService.getPrivateKey();
             let tags: string[][] = this.signerService.getFollowingListAsTags()
             if (unfollow) {
                 tags = tags.filter(tag => {
@@ -52,6 +51,7 @@ export class FollowComponent implements OnInit {
             this.signerService.setFollowingListFromTags(tags);
             let unsignedEvent = this.nostrService.getUnsignedEvent(3, tags, "");
             let signedEvent: Event;
+            const privateKey = this.signerService.getPrivateKey();
             if (privateKey !== "") {
                 let eventId = getEventHash(unsignedEvent)
                 signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);

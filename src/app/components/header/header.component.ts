@@ -49,7 +49,7 @@ export class HeaderComponent implements OnInit {
         let pubkey = this.signerService.getPublicKey();
         if (pubkey) {
             // poorly named but this will save our following list
-            this.nostrService.getKind3({authors: [pubkey], limit: 1})
+            this.nostrService.getContactList(pubkey);
         }
     }
 

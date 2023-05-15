@@ -10,27 +10,47 @@ import { SignerService } from 'src/app/services/signer.service';
   styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
+    users: User[] = [];
+    loading: boolean = true;
+    minutesAgo: number = 10;
+    previousSince: number = 0;
 
     constructor(
         private nostrService: NostrService,
         private signerService: SignerService,
     ) {}
 
-    users: User[] = [];
+    toggleLoading = () => this.loading = !this.loading;
 
     ngOnInit(): void {
-        this.getContactList();
         this.getUsers();
     }
 
-    async getUsers() {
-        let filter: Filter = {limit: 30}
-        this.users = await this.nostrService.getKind0(filter);
+    getSince(minutesAgo: number) {
+        let now = new Date()
+        return Math.floor(now.setMinutes(now.getMinutes() - minutesAgo) / 1000)
     }
 
-    async getContactList() {
-        let pubkey = this.signerService.getPublicKey();
-        let filter: Filter = {kinds: [3], limit: 1, authors: [pubkey]}
-        let contactList = await this.nostrService.getKind3(filter);
+    incrementFilterTimes() {
+        // its not perfect but it does work OK
+        // so we don't keep getting the same posts
+        this.previousSince = this.minutesAgo;
+        this.minutesAgo += 5;
     }
+
+    async getUsers() {
+        let filter: Filter = {
+            limit: 10,
+            since: this.getSince(this.minutesAgo),
+            until: this.getSince(this.previousSince)
+        }
+        let moreUsers = await this.nostrService.getKind0(filter);
+        this.users.push(...moreUsers);
+        this.incrementFilterTimes();
+    }
+
+    async onScroll() {
+        this.getUsers();
+    }
+
 }

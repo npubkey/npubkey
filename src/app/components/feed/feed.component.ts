@@ -23,9 +23,6 @@ export class FeedComponent implements OnInit {
     toggleLoading = () => this.loading = !this.loading;
     posts: Post[] = [];
     followingOnly: boolean = false;
-    // Pagination
-    currentPage = 1;
-    pageSize = 18;
     minutesAgo: number = 5;
     previousSince: number = 0;
 
@@ -177,8 +174,8 @@ export class FeedComponent implements OnInit {
         let counts: {[id: string]: number} = {}
         for (const r of replies) {
             console.log(r);
-            if (r.nip10Result?.root?.id) {
-                counts[r.nip10Result.root.id] = counts[r.nip10Result.root.id] ? counts[r.nip10Result.root.id] + 1 : 1;
+            if (r.nip10Result?.reply?.id) {
+                counts[r.nip10Result.reply.id] = counts[r.nip10Result.reply.id] ? counts[r.nip10Result.reply.id] + 1 : 1;
             }
         }
         posts.forEach(p => {

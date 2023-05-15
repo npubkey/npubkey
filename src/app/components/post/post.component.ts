@@ -55,7 +55,7 @@ export class PostComponent implements OnInit {
         console.log(this.post);
     }
 
-    processLinks(e: any) {
+    async processLinks(e: any) {
         // needed when we generate html from incoming text to
         // route a link without getting a 404
         const element: HTMLElement = e.target;
@@ -66,6 +66,19 @@ export class PostComponent implements OnInit {
                 this.router.navigate([link]).catch((error) => {
                     window.open(link, "_blank");
                 });
+            }
+        }
+        if (element.nodeName === "BUTTON") {
+            console.log("button")
+            e.preventDefault();
+            if (element && element.parentNode && element.parentNode.firstChild?.textContent) {
+                console.log("pay invoice")
+                let invoice = element.parentNode.firstChild.textContent;
+                if ( this.lightning.hasWebln()) {
+                    await this.payInvoice(invoice);
+                } else {
+                    this.copyAny(invoice);
+                }
             }
         }
     }
@@ -127,7 +140,6 @@ export class PostComponent implements OnInit {
         }
     }
 
-
     showQRCode() {
         if (this.displayQRCode) {
             this.displayQRCode = false;
@@ -147,6 +159,11 @@ export class PostComponent implements OnInit {
         }
     }
 
+    copyAny(any: string) {
+        this.clipboard.copy(any);
+        this.openSnackBar("Invoice copied", "dismiss");
+    }
+
     sendZap() {
         this.getLightningInvoice(String(Number(this.sats)*1000));
     }
@@ -160,17 +177,21 @@ export class PostComponent implements OnInit {
                 this.paymentInvoice = this.lightningInvoice.pr;
                 this.showZapForm = false;
                 this.showInvoiceSection = true;
-                this.payInvoice();
+                this.payInvoice(this.paymentInvoice);
             });
         }
     }
 
-    async payInvoice() {
+    async payInvoice(invoice: string) {
         let paid = false;
-        paid = await this.lightning.payInvoice(this.paymentInvoice);
+        paid = await this.lightning.payInvoice(invoice);
+        console.log(paid);
         if (paid) {
             this.openSnackBar("Zapped!", "dismiss");
             this.hideInvoice();
+        } else {
+            this.openSnackBar("Payment Failed", "dismiss");
+            this.copyAny(invoice);
         }
     }
 
@@ -191,9 +212,13 @@ export class PostComponent implements OnInit {
         if (this.post) {
             const privateKey = this.signerService.getPrivateKey();
             let tags: string[][] = [];
-            tags.push(["e", this.rootEvent, "", "root"])
-            if (this.rootEvent !== this.post.noteId) {
-                tags.push(["e", this.post.noteId, "", "reply"])
+            if (this.rootEvent) {
+                if (this.rootEvent !== this.post.noteId) {
+                    tags.push(["e", this.rootEvent, "", "root"])
+                    tags.push(["e", this.post.noteId, "", "reply"])
+                }
+            } else {
+                tags.push(["e", this.post.noteId, "", "root"])
             }
             tags.push(["p", this.post.pubkey])
             let rootAuthorTag = "#[0]";

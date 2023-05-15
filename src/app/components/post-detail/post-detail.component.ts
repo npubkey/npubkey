@@ -15,6 +15,7 @@ export class PostDetailComponent implements OnInit {
     loading: boolean = true;
     nevent: string;
     post: Post | undefined;
+    root: Post | undefined;
     event: nip19.EventPointer;
     replies: Post[] = [];
     postNotFound: boolean = false;
@@ -23,46 +24,82 @@ export class PostDetailComponent implements OnInit {
         private route: ActivatedRoute,
         private nostrService: NostrService,
     ) {
-            this.nevent = this.route.snapshot.paramMap.get('nevent') || "";
+        this.nevent = this.route.snapshot.paramMap.get('nevent') || "";
+        this.event = nip19.decode(this.nevent).data as nip19.EventPointer;
+        route.params.subscribe(val => {
+            this.replies = [];
+            this.post = undefined;
+            this.root = undefined;
+            this.nevent = val["nevent"];
             this.event = nip19.decode(this.nevent).data as nip19.EventPointer;
-            route.params.subscribe(val => {
-                console.log(val);
-                this.nevent = val["nevent"];
-                this.event = nip19.decode(this.nevent).data as nip19.EventPointer;
-                this.getPost();
-            });
+            this.getPost();
+        });
     }
 
     ngOnInit(): void {}
 
     async getPost() {
-        let postFilter: Filter = {
-            ids: [this.event.id], kinds: [1], limit: 1
+        this.post = await this.nostrService.getPost(this.event.id);
+        if (this.post === undefined) {
+            this.root = undefined;
+            this.replies = [];
+            this.loading = false;
+            this.postNotFound = true;
+            return;
         }
-        let replyFilter: Filter = {
-            kinds: [1], "#e": [this.event.id]
+        let postList: Post[] = []
+        if (this.post && this.post.nip10Result.root) {
+            // query for the root event
+            postList = await this.nostrService.getPostAndReplies(this.post.nip10Result.root.id)
         }
-        let postList: Post[] = await this.nostrService.getPostAndReplies([postFilter, replyFilter]);
-        this.replies = []
-        postList.forEach(r => {
-            if (r.noteId === this.event.id) {
-                this.post = r;
-            }
-            else if (r.nip10Result.root && r.nip10Result.root.id === this.event.id) {
-                this.replies.push(r);
-            }
-        })
-        if (this.post) {
-            let user = await this.nostrService.getUser(this.post.pubkey);
-            if (user) {
-                this.post.setPicture(user.pubkey);
-                this.post.setUsername(user.pubkey);
-            }
-            this.post.setReplyCount(this.replies.length);
+        this.addRoot(postList);
+        this.addReplies(postList);
+        if (this.root) {
+            this.getUser();
+            this.root.setReplyCount(this.replies.length);
         } else {
             this.postNotFound = true;
         }
+        if (this.post !== this.root) {
+            this.replies.push(this.post);
+        }
         this.replies.sort((a,b) => a.createdAt - b.createdAt);
         this.loading = false;
+    }
+
+    async getUser() {
+        if (this.root) {
+            let user = await this.nostrService.getUser(this.root.pubkey);
+            if (user) {
+                this.root.setPicture(user.pubkey);
+                this.root.setUsername(user.pubkey);
+            }
+        }
+    }
+
+    addRoot(postList: Post[]): void {
+        if (!this.post?.nip10Result.root) {
+            this.root = undefined;
+            return;
+        }
+        for (let r of postList) {
+            if (r.noteId === this.post.nip10Result.root.id) {
+                this.root = r;
+                return;
+            }
+        }
+    }
+
+    addReplies(postList: Post[]): void {
+        for (let r of postList) {
+            if (this.root) {
+                if (this.root.noteId === r.noteId) {
+                    continue;
+                }
+            }
+            if (r.noteId != this.event.id) {
+                this.replies.push(r);
+            }
+        }
     }
 }
