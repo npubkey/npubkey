@@ -14,8 +14,8 @@
                 <button mat-fab extended color="accent" (click)="signOut()">Sign Out</button>
             </p>
         </div>
-        <div *ngIf="user" class="banner-image">
-            <img src="{{user.banner}}"/>
+        <div *ngIf="user" class="banner">
+            <img class="banner-image" src="{{user.banner}}"/>
         </div>
         <div *ngIf="user">
             <app-user [user]="user"></app-user>

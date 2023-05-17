@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NostrService } from 'src/app/services/nostr.service';
-import { Filter } from 'nostr-tools';
-import { Post } from 'src/app/types/post';
-import { nip19 } from 'nostr-tools';
+import { Post, Zap } from 'src/app/types/post';
+import { User } from 'src/app/types/user';
+import { nip19, Filter } from 'nostr-tools';
 
 @Component({
   selector: 'app-post-detail',
@@ -19,6 +19,9 @@ export class PostDetailComponent implements OnInit {
     event: nip19.EventPointer;
     replies: Post[] = [];
     postNotFound: boolean = false;
+    postZaps: Zap[] = [];
+    postZapsCount: number = 0;
+    user: User | null = null;
 
     constructor(
         private route: ActivatedRoute,
@@ -48,11 +51,18 @@ export class PostDetailComponent implements OnInit {
             return;
         }
         let postList: Post[] = []
-        if (this.post && this.post.nip10Result.root) {
+        let rootEventId;
+        if (!this.post.nip10Result.root) {
             // query for the root event
-            postList = await this.nostrService.getPostAndReplies(this.post.nip10Result.root.id)
+            this.root = this.post;
+            rootEventId = this.root.noteId;
+        } else {
+            rootEventId = this.post.nip10Result.root.id
         }
-        this.addRoot(postList);
+        postList = await this.nostrService.getPostAndReplies(rootEventId)
+        if (this.root === undefined) {
+            this.addRoot(postList);
+        }
         this.addReplies(postList);
         if (this.root) {
             this.getUser();
@@ -69,17 +79,31 @@ export class PostDetailComponent implements OnInit {
 
     async getUser() {
         if (this.root) {
-            let user = await this.nostrService.getUser(this.root.pubkey);
-            if (user) {
-                this.root.setPicture(user.pubkey);
-                this.root.setUsername(user.pubkey);
+            this.user = await this.nostrService.getUser(this.root.pubkey);
+            if (this.user) {
+                this.root.setPicture(this.user.pubkey);
+                this.root.setUsername(this.user.pubkey);
+            }
+            this.getPostZaps();
+        }
+    }
+
+    async getPostZaps() {
+        if (this.root) {
+            let filter: Filter = {
+                kinds: [9735],
+                "#e": [this.root.noteId]
+            }
+            this.postZaps = await this.nostrService.getZaps(filter);
+            if (this.postZaps) {
+                this.postZapsCount = this.postZaps.map(item => item.satAmount).reduce((prev, next) => prev + next);
             }
         }
     }
 
     addRoot(postList: Post[]): void {
         if (!this.post?.nip10Result.root) {
-            this.root = undefined;
+            this.root = this.post;
             return;
         }
         for (let r of postList) {

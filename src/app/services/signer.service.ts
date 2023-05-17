@@ -85,7 +85,8 @@ export class SignerService {
     }
 
     setFollowingList(following: string[]) {
-        localStorage.setItem("following", following.filter(s => s).join(',')); 
+        let followingSet = Array.from(new Set(following));
+        localStorage.setItem("following", followingSet.filter(s => s).join(','));
     }
 
     savePublicKeyToSession(publicKey: string) {

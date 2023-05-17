@@ -17,7 +17,7 @@
         </p>
         <div fxLayout="row" fxLayoutAlign="space-evenly center">
             <button mat-fab extended (click)="searchGif()">Search Gif</button>
-            <button mat-stroked-button (click)="sendEvent()">Send</button>
+            <button mat-fab extended color="primary" (click)="sendEvent()">Send</button>
         </div>
     </div>
     <div *ngIf="gifsFound.length > 0">
@@ -27,7 +27,7 @@
         <p>
             <mat-divider></mat-divider>
         </p>
-        <mat-grid-list cols="4" rowHeight="100px">
+        <mat-grid-list cols="3" rowHeight="120px">
             <mat-grid-tile
                 *ngFor="let g of gifsFound"
                 [colspan]="1"

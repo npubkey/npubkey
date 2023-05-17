@@ -11,21 +11,22 @@ import { filter } from 'rxjs';
   templateUrl: './contact-list.component.html',
   styleUrls: ['./contact-list.component.css']
 })
-export class ContactListComponent implements OnInit {
+export class ContactListComponent {
 
+    loading: boolean = true;
     contactSelected: boolean = false;
     contactList: string[] = [];
     users: User[] = [];
     displayedUsers: User[] = [];
     filterText: string = "";
 
+    toggleLoading = () => this.loading = !this.loading;
+
     constructor(
         private signerService: SignerService,
         private nostrService: NostrService
-    ) {}
-
-    ngOnInit() {
-        this.getContactList();
+    ) {
+        this.getFollowingUsers();
     }
 
     filterContacts() {
@@ -41,15 +42,11 @@ export class ContactListComponent implements OnInit {
         })
     }
 
-    async getFollowingUsers(contactList: string[]) {
+    async getFollowingUsers() {
+        let contactList: string[] = this.signerService.getFollowingList()
         let filter: Filter = {authors: contactList}
         this.users = await this.nostrService.getKind0(filter);
         this.displayedUsers = this.users;
-    }
-
-    async getContactList() {
-        let pubkey = this.signerService.getPublicKey();
-        let contactList = await this.nostrService.getContactList(pubkey);
-        this.getFollowingUsers(contactList)
+        this.toggleLoading();
     }
 }

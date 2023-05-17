@@ -25,7 +25,6 @@ export class SearchComponent {
     submit() {
         this.toggleLoading();
         this.searchForUsers();
-        this.searchForPosts();
         this.searchUsers = [];
         const items = { ...localStorage };
         for (let key of Object.keys(items)) {
@@ -70,11 +69,12 @@ export class SearchComponent {
 
     async searchForPosts() {
         this.searchPosts = await this.nostrService.search(this.search);
+        this.toggleLoading();
     }
 
     async searchForUsers() {
         let users = await this.nostrService.searchUsers(this.search)
         this.searchUsers.push(...users);
-        this.toggleLoading();
+        this.searchForPosts();
     }
 }

@@ -17,19 +17,14 @@
                 <button mat-menu-item (click)="showEventJson()">
                     <span>Event Json</span>
                 </button>
-                <!-- <button mat-menu-item disabled>
-                    <mat-icon>voicemail</mat-icon>
-                    <span>Check voice mail</span>
-                </button>
-                <button mat-menu-item>
-                    <mat-icon>notifications_off</mat-icon>
-                    <span>Disable alerts</span>
-                </button> -->
             </mat-menu>
         </div>
         <mat-card-subtitle>{{post.fromNow}}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
+        <div>
+            <span class="extras" routerLink="/posts/{{post.nostrEventId}}">id: {{post.nostrEventId|ellipsis}}</span>
+        </div>
         <div *ngIf="post.nip10Result.profiles && post.nip10Result.profiles.length > 0">
             <span class="extras">users: </span>
             <span 
@@ -47,22 +42,26 @@
             <span class="extras">root: </span>
             <span routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="extras">{{post.nip10Result.root.id|nevent|ellipsis}}</span>
         </div>
-        <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)" routerLink="/posts/{{post.noteId|nevent}}"></p>
+        <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
     </mat-card-content>
     <div fxLayout="row" fxLayoutAlign="space-around center">
-        <div fxLayout="row">
-            <span *ngIf="post.replyCount > 0">{{post.replyCount}}</span>
+        <div fxLayout="row" class="click-icon">
             <mat-icon (click)="clickShowReplyForm()">mode_comment</mat-icon>
+            <span *ngIf="post.replyCount > 0">{{post.replyCount}}</span>
         </div>
-        <button mat-icon-button (click)="repost()">
+        <div (click)="repost()" class="click-icon">
             <mat-icon>autorenew</mat-icon>
-        </button>
-        <button mat-icon-button (click)="zap()">
+        </div>
+        <div fxLayout="row" (click)="zap()" class="click-icon">
             <mat-icon>bolt</mat-icon>
-        </button>
-        <button mat-icon-button (click)="copyLink()">
+            <span *ngIf="zapsCount">{{zapsCount}}</span>
+        </div>
+        <div (click)="copyLink()" class="click-icon">
             <mat-icon>share</mat-icon>
-        </button>
+        </div>
+        <div routerLink="/posts/{{post.noteId|nevent}}" class="click-icon">
+            <mat-icon>open_in_full</mat-icon>
+        </div>
     </div>
     <div *ngIf="showReplyForm">
         <p>
@@ -114,5 +113,7 @@
             <qrcode [qrdata]="paymentInvoice" [colorDark]="'#800080'" [imageSrc]="'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0'" [title]="'Lightning Invoice'" [errorCorrectionLevel]="'M'"></qrcode>
         </p>
     </div>
-    <mat-divider></mat-divider>
+    <p>
+        <mat-divider></mat-divider>
+    </p>
 </mat-card>

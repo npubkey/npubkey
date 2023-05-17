@@ -1,10 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NostrService } from 'src/app/services/nostr.service';
 import { User } from '../../types/user';
 import { Post } from '../../types/post';
-import { Filter, Event} from 'nostr-tools';
+import { Filter } from 'nostr-tools';
 import { nip19 } from 'nostr-tools';
+
 
 @Component({
   selector: 'app-user-detail',
@@ -26,7 +27,8 @@ export class UserDetailComponent implements OnInit {
         private nostrService: NostrService) {
             this.npub = this.route.snapshot.paramMap.get('npub') || "";
             route.params.subscribe(val => {
-                console.log(val);
+                this.user = null;
+                this.posts = [];
                 this.npub = val["npub"];
                 this.getUser();
             });
@@ -73,8 +75,14 @@ export class UserDetailComponent implements OnInit {
             kinds: [1], "#e": noteIds
         }
         this.posts.push(...posts);
+        this.posts.sort((a,b) => a.createdAt - b.createdAt).reverse();
         let replies = await this.nostrService.getKind1(replyFilter)
         this.patchPostsWithMoreInfo(posts, replies);
+        this.posts = this.posts.filter((value, index, self) =>
+            index === self.findIndex((t) => (
+                t.noteId === value.noteId
+            ))
+        )
         this.loadingPosts = false;
     }
 

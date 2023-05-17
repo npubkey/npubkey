@@ -70,5 +70,6 @@ export class CreateEventComponent {
         this.nostrService.sendEvent(signedEvent);
         this.openSnackBar("Message Sent!", "dismiss")
         this.content = "";
+        this.gifsFound = [];
     }
 }

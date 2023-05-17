@@ -83,12 +83,15 @@ mat-form-field {
 }
 
 .gif-preview {
-    max-height: 100px;
-    width: 100px;
-    border: 1px solid black;
-    border-radius: 5px 5px 5px 5px;
+    max-height: 100%;
+    width: 100%;
+    
 }
 
 .gif-header {
     text-align: center;
+}
+
+mat-grid-tile {
+    border-radius: 5px 5px 5px 5px;
 }

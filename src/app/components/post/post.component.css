@@ -70,14 +70,14 @@ mat-card-header img {
 img {
     margin-top: 1em;
     background-size: cover;
-    max-height:100%;
+    max-height:400px;
     max-width:100%;
 }
 
 video {
     margin-top: 1em;
     background-size: cover;
-    max-height:100%;
+    max-height:400px;
     max-width:100%;
 }
 
@@ -132,6 +132,9 @@ mat-form-field {
     font-weight: bold;;
 }
 
+.click-icon:hover {
+    cursor: pointer;
+}
 
 /* CSS */
 .button-17 {

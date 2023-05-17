@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 
 import { relayInit, Event, Filter, nip10, UnsignedEvent, signEvent } from 'nostr-tools';
 import { User } from '../types/user';
-import { Post } from '../types/post';
+import { Post, Zap } from '../types/post';
 import { SignerService } from './signer.service';
-import { S } from '@angular/cdk/keycodes';
+
 
 @Injectable({
   providedIn: 'root'
@@ -201,7 +201,7 @@ export class NostrService {
             if (user.displayName.includes(searchTerm)) {
                 users.push(user)
             }
-            this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture)
+            this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture);
         });
         return users;
     }
@@ -277,11 +277,9 @@ export class NostrService {
         return following
     }
 
-    async getKind4(filter: Filter): Promise<Event[]> {
-        // direct messages
-        filter.kinds = [4];
+    async getKind4(filter1: Filter, filter2: Filter): Promise<Event[]> {
         const relay = await this.relayConnect();
-        return await relay.list([filter]);
+        return await relay.list([filter1, filter2]);
     }
 
     async getKind11(limit: number) {
@@ -290,8 +288,18 @@ export class NostrService {
         return await relay.list([{kinds: [11], limit: limit}]);
     }
 
+    async getZaps(filter: Filter) {
+        const relay = await this.relayConnect();
+        const response = await relay.list([filter])
+        let zaps: Zap[] = [];
+        response.forEach(e => {
+            zaps.push(new Zap(e.id, e.kind, e.pubkey, e.created_at, e.sig, e.tags));
+        });
+        return zaps;
+    }
+
     async getContactList(pubkey: string) {
-        let filter: Filter = {authors: [pubkey], limit: 1}
+        let filter: Filter = {kinds: [3], authors: [pubkey], limit: 1}
         const relay = await this.relayConnect();
         const response = await relay.get(filter);
         let following: string[] = []
@@ -300,6 +308,7 @@ export class NostrService {
                 following.push(tag[1]);
             });
         }
+        this.signerService.setFollowingList(following);
         return following
     }
 
@@ -315,7 +324,8 @@ export class NostrService {
             
         }
         let filter3: Filter = {
-            kinds: [1]
+            kinds: [1],
+            "#t": tags
         }
         const relay = await this.relayConnect();
         const response = await relay.list([filter2, filter3]);

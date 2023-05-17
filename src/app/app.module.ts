@@ -62,6 +62,7 @@ import { HumantimePipe } from './pipes/humantime.pipe';
 import { FollowComponent } from './components/follow/follow.component';
 import { LoadingComponent } from './components/loading/loading.component';
 import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.component';
+import { ZapComponent } from './components/zap/zap.component';
 
 
 @NgModule({
@@ -99,6 +100,7 @@ import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.com
     FollowComponent,
     LoadingComponent,
     HashtagFeedComponent,
+    ZapComponent,
   ],
   imports: [
     BrowserModule,

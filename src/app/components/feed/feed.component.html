@@ -1,9 +1,9 @@
 <div class="router-container">
     <div class="feed-chips">
         <mat-chip-listbox aria-label="Feed selection">
-            <div *ngFor="let chip of chips; index as i;" >
-                <mat-chip-option *ngIf="i === 0" selected (click)="switchFeed(chip.name)">{{chip.name}}</mat-chip-option>
-                <mat-chip-option *ngIf="i !== 0" (click)="switchFeed(chip.name)">{{chip.name}}</mat-chip-option>
+            <div *ngFor="let chip of chips;" >
+                <mat-chip-option *ngIf="chip.name === selectedChip.name" selected (click)="switchFeed(chip.name)">{{chip.name}}</mat-chip-option>
+                <mat-chip-option *ngIf="chip.name !== selectedChip.name" (click)="switchFeed(chip.name)">{{chip.name}}</mat-chip-option>
             </div>
         </mat-chip-listbox>
         <div *ngIf="selectedChip.name === this.chips[2].name">
@@ -43,8 +43,15 @@
       (scrolled)="onScroll()"
       [scrollWindow]="true"
     >
-        <div class="feed" *ngFor="let post of posts">
-            <app-post [post]="post"></app-post>
+        <div *ngIf="selectedChip.name !== 'Zaps'">
+            <div class="feed" *ngFor="let post of posts">
+                <app-post [post]="post"></app-post>
+            </div>
+        </div>
+        <div *ngIf="selectedChip.name === 'Zaps'">
+            <div class="feed" *ngFor="let zap of zaps">
+                <app-zap [zap]="zap"></app-zap>
+            </div>
         </div>
     </div>
     <div *ngIf="loading">

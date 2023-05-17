@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { SignerService } from 'src/app/services/signer.service';
-import { Post, LightningResponse, LightningInvoice } from '../../types/post';
+import { Post, LightningResponse, LightningInvoice, Zap } from '../../types/post';
 import { NostrService } from 'src/app/services/nostr.service';
-import { getEventHash, Event, Filter } from 'nostr-tools';
+import { getEventHash, Event } from 'nostr-tools';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -20,6 +20,8 @@ export class PostComponent implements OnInit {
     @ViewChild('canvas') canvas?: HTMLCanvasElement;
     @Input() root?: Post;
     @Input() post?: Post;
+    @Input() zaps?: Zap[];
+    @Input() zapsCount?: number;
     viewingRoot: boolean = false;
     rootEvent: string = "";
     replyContent: string = "";
@@ -69,10 +71,8 @@ export class PostComponent implements OnInit {
             }
         }
         if (element.nodeName === "BUTTON") {
-            console.log("button")
             e.preventDefault();
             if (element && element.parentNode && element.parentNode.firstChild?.textContent) {
-                console.log("pay invoice")
                 let invoice = element.parentNode.firstChild.textContent;
                 if ( this.lightning.hasWebln()) {
                     await this.payInvoice(invoice);
@@ -104,7 +104,6 @@ export class PostComponent implements OnInit {
         }
         if (this.user && (this.user.lud06 || this.user.lud16)) {
             this.openSnackBar("user can receive zaps", "dismiss");
-            console.log("getting lightning info");
             this.getLightningInfo();
         } else {
             this.openSnackBar("user can't recieve zaps", "dismiss");
@@ -172,7 +171,6 @@ export class PostComponent implements OnInit {
         if (this.lightningResponse && this.lightningResponse.callback) {
             this.lightning.getLightningInvoice(this.lightningResponse.callback, amount)
             .subscribe(response => {
-                console.log(response);
                 this.lightningInvoice = response;
                 this.paymentInvoice = this.lightningInvoice.pr;
                 this.showZapForm = false;
@@ -185,7 +183,6 @@ export class PostComponent implements OnInit {
     async payInvoice(invoice: string) {
         let paid = false;
         paid = await this.lightning.payInvoice(invoice);
-        console.log(paid);
         if (paid) {
             this.openSnackBar("Zapped!", "dismiss");
             this.hideInvoice();

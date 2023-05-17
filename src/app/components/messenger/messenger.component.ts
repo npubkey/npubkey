@@ -122,9 +122,10 @@ export class MessengerComponent implements OnInit {
 
     async getMessages() {
         let fromPubKey = nip19.decode(this.friendNPub).data.toString();
-        let toPubkey = this.signerService.getPublicKey()
-        let filter: Filter = {kinds: [4], authors: [fromPubKey, toPubkey], "#p": [toPubkey]}
-        let dmEvents: Event[] = await this.nostrService.getKind4(filter)
+        let toPubKey = this.signerService.getPublicKey()
+        let fromPubKeyMessages: Filter = {kinds: [4], authors: [fromPubKey], "#p": [toPubKey]}
+        let toPubKeyMessages: Filter = {kinds: [4], authors: [toPubKey], "#p": [fromPubKey]}
+        let dmEvents: Event[] = await this.nostrService.getKind4(fromPubKeyMessages, toPubKeyMessages)
         console.log(dmEvents);
         for (let e in dmEvents) {
             let decryptedContent = await this.decryptCipherText(dmEvents[e].pubkey, dmEvents[e].content);

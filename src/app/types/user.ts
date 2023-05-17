@@ -49,9 +49,11 @@ export class User {
     createdAt: number;
     apiKey: string;
     constructor(kind0: Kind0Content, createdAt: number, pubkey: string) {
+        this.pubkey = pubkey;
+        this.npub = nip19.npubEncode(this.pubkey);
         this.name = kind0.name || "";
         this.username = kind0.username || "";
-        this.displayName = kind0.displayName || this.name || this.username || "No Name";
+        this.displayName = kind0.displayName || this.name || this.username || this.npub;
         this.website = this.getClickableWebsite(kind0.website || "");
         this.about = kind0.about || "";
         this.picture = kind0.picture || "https://axiumradonmitigations.com/wp-content/uploads/2015/01/icon-user-default.png";
@@ -60,8 +62,7 @@ export class User {
         this.lud16 = kind0.lud16 || "";
         this.nip05 = kind0.nip05 || "";
         this.createdAt = createdAt;
-        this.pubkey = pubkey;
-        this.npub = nip19.npubEncode(this.pubkey);
+
         this.cachePubkeyDisplayName()
         this.apiKey = "LIVDSRZULELA" // TODO;
     }
