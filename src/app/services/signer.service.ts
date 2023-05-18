@@ -67,6 +67,14 @@ export class SignerService {
         return following;
     }
 
+    getRelay() {
+        return localStorage.getItem("relay") || "wss://relay.damus.io/";
+    }
+
+    setRelay(relay: string) {
+        localStorage.setItem("relay", relay);
+    }
+
     getFollowingListAsTags(): string[][] {
         let following = this.getFollowingList();
         let tags: string[][] = [];

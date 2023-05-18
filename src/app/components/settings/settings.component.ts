@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { SignerService } from 'src/app/services/signer.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NostrService } from 'src/app/services/nostr.service';
+import { signEvent, getEventHash, UnsignedEvent, Event } from 'nostr-tools';
+import { User } from 'src/app/types/user';
 
 @Component({
   selector: 'app-settings',
@@ -10,16 +13,89 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class SettingsComponent {
 
+    relay: string;
+
     constructor(
         private signerService: SignerService,
         private router: Router,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private nostrService: NostrService
     ) {
+        this.relay = this.signerService.getRelay();
         let pubkey = this.signerService.getPublicKey()
-        console.log(pubkey)
         if (pubkey === "") {
             this.router.navigate(["/login"])
         }
+    }
+
+    async saveRelay() {
+        this.openSnackBar("Publishing profile to new relay...", "dismiss");
+        let kind0 = await this.nostrService.getUser(this.signerService.getPublicKey());
+        if (kind0) {
+            await this.publishSelfToNewRelay(kind0);
+            this.setRelay()
+        } else {
+            this.setRelay();
+        }
+    }
+
+    setRelay() {
+        this.signerService.setRelay(this.relay);
+        this.openSnackBar("Relay Set!", "dismiss");
+    }
+
+    async publishSelfToNewRelay(kind0: User) {
+        // if we are changing relays -- publish our profile there
+        if (kind0) {
+            let x = {
+                name: kind0.name,
+                username: kind0.username,
+                displayName: kind0.displayName,
+                website: kind0.website,
+                about: kind0.about,
+                picture: kind0.picture,
+                banner: kind0.banner,
+                lud06: kind0.lud06,
+                lud16: kind0.lud16,
+                nip05: kind0.nip05
+            }
+            const content = JSON.stringify(x)
+            const privateKey = this.signerService.getPrivateKey();
+            let unsignedEvent = this.getUnsignedEvent(0, [], content);
+            let signedEvent: Event;
+            if (privateKey !== "") {
+                let eventId = getEventHash(unsignedEvent)
+                signedEvent = this.getSignedEvent(eventId, privateKey, unsignedEvent);
+            } else {
+                signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+            }
+            this.nostrService.sendEvent(signedEvent);
+        }
+    }
+
+    getUnsignedEvent(kind: number, tags: any, content: string) {
+        const eventUnsigned: UnsignedEvent = {
+            kind: kind,
+            pubkey: this.signerService.getPublicKey(),
+            tags: tags,
+            content: content,
+            created_at: Math.floor(Date.now() / 1000),
+        }
+        return eventUnsigned
+    }
+
+    getSignedEvent(eventId: string, privateKey: string, eventUnsigned: UnsignedEvent) {
+        let signature = signEvent(eventUnsigned, privateKey);
+        const signedEvent: Event = {
+            id: eventId,
+            kind: eventUnsigned.kind,
+            pubkey: eventUnsigned.pubkey,
+            tags: eventUnsigned.tags,
+            content: eventUnsigned.content,
+            created_at: eventUnsigned.created_at,
+            sig: signature,
+          };
+          return signedEvent;
     }
 
     signOut() {

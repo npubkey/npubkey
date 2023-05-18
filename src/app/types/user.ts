@@ -1,4 +1,5 @@
 import { nip19 } from 'nostr-tools';
+import { Content } from 'src/app/types/post';
 
 // kind 0 content - nostr
 export interface Kind0Content {
@@ -55,7 +56,14 @@ export class User {
         this.username = kind0.username || "";
         this.displayName = kind0.displayName || this.name || this.username || this.npub;
         this.website = this.getClickableWebsite(kind0.website || "");
-        this.about = kind0.about || "";
+        const fake = {
+            reply: undefined,
+            root: undefined,
+            mentions: [],
+            profiles: []
+        }
+        this.about = new Content(1, kind0.about || "", fake).getParsedContent();
+        console.log(this.about);
         this.picture = kind0.picture || "https://axiumradonmitigations.com/wp-content/uploads/2015/01/icon-user-default.png";
         this.banner = kind0.banner || "";
         this.lud06 = kind0.lud06 || "";

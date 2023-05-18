@@ -6,6 +6,18 @@
         <p>
             <button mat-fab extended color="accent" (click)="signOut()">Sign Out</button>
         </p>
+        <p>
+            <mat-divider></mat-divider>
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Relay</mat-label>
+                <input matInput [(ngModel)]="relay">
+            </mat-form-field>
+        </p>
+        <p>
+            <button mat-fab extended color="accent" (click)="saveRelay()">Save Relay</button>
+        </p>
     </div>
 </div>
 

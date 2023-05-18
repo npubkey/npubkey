@@ -53,6 +53,7 @@ export class UserDetailComponent implements OnInit {
     async getUser() {
         const pubkey: string = nip19.decode(this.npub).data.toString();
         this.user = await this.nostrService.getUser(pubkey);
+        console.log(this.user);
         if (this.user) {
             this.getUserPosts(this.user);
         } else {

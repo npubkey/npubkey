@@ -18,7 +18,7 @@ export class NostrService {
     async relayConnect() {
         // TODO: relay should be in settings / stored on relays
         // pull from there
-        const relay = relayInit('wss://relay.damus.io/')
+        const relay = relayInit(this.signerService.getRelay());
         relay.on('connect', () => {
             console.log(`connected to ${relay.url}`)
         })

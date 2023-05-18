@@ -37,6 +37,8 @@ export class HeaderComponent implements OnInit {
         private nostrService: NostrService,
         private breakpointObserver: BreakpointObserver
     ) {
+        const relay = this.signerService.getRelay() // will get from storage or default
+        this.signerService.setRelay(relay); // incase its not there
     }
 
     ngOnInit(): void {

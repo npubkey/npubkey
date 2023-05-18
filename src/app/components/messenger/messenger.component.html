@@ -4,20 +4,25 @@
             <mat-card>
                 <mat-card-header *ngIf="message.npub" class="sent-message">
                         <img 
-                            *ngIf="me && me.picture"
+                            *ngIf="me && me.picture && me.npub === message.npub"
                             class="header-image"
                             mat-card-avatar
                             src="{{me.picture}}"
                             routerLink="/users/{{message.npub}}"
                         />
+                        <img 
+                            *ngIf="friend && friend.picture && friend.npub === message.npub"
+                            class="header-image"
+                            mat-card-avatar
+                            src="{{friend.picture}}"
+                            routerLink="/users/{{message.npub}}"
+                        />
                         <mat-card-subtitle class="npub">{{message.npub|username}}</mat-card-subtitle>
                         <mat-card-subtitle>{{message.createdAt|humantime}}</mat-card-subtitle>
                 </mat-card-header>
-                <mat-card-content>
-                    <div class="message-content">
-                        <p class="message" [innerHTML]="message.content | safe" (click)="processLinks($event)"></p>
-                    </div>
-                </mat-card-content>
+                <div class="message-content">
+                    <p class="message" [innerHTML]="message.content | safe" (click)="processLinks($event)"></p>
+                </div>
             </mat-card>
         </div>
 
