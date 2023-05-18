@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { Event, getEventHash, Filter } from "nostr-tools";
+import { Event, getEventHash } from "nostr-tools";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NostrService } from '../../services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
 import { User } from 'src/app/types/user';
 import { GifService } from 'src/app/services/gif.service';
-import { TenorGifResponse, TenorGif } from 'src/app/types/gif';
+import { ImageServiceService } from 'src/app/services/image-service.service';
 
 @Component({
   selector: 'app-create-event',
@@ -18,12 +18,17 @@ export class CreateEventComponent {
     content: string = "";
     gifSearch: string = "";
     gifsFound: string[] = [];
+    selectedFiles?: FileList;
+    selectedFileNames: string[] = [];
+    showProgressBar: boolean = false;
+    preview: string = "";
 
     constructor(
         private nostrService: NostrService,
         private signerService: SignerService,
         private snackBar: MatSnackBar,
-        private gifService: GifService
+        private gifService: GifService,
+        private imageService: ImageServiceService
     ) {
         this.getUser();
     }
@@ -36,6 +41,38 @@ export class CreateEventComponent {
     addGifToPostContent(g: string) {
         this.content = this.content + " " + g;
         this.openSnackBar("GIF added!", "dismiss");
+    }
+
+    addImageToPostContent(imgUrl: string) {
+        this.content = this.content + " " + imgUrl;
+        this.openSnackBar("Image added!", "dismiss");
+    }
+
+    selectFiles(event: any): void {
+        this.selectedFileNames = [];
+        this.selectedFiles = event.target.files;
+        if (this.selectedFiles && this.selectedFiles[0]) {
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                console.log(e.target.result);
+                this.preview = e.target.result;
+            };
+            reader.readAsDataURL(this.selectedFiles[0]);
+            this.selectedFileNames.push(this.selectedFiles[0].name);
+        }
+    }
+
+    upload(file: File): void {
+        if (file) {
+          this.imageService.uploadImage(file)
+            .subscribe(response => this.addImageToPostContent(response));
+        }
+    }
+
+    uploadImage(): void {
+        if (this.selectedFiles) {
+            this.upload(this.selectedFiles[0]);
+        }
     }
 
     async searchGif() {

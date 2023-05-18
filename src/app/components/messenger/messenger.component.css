@@ -2,6 +2,22 @@
     font-family: 'Courier New', Courier, monospace;
     font-size: medium;
     font-weight: lighter;
+    overflow-wrap: break-word;
+    padding-bottom: 1em;
+}
+
+.message-content img {
+    margin-top: 1em;
+    max-height:250px;
+    width:250px;
+    max-width: 100%;
+}
+
+.message-content video {
+    margin-top: 1em;
+    max-height:250;
+    max-width: 100%;
+    width:250px;
 }
 
 .npub {
@@ -17,14 +33,36 @@ mat-form-field {
 }
 
 .messages-container {
-    height: 90vh;
+    margin: 0;
+    padding: 0 0 0 0;
+    position: absolute;
+    top:60px;
+    height: 70vh; 
+    width: 100%;
     overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.mat-toolbar-single-row {
+    height: auto !important;
+    background: transparent;
+    padding: 0;
+}
+
+.mat-toolbar-single-row button {
+    width: 100px;
+}
+
+.container {
+    height: 100vh;
+    overflow: hidden;
+    width: 100%;
 }
 
 .small-screen-footer-nav-bar {
     position: fixed;
     left: 0;
-    bottom: 48px;
+    bottom: 25px;
     width: 100%;
     z-index: 10;
 }

@@ -139,10 +139,19 @@ export class SignerService {
         return (await (window as any).nostr.nip04.encrypt(pubkey, content))
     }
 
+    async login(): Promise<boolean> {
+        if (window.webln && !window.webln.enabled) {
+            await window.webln.enable();
+        }
+        return true;
+    }
+
     async decryptDMWithExtension(pubkey: string, ciphertext: string): Promise<string> {
+        await this.login();
         return (
             await (window as any).nostr.nip04.decrypt(pubkey, ciphertext)
-            .catch(() => {
+            .catch((error: any) => {
+                console.log(error);
                 return "*Failed to Decrypted Content*"
             })
         )
@@ -152,7 +161,7 @@ export class SignerService {
         let privateKey = this.getPrivateKey()
         return await nip04.decrypt(privateKey, pubkey, ciphertext).catch((error) => {
             console.log(error);
-            return `${error}`;
+            return "*Failed to Decrypted Content*";
         });
     }
 }

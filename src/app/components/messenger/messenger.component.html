@@ -1,51 +1,49 @@
-<div #messagesDiv class="messages-container">
-    <mat-card *ngFor="let message of messages">
-        <mat-card-header *ngIf="message.npub === myNPub" class="sent-message">
-                <img 
-                    *ngIf="me && me.picture"
-                    class="header-image"
-                    mat-card-avatar
-                    src="{{me.picture}}"
-                    routerLink="/users/{{message.npub}}"
-                />
-                <mat-card-subtitle class="npub">{{message.npub|username}}</mat-card-subtitle>
-                <mat-card-subtitle>{{message.createdAt|humantime}}</mat-card-subtitle>
-                <mat-card-title class="message">{{message.content}}</mat-card-title>
-        </mat-card-header>
-        <mat-card-header *ngIf="message.npub !== myNPub">
-            <img 
-                *ngIf="friend && friend.picture"
-                class="header-image"
-                mat-card-avatar
-                src="{{friend.picture}}"
-                routerLink="/users/{{message.npub}}"
-            />
-            <mat-card-subtitle class="npub">{{message.npub|username}}</mat-card-subtitle>
-            <mat-card-subtitle>{{message.createdAt|humantime}}</mat-card-subtitle>
-            <mat-card-title class="message">{{message.content}}</mat-card-title>
-        </mat-card-header>
-    </mat-card>
-</div>
-<div *ngIf="smallScreen">
-    <mat-toolbar color="accent" class="small-screen-footer-nav-bar">
-        <mat-toolbar-row>
-            <mat-form-field appearance="outline" fxFlex='90'>
-                <mat-label>Image Url</mat-label>
-                <input matInput [(ngModel)]="content" placeholder="content">
-            </mat-form-field>
-            <button fxFlex="nogrow" mat-icon-button (click)="sendEvent()">
-                <mat-icon>send</mat-icon>
-            </button>
-        </mat-toolbar-row>
-    </mat-toolbar>
-</div>
-<div *ngIf="!smallScreen">
-    <mat-toolbar class="footer-nav-bar">
-        <mat-form-field appearance="outline" fxFlex='90'>
-            <input matInput [(ngModel)]="content" placeholder="content">
+<div class="container">
+    <div #scrollMe [scrollTop]="scrollMe.scrollHeight" class="messages-container">
+        <div class="messages" *ngFor="let message of messages">
+            <mat-card>
+                <mat-card-header *ngIf="message.npub" class="sent-message">
+                        <img 
+                            *ngIf="me && me.picture"
+                            class="header-image"
+                            mat-card-avatar
+                            src="{{me.picture}}"
+                            routerLink="/users/{{message.npub}}"
+                        />
+                        <mat-card-subtitle class="npub">{{message.npub|username}}</mat-card-subtitle>
+                        <mat-card-subtitle>{{message.createdAt|humantime}}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="message-content">
+                        <p class="message" [innerHTML]="message.content | safe" (click)="processLinks($event)"></p>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+    </div>
+    <div *ngIf="smallScreen">
+        <mat-form-field class="small-screen-footer-nav-bar">
+            <div>
+                <mat-toolbar class="mat-toolbar-single-row">
+                    <input class="mat-input-element" id="messageInput" matInput [(ngModel)]="content" placeholder="content"/>
+                    <button mat-icon-button color="primary" (click)="sendEvent()">
+                        <mat-icon>send</mat-icon>
+                    </button>
+                </mat-toolbar>
+            </div>
         </mat-form-field>
-        <button fxFlex="nogrow" mat-icon-button (click)="sendEvent()">
-            <mat-icon>send</mat-icon>
-        </button>
-    </mat-toolbar>
+    </div>
+    <div *ngIf="!smallScreen">
+        <mat-form-field class="footer-nav-bar">
+            <div>
+                <mat-toolbar class="mat-toolbar-single-row">
+                    <input class="mat-input-element" id="messageInput" matInput [(ngModel)]="content" placeholder="content"/>
+                    <button mat-icon-button color="primary" (click)="sendEvent()">
+                        <mat-icon>send</mat-icon>
+                    </button>
+                </mat-toolbar>
+            </div>
+        </mat-form-field>
+    </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { SignerService } from 'src/app/services/signer.service';
 import { Post, LightningResponse, LightningInvoice, Zap } from '../../types/post';
 import { NostrService } from 'src/app/services/nostr.service';
@@ -9,6 +9,9 @@ import { Router } from '@angular/router';
 import { User } from 'src/app/types/user';
 import { bech32 } from '@scure/base'
 import { LightningService } from 'src/app/services/lightning.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { distinctUntilChanged } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-post',
@@ -34,6 +37,13 @@ export class PostComponent implements OnInit {
     paymentInvoice: string = "";
     displayQRCode: boolean = false;
     showInvoiceSection: boolean = false;
+    smallScreen: boolean = false;
+    Breakpoints = Breakpoints;
+    currentBreakpoint:string = '';
+
+    readonly breakpoint$ = this.breakpointObserver
+        .observe([Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, '(min-width: 500px)'])
+        .pipe(distinctUntilChanged());
 
     constructor(
         private signerService: SignerService,
@@ -41,15 +51,38 @@ export class PostComponent implements OnInit {
         private clipboard: Clipboard,
         private snackBar: MatSnackBar,
         private router: Router,
-        private lightning: LightningService
+        private lightning: LightningService,
+        private breakpointObserver: BreakpointObserver
     ) {}
 
     ngOnInit() {
+        this.breakpoint$.subscribe(() => {
+            this.breakpointChanged()
+        });
         if (this.root?.noteId === this.post?.nip10Result?.root?.id) {
             this.viewingRoot = true;
         }
         if (this.post) {
             this.rootEvent = this.post.nip10Result?.root?.id || "";
+        }
+    }
+
+    private breakpointChanged() {
+        if(this.breakpointObserver.isMatched(Breakpoints.XLarge)) {
+            this.currentBreakpoint = Breakpoints.Large;
+            this.smallScreen = false;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.Large)) {
+            this.currentBreakpoint = Breakpoints.Large;
+            this.smallScreen = false;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.Medium)) {
+            this.currentBreakpoint = Breakpoints.Medium;
+            this.smallScreen = false;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.Small)) {
+            this.currentBreakpoint = Breakpoints.Small;
+            this.smallScreen = true;
+        } else if(this.breakpointObserver.isMatched(Breakpoints.XSmall)) {
+            this.currentBreakpoint = Breakpoints.XSmall;
+            this.smallScreen = true;
         }
     }
 

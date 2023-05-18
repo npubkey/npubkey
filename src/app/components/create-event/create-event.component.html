@@ -19,6 +19,29 @@
             <button mat-fab extended (click)="searchGif()">Search Gif</button>
             <button mat-fab extended color="primary" (click)="sendEvent()">Send</button>
         </div>
+        <p>
+            <mat-divider></mat-divider>
+        </p>
+        <mat-form-field>
+            <div>
+                <mat-toolbar class="mat-toolbar-single-row">
+                    <input class="mat-input-element" matInput [value]="selectedFileNames.length ? selectedFileNames : 'Add image'" />
+                    <button mat-flat-button color="primary" [disabled]="!selectedFiles" (click)="uploadImage()">
+                        Upload
+                    </button>
+                </mat-toolbar>
+                <input
+                    type="file"
+                    id="fileInput"
+                    name="fileInput"
+                    accept="image/*" multiple 
+                    (change)="selectFiles($event)"
+                />
+            </div>
+        </mat-form-field>
+        <div>
+            <img *ngIf="preview" [src]="preview" class="preview">
+        </div>
     </div>
     <div *ngIf="gifsFound.length > 0">
         <div class="gif-header">

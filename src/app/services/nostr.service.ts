@@ -321,7 +321,6 @@ export class NostrService {
         // }
         let filter2: Filter = {
             kinds: [1],
-            
         }
         let filter3: Filter = {
             kinds: [1],
@@ -338,32 +337,6 @@ export class NostrService {
             }
         });
         return posts;
-    }
-
-    async queryRelay(filter: Filter): Promise<Event | null> {
-        const relay = await this.relayConnect()
-        // let's query for an event that exists
-        let sub = relay.sub([
-            {
-                ids: filter.ids,
-                authors: filter.authors,
-                kinds: filter.kinds,
-                since: filter.since,
-                until: filter.until,
-                limit: filter.limit,
-                search: filter.search
-            }
-        ])
-        let cool: Event | null = null;
-        sub.on('event', (event: Event) => {
-            cool = event;
-            console.log('we got the event we wanted:', event)
-        })
-        sub.on('eose', () => {
-            sub.unsub()
-        })
-        relay.close();
-        return cool;
     }
 
     getUnsignedEvent(kind: number, tags: string[][], content: string) {

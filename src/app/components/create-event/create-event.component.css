@@ -1,6 +1,32 @@
 mat-form-field {
     width: 100%;
 }
+
+.mat-input-element {
+    font-size: medium;
+    font-weight: 200;
+}
+
+#fileInput {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+}
+
+.mat-toolbar-single-row {
+    height: auto !important;
+    background: transparent;
+    padding: 0;
+}
+
+.mat-toolbar-single-row button {
+    width: 100px;
+}
+
 .npub {
     color: purple;
 }

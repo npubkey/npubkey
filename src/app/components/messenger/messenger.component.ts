@@ -1,13 +1,14 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { NostrService } from 'src/app/services/nostr.service';
 import { User } from "../../types/user";
-import { getEventHash, Event, nip19, nip04, Filter } from 'nostr-tools';
+import { getEventHash, Event, nip19, nip04, Filter, Sub, nip10 } from 'nostr-tools';
 import { SignerService } from 'src/app/services/signer.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { distinctUntilChanged, tap } from 'rxjs/operators';
-
+import { distinctUntilChanged } from 'rxjs/operators';
+import { Content } from 'src/app/types/post';
+import { Router } from '@angular/router';
 
 interface Message {
     content: string;
@@ -18,11 +19,10 @@ interface Message {
 @Component({
   selector: 'app-messenger',
   templateUrl: './messenger.component.html',
-  styleUrls: ['./messenger.component.css']
+  styleUrls: ['./messenger.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
-export class MessengerComponent implements OnInit {
-    @ViewChild('messagesDiv') messagesDiv?: ElementRef<HTMLDivElement>;
-
+export class MessengerComponent implements OnInit, OnDestroy, AfterViewInit {
     pageLogs: string[] = []; // temporary debug for phone browser
     contactSelected: boolean = false;
     friendNPub: string;
@@ -36,25 +36,38 @@ export class MessengerComponent implements OnInit {
     smallScreen: boolean = false;
     Breakpoints = Breakpoints;
     currentBreakpoint:string = '';
-
+    subscription: Sub | null = null;
+    userPubkey: string;
+    friendPubkey: string;
+    userPrivateKey: string;
+    fake: nip10.NIP10Result;
     readonly breakpoint$ = this.breakpointObserver
         .observe([Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, '(min-width: 500px)'])
-        .pipe(
-        tap(value => console.log(value)),
-        distinctUntilChanged()
-    );
+        .pipe(distinctUntilChanged());
 
     constructor(
         private nostrService: NostrService,
         private signerService: SignerService,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
-        private breakpointObserver: BreakpointObserver
+        private breakpointObserver: BreakpointObserver,
+        private cdRef: ChangeDetectorRef,
+        private router: Router
     ) {
+        this.fake = {
+            reply: undefined,
+            root: undefined,
+            mentions: [],
+            profiles: []
+        }
         this.myNPub = this.signerService.npub();
         this.friendNPub = this.route.snapshot.paramMap.get('npub') || "";
+        this.userPubkey = this.signerService.getPublicKey();
+        this.friendPubkey = nip19.decode(this.friendNPub).data.toString();
+        this.userPrivateKey = this.signerService.getPrivateKey();
         route.params.subscribe(val => {
             this.friendNPub = val["npub"];
+            this.friendPubkey = nip19.decode(this.friendNPub).data.toString();
             this.getFriend()
             this.getMe();
             this.getMessages();
@@ -63,9 +76,22 @@ export class MessengerComponent implements OnInit {
 
     ngOnInit(): void {
         this.breakpoint$.subscribe(() => {
-            console.log("what?")
             this.breakpointChanged()
         });
+    }
+
+    ngOnDestroy(): void {
+        if (this.subscription) {
+            this.subscription.unsub();
+        }
+    }
+
+    ngAfterViewInit() {
+        this.cdRef.detectChanges();
+    }
+
+    ngOnChanges() {
+        this.cdRef.detectChanges();
     }
 
     private breakpointChanged() {
@@ -84,14 +110,6 @@ export class MessengerComponent implements OnInit {
         } else if(this.breakpointObserver.isMatched(Breakpoints.XSmall)) {
             this.currentBreakpoint = Breakpoints.XSmall;
             this.smallScreen = true;
-        }
-    }
-
-    scrollBottom() {
-        const maxScroll = this.messagesDiv?.nativeElement.scrollHeight;
-        if (maxScroll) {
-            this.messagesDiv?.nativeElement.scrollTo({ top: maxScroll, behavior: 'smooth' });
-            console.log(this.messagesDiv);
         }
     }
 
@@ -121,24 +139,55 @@ export class MessengerComponent implements OnInit {
     }
 
     async getMessages() {
-        let fromPubKey = nip19.decode(this.friendNPub).data.toString();
-        let toPubKey = this.signerService.getPublicKey()
-        let fromPubKeyMessages: Filter = {kinds: [4], authors: [fromPubKey], "#p": [toPubKey]}
-        let toPubKeyMessages: Filter = {kinds: [4], authors: [toPubKey], "#p": [fromPubKey]}
-        let dmEvents: Event[] = await this.nostrService.getKind4(fromPubKeyMessages, toPubKeyMessages)
-        console.log(dmEvents);
-        for (let e in dmEvents) {
-            let decryptedContent = await this.decryptCipherText(dmEvents[e].pubkey, dmEvents[e].content);
-            this.messages.push(
-                {
-                    content: decryptedContent,
-                    npub: nip19.npubEncode(dmEvents[e].pubkey),
-                    createdAt: dmEvents[e].created_at
-                }
-            );
+        let usToThem: Filter = {kinds: [4], authors: [this.userPubkey], "#p": [this.friendPubkey]}
+        let themToUs: Filter = {kinds: [4], authors: [this.friendPubkey], "#p": [this.userPubkey]}
+        let dmEvents: Event[] = await this.nostrService.getKind4(usToThem, themToUs)
+        for (let dm of dmEvents) {
+            this.addMessage(dm);
         }
+        // TODO subscribe to any new messages while it is open
+        this.listenToRelay([usToThem, themToUs]);
+    }
+
+    async addMessage(dm: Event) {
+        let decryptedContent;
+        if (this.userPubkey === dm.pubkey) {
+            decryptedContent = await this.decryptCipherText(dm.tags[0][1], dm.content);
+        } else {
+            decryptedContent = await this.decryptCipherText(dm.pubkey, dm.content);
+        }
+        this.messages.push(
+            {
+                content: new Content(1, decryptedContent, this.fake).getParsedContent(),
+                npub: nip19.npubEncode(dm.pubkey),
+                createdAt: dm.created_at
+            }
+        );
         this.messages.sort((a,b) => a.createdAt - b.createdAt);
-        this.scrollBottom();
+    }
+
+    async processLinks(e: any) {
+        // needed when we generate html from incoming text to
+        // route a link without getting a 404
+        const element: HTMLElement = e.target;
+        if (element.nodeName === 'A') {
+            e.preventDefault();
+            const link = element.getAttribute('href');
+            if (link) {
+                this.router.navigate([link]).catch((error) => {
+                    window.open(link, "_blank");
+                });
+            }
+        }
+    }
+
+    async listenToRelay(filters: Filter[]) {
+        const relay = await this.nostrService.relayConnect()
+        // let's query for an event that exists
+        this.subscription = relay.sub(filters);
+        this.subscription.on('event', (dm: Event) => {
+            this.addMessage(dm);
+        });
     }
 
     encryptContent(pubkey: string, content: string) {
@@ -149,9 +198,9 @@ export class MessengerComponent implements OnInit {
         return nip04.encrypt(privateKey, pubkey, this.content);
     }
 
-    decryptCipherText(pubkey: string, content: string) {
+    async decryptCipherText(pubkey: string, content: string) {
         if (this.signerService.usingNostrBrowserExtension()) {
-            return this.signerService.decryptDMWithExtension(pubkey, content);
+            return await this.signerService.decryptDMWithExtension(pubkey, content);
         }
         return this.signerService.decryptWithPrivateKey(pubkey, content);
     }
@@ -161,30 +210,18 @@ export class MessengerComponent implements OnInit {
     }
 
     async sendEvent() {
-        const privateKey = this.signerService.getPrivateKey();
-        let toPubKey = nip19.decode(this.friendNPub).data.toString();
-        let toFriendContent: string = await this.encryptContent(toPubKey, this.content);
-        let selfPubkey = this.signerService.getPublicKey();
-        let selfContent: string = await this.encryptContent(selfPubkey, this.content);
-        let toTags = [["p", toPubKey]]
-        let selfTags = [["p", selfPubkey]]
+        const toFriendContent: string = await this.encryptContent(this.friendPubkey, this.content);
+        const toTags = [["p", this.friendPubkey]]
         let toFriendUnsignedEvent = this.nostrService.getUnsignedEvent(4, toTags, toFriendContent);
-        let toSelfUnsignedEvent = this.nostrService.getUnsignedEvent(4, selfTags, selfContent);
         let toFriendSignedEvent: Event;
-        let toSelfSignedEvent: Event;
-        if (privateKey !== "") {
+        if (this.userPrivateKey !== "") {
             let toFriendEventId = getEventHash(toFriendUnsignedEvent)
-            let toSelfEventId = getEventHash(toSelfUnsignedEvent)
-            toFriendSignedEvent = this.nostrService.getSignedEvent(toFriendEventId, privateKey, toFriendUnsignedEvent);
-            toSelfSignedEvent = this.nostrService.getSignedEvent(toSelfEventId, privateKey, toSelfUnsignedEvent)
+            toFriendSignedEvent = this.nostrService.getSignedEvent(toFriendEventId, this.userPrivateKey, toFriendUnsignedEvent);
         } else {
             toFriendSignedEvent = await this.signerService.signEventWithExtension(toFriendUnsignedEvent);
-            toSelfSignedEvent = await this.signerService.signEventWithExtension(toSelfUnsignedEvent);
         }
         this.nostrService.sendEvent(toFriendSignedEvent);
-        this.nostrService.sendEvent(toSelfSignedEvent);
         this.openSnackBar("Message Sent!", "dismiss");
         this.content = "";
-        this.scrollBottom()
     }
 }
