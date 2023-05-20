@@ -113,7 +113,7 @@
             </button>
         </div>
         <p *ngIf="displayQRCode" class="qrcode" >
-            <span>Scan with phone to pay</span>
+            <span>Scan with phone to pay ({{invoiceAmount}} sats)</span>
             <mat-divider></mat-divider>
             <qrcode [qrdata]="paymentInvoice" [colorDark]="'#800080'" [imageSrc]="'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0'" [title]="'Lightning Invoice'" [errorCorrectionLevel]="'M'"></qrcode>
         </p>

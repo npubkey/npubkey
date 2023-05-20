@@ -14,6 +14,7 @@ import { User } from 'src/app/types/user';
 export class SettingsComponent {
 
     relay: string;
+    zap: string;
 
     constructor(
         private signerService: SignerService,
@@ -22,6 +23,7 @@ export class SettingsComponent {
         private nostrService: NostrService
     ) {
         this.relay = this.signerService.getRelay();
+        this.zap = this.signerService.getDefaultZap();
         let pubkey = this.signerService.getPublicKey()
         if (pubkey === "") {
             this.router.navigate(["/login"])
@@ -42,6 +44,11 @@ export class SettingsComponent {
     setRelay() {
         this.signerService.setRelay(this.relay);
         this.openSnackBar("Relay Set!", "dismiss");
+    }
+
+    setZap() {
+        this.signerService.setDefaultZap(this.zap);
+        this.openSnackBar("Default Zap Set", "dismiss");
     }
 
     async publishSelfToNewRelay(kind0: User) {

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { SignerService } from 'src/app/services/signer.service';
-import { Post, LightningResponse, LightningInvoice, Zap } from '../../types/post';
+import { Post, LightningResponse, LightningInvoice, Zap, ZapRequest } from '../../types/post';
 import { NostrService } from 'src/app/services/nostr.service';
 import { getEventHash, Event } from 'nostr-tools';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -11,6 +11,7 @@ import { bech32 } from '@scure/base'
 import { LightningService } from 'src/app/services/lightning.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { distinctUntilChanged } from 'rxjs/operators';
+import { decode } from "@gandlaf21/bolt11-decode";
 
 
 @Component({
@@ -33,8 +34,9 @@ export class PostComponent implements OnInit {
     user: User | null = null;
     lightningResponse: LightningResponse | null = null;
     lightningInvoice: LightningInvoice | null = null;
-    sats: string = "5";
+    sats: string;
     paymentInvoice: string = "";
+    invoiceAmount: string = "?";
     displayQRCode: boolean = false;
     showInvoiceSection: boolean = false;
     smallScreen: boolean = false;
@@ -53,7 +55,9 @@ export class PostComponent implements OnInit {
         private router: Router,
         private lightning: LightningService,
         private breakpointObserver: BreakpointObserver
-    ) {}
+    ) {
+        this.sats = this.signerService.getDefaultZap();
+    }
 
     ngOnInit() {
         this.breakpoint$.subscribe(() => {
@@ -88,6 +92,18 @@ export class PostComponent implements OnInit {
 
     showEventJson() {
         console.log(this.post);
+    }
+
+    setInvoiceAmount(invoice: string) {
+        if (invoice) {
+            const decodedInvoice = decode(invoice);
+            for (let s of decodedInvoice.sections) {
+                if (s.name === "amount") {
+                    this.invoiceAmount = String(Number(s.value)/1000);
+                    break;
+                }
+            }
+        }
     }
 
     async processLinks(e: any) {
@@ -157,6 +173,7 @@ export class PostComponent implements OnInit {
             this.lightning.getLightning(lightningAddress)
             .subscribe(response => {
                 this.lightningResponse = response;
+                console.log(response);
                 if (this.lightningResponse.status && this.lightningResponse.status == "Failed") {
                     this.showZapForm = false;
                     this.openSnackBar("Failed to lookup lightning address", "dismiss");
@@ -197,7 +214,55 @@ export class PostComponent implements OnInit {
     }
 
     sendZap() {
-        this.getLightningInvoice(String(Number(this.sats)*1000));
+        console.log(this.lightningResponse)
+        console.log(this.lightningResponse?.allowsNostr)
+        console.log(this.lightningResponse?.nostrPubkey)
+        if (this.lightningResponse?.allowsNostr && this.lightningResponse.nostrPubkey) {
+            // should also check if nostrPubkey is valid
+            console.log("can be nostr aware zap");
+            this.createZapRequest();
+        } else {
+            this.getLightningInvoice(String(Number(this.sats)*1000));
+        }
+    }
+
+    async createZapRequest() {
+        if (this.post && this.lightningResponse?.callback) {
+            const privateKey = this.signerService.getPrivateKey();
+            let finalContent: string = "Zap!";
+            let lnurl;
+            if (this.user && this.user.lud06) {
+                lnurl = this.user.lud06
+            } else {
+                lnurl = ""; // todo decode callback to lnurl
+            }
+            const amount = String(Number(this.sats)*1000)
+            let tags: string[][] = [
+                ["relays", this.signerService.getRelay()],
+                ["amount", amount],
+                ["lnurl", lnurl],
+                ["p", this.post.pubkey],
+                ["e", this.post.noteId]
+            ]
+            let unsignedEvent = this.nostrService.getUnsignedEvent(9734, tags, finalContent);
+            let signedEvent: Event;
+            if (privateKey !== "") {
+                let eventId = getEventHash(unsignedEvent)
+                signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
+            } else {
+                signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+            }
+            this.lightning.sendZapRequest(this.lightningResponse.callback, signedEvent, amount, lnurl)
+                .subscribe(response => {
+                    console.log(response);
+                    this.lightningInvoice = response;
+                    this.paymentInvoice = this.lightningInvoice.pr;
+                    this.setInvoiceAmount(this.paymentInvoice);
+                    this.showZapForm = false;
+                    this.showInvoiceSection = true;
+                    this.payInvoice(this.paymentInvoice);
+                });
+        }
     }
 
     async getLightningInvoice(amount: string) {
@@ -206,6 +271,7 @@ export class PostComponent implements OnInit {
             .subscribe(response => {
                 this.lightningInvoice = response;
                 this.paymentInvoice = this.lightningInvoice.pr;
+                this.setInvoiceAmount(this.paymentInvoice);
                 this.showZapForm = false;
                 this.showInvoiceSection = true;
                 this.payInvoice(this.paymentInvoice);
@@ -251,14 +317,14 @@ export class PostComponent implements OnInit {
                 tags.push(["e", this.post.noteId, "", "root"])
             }
             tags.push(["p", this.post.pubkey])
-            let rootAuthorTag = "#[0]";
-            let otherOtherTags = "";
-            for (let p in this.post.nip10Result.profiles) {
-                let pk = this.post.nip10Result.profiles[p].pubkey;
-                tags.push(["p", pk])
-                otherOtherTags = otherOtherTags + ` #[${p+1}]`;
-            }
-            this.replyContent = `${rootAuthorTag} ${otherOtherTags} ${this.replyContent}`;
+            // let rootAuthorTag = "#[0]";
+            // let otherOtherTags = "";
+            // for (let p in this.post.nip10Result.profiles) {
+            //     let pk = this.post.nip10Result.profiles[p].pubkey;
+            //     tags.push(["p", pk])
+            //     otherOtherTags = otherOtherTags + ` #[${p+1}]`;
+            // }
+            // this.replyContent = `${rootAuthorTag} ${otherOtherTags} ${this.replyContent}`;
             let unsignedEvent = this.nostrService.getUnsignedEvent(1, tags, this.replyContent);
             let signedEvent: Event;
             if (privateKey !== "") {

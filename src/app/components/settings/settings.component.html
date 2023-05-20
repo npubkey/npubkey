@@ -18,6 +18,15 @@
         <p>
             <button mat-fab extended color="accent" (click)="saveRelay()">Save Relay</button>
         </p>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Default Zap Amount</mat-label>
+                <input matInput [(ngModel)]="zap">
+            </mat-form-field>
+        </p>
+        <p>
+            <button mat-fab extended color="accent" (click)="setZap()">Set Default Zap</button>
+        </p>
     </div>
 </div>
 

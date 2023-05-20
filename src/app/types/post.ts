@@ -13,7 +13,7 @@ interface TextWrap {
 }
 
 export interface LightningResponse {
-    allowNostr?: boolean;
+    allowsNostr?: boolean;
     nostrPubkey?: string;
     callback?: string; // The URL from LN SERVICE which will accept the pay request parameters
     commentAllowed?: number;
@@ -146,7 +146,6 @@ export class Zap {
         if (this.bolt11) {
             const decodedInvoice = decode(this.bolt11);
             for (let s of decodedInvoice.sections) {
-                console.log(s);
                 if (s.name === "amount") {
                     return Number(s.value)/1000;
                 }
@@ -287,7 +286,6 @@ export class Content {
         if (invoice) {
             const decodedInvoice = decode(invoice);
             for (let s of decodedInvoice.sections) {
-                console.log(s);
                 if (s.name === "amount") {
                     return Number(s.value)/1000;
                 }
@@ -390,6 +388,7 @@ export class Post {
     nostrNoteId: string;
     nostrEventId: string;
     replyCount: number;
+    isAReply: boolean = false;
     constructor(kind: number, pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result) {
         this.kind = kind;
         this.pubkey = pubkey;
@@ -405,6 +404,7 @@ export class Post {
         this.nostrNoteId = nip19.noteEncode(this.noteId);
         this.nostrEventId = nip19.neventEncode({id: this.noteId});
         this.replyCount = 0;
+        this.setIsAReply();
     }
 
     setUsername(pubkey: string): void {
@@ -425,5 +425,13 @@ export class Post {
 
     setReplyingTo(): void {
         //this.replyingTo = this.nip10Result.profiles;
+    }
+
+    setIsAReply(): void {
+        if (this.nip10Result.root || this.nip10Result.reply) {
+            this.isAReply = true;
+        } else {
+            this.isAReply = false;
+        }
     }
 }

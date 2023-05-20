@@ -54,7 +54,6 @@ export class CreateEventComponent {
         if (this.selectedFiles && this.selectedFiles[0]) {
             const reader = new FileReader();
             reader.onload = (e: any) => {
-                console.log(e.target.result);
                 this.preview = e.target.result;
             };
             reader.readAsDataURL(this.selectedFiles[0]);

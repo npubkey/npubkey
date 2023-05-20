@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { LightningService } from 'src/app/services/lightning.service';
 import { LightningResponse, LightningInvoice } from 'src/app/types/post';
 import { bech32 } from '@scure/base'
+import { decode } from "@gandlaf21/bolt11-decode";
 
 
 @Component({
@@ -24,8 +25,9 @@ export class UserComponent implements OnInit {
     showZapForm: boolean = false;
     lightningResponse: LightningResponse | null = null;
     lightningInvoice: LightningInvoice | null = null;
-    sats: string = "5";
+    sats: string;
     paymentInvoice: string = "";
+    invoiceAmount: string = "?";
     displayQRCode: boolean = false;
     showInvoiceSection: boolean = false;
     displayUserQR: boolean = false;
@@ -36,7 +38,9 @@ export class UserComponent implements OnInit {
         private clipboard: Clipboard,
         private snackBar: MatSnackBar,
         private lightning: LightningService
-    ) {}
+    ) {
+        this.sats = this.signerService.getDefaultZap();
+    }
 
     ngOnInit() {
         let pubkey = this.signerService.getPublicKey()
@@ -66,7 +70,21 @@ export class UserComponent implements OnInit {
     }
 
     sendZap() {
-        this.getLightningInvoice(String(Number(5)*1000));
+        this.getLightningInvoice(String(Number(this.sats)*1000));
+    }
+
+
+    setInvoiceAmount(invoice: string) {
+        if (invoice) {
+            const decodedInvoice = decode(invoice);
+            for (let s of decodedInvoice.sections) {
+                console.log(s);
+                if (s.name === "amount") {
+                    this.invoiceAmount = String(Number(s.value)/1000);
+                    break;
+                }
+            }
+        }
     }
 
     getLightningInfo() {
@@ -126,6 +144,7 @@ export class UserComponent implements OnInit {
                 console.log(response);
                 this.lightningInvoice = response;
                 this.paymentInvoice = this.lightningInvoice.pr;
+                this.setInvoiceAmount(this.paymentInvoice);
                 this.showZapForm = false;
                 this.showInvoiceSection = true;
                 this.payInvoice();

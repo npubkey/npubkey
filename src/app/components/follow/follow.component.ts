@@ -63,7 +63,6 @@ export class FollowComponent implements OnInit {
     }
 
     followUser() {
-        console.log("following");
         this.sendFollowEvent()
         if (this.user) {
             this.buttonText = "Unfollow";
@@ -73,7 +72,6 @@ export class FollowComponent implements OnInit {
     }
 
     unFollowUser() {
-        console.log("unfollowing");
         this.sendFollowEvent(true);
         if (this.user) {
             this.buttonText = "Follow";

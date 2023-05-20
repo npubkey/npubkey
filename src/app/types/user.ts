@@ -63,7 +63,6 @@ export class User {
             profiles: []
         }
         this.about = new Content(1, kind0.about || "", fake).getParsedContent();
-        console.log(this.about);
         this.picture = kind0.picture || "https://axiumradonmitigations.com/wp-content/uploads/2015/01/icon-user-default.png";
         this.banner = kind0.banner || "";
         this.lud06 = kind0.lud06 || "";

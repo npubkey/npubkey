@@ -25,7 +25,6 @@ export class FeedComponent implements OnInit {
     minutesAgo: number = 5;
     previousSince: number = 0;
     selectedChip: Chip;
-    // chip stuff
     chips: Chip[] = [
         {name: "Explore"},
         {name: "Following"},
@@ -96,6 +95,7 @@ export class FeedComponent implements OnInit {
     }
 
     searchHashtags() {
+        this.posts = [];
         this.toggleLoading();
         this.getPosts();
     }
@@ -139,8 +139,6 @@ export class FeedComponent implements OnInit {
             this.queryForMorePostInfo(waitPosts);
         } else {
             waitZaps = await this.nostrService.getZaps(filter);
-            console.log("ZAPS");
-            console.log(waitZaps);
             this.zaps = waitZaps;
         }
         this.incrementFilterTimes();
@@ -221,7 +219,6 @@ export class FeedComponent implements OnInit {
     patchPostsWithMoreInfo(posts: Post[], replies: Post[]) {
         let counts: {[id: string]: number} = {}
         for (const r of replies) {
-            console.log(r);
             if (r.nip10Result?.reply?.id) {
                 counts[r.nip10Result.reply.id] = counts[r.nip10Result.reply.id] ? counts[r.nip10Result.reply.id] + 1 : 1;
             }

@@ -196,12 +196,16 @@ export class NostrService {
         let content;
         let user;
         response.forEach(e => {
-            content = JSON.parse(e.content)
-            user = new User(content, e.created_at, e.pubkey)
-            if (user.displayName.includes(searchTerm)) {
-                users.push(user)
+            try {
+                content = JSON.parse(e.content);
+                user = new User(content, e.created_at, e.pubkey)
+                if (user.displayName.includes(searchTerm)) {
+                    users.push(user)
+                }
+                this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture);
+            } catch (e) {
+                console.log(e);
             }
-            this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture);
         });
         return users;
     }

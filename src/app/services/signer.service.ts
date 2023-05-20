@@ -75,6 +75,14 @@ export class SignerService {
         localStorage.setItem("relay", relay);
     }
 
+    getDefaultZap() {
+        return localStorage.getItem("defaultZap") || "5";
+    }
+
+    setDefaultZap(defaultZap: string) {
+        localStorage.setItem("defaultZap", defaultZap)
+    }
+
     getFollowingListAsTags(): string[][] {
         let following = this.getFollowingList();
         let tags: string[][] = [];
