@@ -29,7 +29,6 @@ export interface LightningInvoice {
     routes?: string[];
 }
 
-
 export interface ZapRequest {
     kind: number;
     content: string;
@@ -226,7 +225,7 @@ export class Content {
         if (value.length < 25) return value;
         let section: number = value.length / 10;
         let finalSection: number = value.length - section;
-        return value.substring(0, section) + ":" + value.substring(finalSection)
+        return value.substring(0, section) + ":" +  value.substring(finalSection)
     }
 
     reposted(): string {
@@ -352,12 +351,12 @@ export class Content {
                 }
                 if (match.startsWith("nostr:nevent")) {
                     let nevent = match.substring(6)
-                    let textWrap: TextWrap = {text: this.ellipsis(nevent), addLink: `href="/posts/${nevent}"`}
+                    let textWrap: TextWrap = {text: nevent, addLink: `href="/posts/${nevent}"`}
                     content = content.replace(match, this.wrapTextInSpan(textWrap));
                 }
                 if (match.startsWith("nostr:note")) {
                     let note = match.substring(6);
-                    let textWrap: TextWrap = {text: this.ellipsis(note), addLink: `href="/posts/${this.encodeNoteAsEvent(note)}"`}
+                    let textWrap: TextWrap = {text: note, addLink: `href="/posts/${this.encodeNoteAsEvent(note)}"`}
                     content = content.replace(match, this.wrapTextInSpan(textWrap));
                 }
             } catch (e) {
@@ -388,8 +387,8 @@ export class Post {
     nostrEventId: string;
     replyCount: number;
     isAReply: boolean = false;
-    isARepost: boolean = false;
-    constructor(kind: number, pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result) {
+    repostingPubkey: string;
+    constructor(kind: number, pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result, repostingPubkey: string) {
         this.kind = kind;
         this.pubkey = pubkey;
         this.npub = nip19.npubEncode(this.pubkey);
@@ -405,7 +404,7 @@ export class Post {
         this.nostrEventId = nip19.neventEncode({id: this.noteId});
         this.replyCount = 0;
         this.setIsAReply();
-        this.setIsARepost();
+        this.repostingPubkey = repostingPubkey;
     }
 
     setUsername(pubkey: string): void {
@@ -433,12 +432,6 @@ export class Post {
             this.isAReply = true;
         } else {
             this.isAReply = false;
-        }
-    }
-
-    setIsARepost(): void {
-        if (this.kind === 6) {
-            this.isARepost  = true;
         }
     }
 }

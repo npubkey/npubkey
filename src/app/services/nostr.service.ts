@@ -77,7 +77,7 @@ export class NostrService {
         return Math.floor(now.setMinutes(now.getMinutes() - minutesAgo) / 1000)
     }
 
-    getPostFromResponse(response: Event) {
+    getPostFromResponse(response: Event, repostingPubkey: string = "") {
         let nip10Result = nip10.parse(response);
         return new Post(
             response.kind,
@@ -85,7 +85,8 @@ export class NostrService {
             response.content,
             response.id,
             response.created_at,
-            nip10Result
+            nip10Result,
+            repostingPubkey
         );
     }
 
@@ -107,9 +108,17 @@ export class NostrService {
         const relay = await this.relayConnect();
         const response = await relay.list([kind6, kind1])
         let posts: Post[] = [];
+        let repostIds: string[] = [];
         response.forEach(e => {
-            posts.push(this.getPostFromResponse(e));
+            if (e.kind === 1) {
+                posts.push(this.getPostFromResponse(e));
+            } else {
+                repostIds.push(e.tags[0][1]);
+            }
         });
+        let repostFilter: Filter = {"ids": repostIds}
+        const r2 = await this.getKind1(repostFilter, pubkey);
+        posts.push(...r2);
         posts.sort((a,b) => a.createdAt - b.createdAt).reverse();
         return posts;
     }
@@ -152,7 +161,6 @@ export class NostrService {
         let filter: Filter = {kinds: [3], "#p": [pubkey], limit: 100}
         const relay = await this.relayConnect();
         const response = await relay.list([filter]);
-        console.log(response)
         let followers: string[] = []
         if (response) {
             response.forEach(r => {
@@ -176,7 +184,7 @@ export class NostrService {
         return undefined;
     }
 
-    async getKind1(filter: Filter): Promise<Post[]>{
+    async getKind1(filter: Filter, repostingPubkey: string = ""): Promise<Post[]>{
         // text notes
         filter.kinds = [1];
         const relay = await this.relayConnect();
@@ -185,7 +193,7 @@ export class NostrService {
         const muteList: string[] = this.signerService.getMuteList();
         response.forEach(e => {
             if (!muteList.includes(e.pubkey)) {
-                posts.push(this.getPostFromResponse(e));
+                posts.push(this.getPostFromResponse(e, repostingPubkey));
             } else {
                 console.log("muted user found not including");
             }
@@ -265,7 +273,6 @@ export class NostrService {
         // text notes
         const relay = await this.relayConnect();
         const response = await relay.list(filters)
-        console.log(response);
         let posts: Post[] = [];
         response.forEach(e => {
             posts.push(this.getPostFromResponse(e));
@@ -337,7 +344,6 @@ export class NostrService {
         }
         const relay = await this.relayConnect();
         const response = await relay.get(filter)
-        console.log(response);
         if (response) {
             this.signerService.setMuteListFromTags(response.tags);
         } else {
@@ -382,7 +388,6 @@ export class NostrService {
         }
         const relay = await this.relayConnect();
         const response = await relay.list([filter2, filter3]);
-        console.log(response);
         let posts: Post[] = [];
         response.forEach(e => {
             const post = this.getPostFromResponse(e);

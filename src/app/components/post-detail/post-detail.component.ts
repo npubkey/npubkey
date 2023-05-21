@@ -95,7 +95,7 @@ export class PostDetailComponent implements OnInit {
                 "#e": [this.root.noteId]
             }
             this.postZaps = await this.nostrService.getZaps(filter);
-            if (this.postZaps) {
+            if (this.postZaps.length > 0) {
                 this.postZapsCount = this.postZaps.map(item => item.satAmount).reduce((prev, next) => prev + next);
             }
         }

@@ -13,6 +13,7 @@ export class Paginator {
     originalBaseTimeDiff: number;
     constructor(until: number = 0, since: number = 0, baseTimeDiff: number = 5) {
         this.until = until;
+        this.setDefaultUntil();
         this.baseTimeDiff = baseTimeDiff;
         this.originalBaseTimeDiff = this.baseTimeDiff;
         if (since === 0) {

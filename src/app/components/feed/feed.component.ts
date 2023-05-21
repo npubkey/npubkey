@@ -186,7 +186,7 @@ export class FeedComponent implements OnInit, OnDestroy {
             filter.since = this.paginator.since;
             filter.until = this.paginator.until;
         }
-        this.paginator.printTimes();
+        // this.paginator.printTimes();
         return filter;
     }
 

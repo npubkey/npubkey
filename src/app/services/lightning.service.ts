@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of} from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { LightningResponse, LightningInvoice, ZapRequest } from '../types/post';
+import { LightningResponse, LightningInvoice } from '../types/post';
 import { WebLN } from 'src/app/types/webln';
 import { Event } from 'nostr-tools';
+
 
 declare global {
     interface Window {

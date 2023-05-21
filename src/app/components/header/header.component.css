@@ -41,3 +41,7 @@ mat-toolbar-row {
     outline: none;
     border: 0;
 }
+
+.header-user-image img {
+    border-radius: 50%;
+}

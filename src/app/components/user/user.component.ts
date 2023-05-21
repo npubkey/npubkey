@@ -78,7 +78,6 @@ export class UserComponent implements OnInit {
         if (invoice) {
             const decodedInvoice = decode(invoice);
             for (let s of decodedInvoice.sections) {
-                console.log(s);
                 if (s.name === "amount") {
                     this.invoiceAmount = String(Number(s.value)/1000);
                     break;
@@ -141,7 +140,6 @@ export class UserComponent implements OnInit {
         if (this.lightningResponse && this.lightningResponse.callback) {
             this.lightning.getLightningInvoice(this.lightningResponse.callback, amount)
             .subscribe(response => {
-                console.log(response);
                 this.lightningInvoice = response;
                 this.paymentInvoice = this.lightningInvoice.pr;
                 this.setInvoiceAmount(this.paymentInvoice);

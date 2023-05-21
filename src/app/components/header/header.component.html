@@ -24,7 +24,10 @@
                         <mat-icon>{{ create_icon }}</mat-icon>
                     </button>
                     <button mat-icon-button routerLink='/profile'>
-                        <mat-icon>{{ menu_icon }}</mat-icon>
+                        <div *ngIf="userImage" class="header-user-image">
+                            <img src="{{userImage}}" />
+                        </div>
+                        <mat-icon *ngIf="!userImage">{{ menu_icon }}</mat-icon>
                     </button>
                 </div>
             </mat-toolbar-row>

@@ -1,4 +1,21 @@
 <div class="router-container">
+    <div *ngIf="!user" class="no-profile-yet">
+        <p class="title-container">
+            <small class="subtitle">{{welcomeMessage}}</small>
+        </p>
+        <p>
+            <button mat-fab extended color="primary" routerLink="/profile-edit">Create Profile</button>
+        </p>
+        <p>
+            <button mat-fab extended color="explore" routerLink="/feed">Explore Nostr</button>
+        </p>
+        <p>
+            <button mat-fab extended color="accent" routerLink="/settings">Settings</button>
+        </p>
+        <p>
+            <button mat-fab extended color="accent" (click)="signOut()">Sign Out</button>
+        </p>
+    </div>
     <div *ngIf="user">
         <div class="banner">
             <img class="banner-image" src="{{user.banner}}"/>
@@ -30,10 +47,10 @@
             <app-loading></app-loading>
         </div>
         <div *ngIf="posts.length === 0 && !loading">
-            <p>No posts</p>
+            <p>Nothing here...</p>
         </div>
     </div>
-    <div *ngIf="userNotFound">
+    <div *ngIf="userNotFound && !viewingSelf">
         <mat-card>
             <mat-card-content>User Not Found</mat-card-content>
         </mat-card>

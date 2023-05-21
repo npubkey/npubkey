@@ -1,4 +1,9 @@
 <mat-card class="post" *ngIf="post">
+    <div *ngIf="post.repostingPubkey" class="repost-header">
+        <p class="repost-p">
+            {{post.repostingPubkey | username | ellipsis}} reposted
+        </p>
+    </div>
     <mat-card-header>
         <img 
             *ngIf="post.picture"

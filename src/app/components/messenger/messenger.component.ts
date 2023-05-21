@@ -163,6 +163,7 @@ export class MessengerComponent implements OnInit, OnDestroy, AfterViewInit {
                 createdAt: dm.created_at
             }
         );
+        // TODO filter out dupes here
         this.messages.sort((a,b) => a.createdAt - b.createdAt);
     }
 
@@ -190,8 +191,8 @@ export class MessengerComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    encryptContent(pubkey: string, content: string) {
-        if (this.signerService.usingNostrBrowserExtension()) {
+    async encryptContent(pubkey: string, content: string) {
+        if (await this.signerService.usingNostrBrowserExtension()) {
             return this.signerService.signDMWithExtension(pubkey, content);
         }
         let privateKey = this.signerService.getPrivateKey()
@@ -199,7 +200,7 @@ export class MessengerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     async decryptCipherText(pubkey: string, content: string) {
-        if (this.signerService.usingNostrBrowserExtension()) {
+        if (await this.signerService.usingNostrBrowserExtension()) {
             return await this.signerService.decryptDMWithExtension(pubkey, content);
         }
         return this.signerService.decryptWithPrivateKey(pubkey, content);
@@ -213,15 +214,21 @@ export class MessengerComponent implements OnInit, OnDestroy, AfterViewInit {
         const toFriendContent: string = await this.encryptContent(this.friendPubkey, this.content);
         const toTags = [["p", this.friendPubkey]]
         let toFriendUnsignedEvent = this.nostrService.getUnsignedEvent(4, toTags, toFriendContent);
-        let toFriendSignedEvent: Event;
+        let toFriendSignedEvent: Event | null;
         if (this.userPrivateKey !== "") {
             let toFriendEventId = getEventHash(toFriendUnsignedEvent)
             toFriendSignedEvent = this.nostrService.getSignedEvent(toFriendEventId, this.userPrivateKey, toFriendUnsignedEvent);
         } else {
             toFriendSignedEvent = await this.signerService.signEventWithExtension(toFriendUnsignedEvent);
         }
-        this.nostrService.sendEvent(toFriendSignedEvent);
-        this.openSnackBar("Message Sent!", "dismiss");
-        this.content = "";
+        if (toFriendSignedEvent) {
+            this.nostrService.sendEvent(toFriendSignedEvent);
+            this.openSnackBar("Message Sent!", "dismiss");
+            this.content = "";
+        } else {
+            this.openSnackBar("Message Failed on signing!", "dismiss");
+            this.content = "";
+        }
+
     }
 }

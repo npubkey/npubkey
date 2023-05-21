@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { UnsignedEvent, nip19, getPublicKey, nip04 } from 'nostr-tools';
+import { UnsignedEvent, nip19, getPublicKey, nip04, Event } from 'nostr-tools';
+import { NostrWindow } from '../types/nostr';
+
+declare global {
+    interface Window {
+        nostr: NostrWindow | undefined
+    }
+}
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +60,11 @@ export class SignerService {
 
     getPrivateKey() {
         return localStorage.getItem(this.localStoragePrivateKeyName) || "";
+    }
+
+    getLoggedInUserImage() {
+        // gets from local storage if we have it
+        return localStorage.getItem(`${this.getPublicKey()}_img`) || "";
     }
 
     usingPrivateKey() {
@@ -155,44 +167,52 @@ export class SignerService {
         if (this.usingPrivateKey()) {
             return false;
         }
-        if (!(window as any).nostr) {
-            return false;
+        if (window.nostr) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     async handleLoginWithExtension(): Promise<boolean> {
-        const pubKey = await (window as any).nostr.getPublicKey().catch(() => {
-            return false;
-        });
-        this.setPublicKeyFromExtension(pubKey);
-        return true;
-    }
-
-    async signEventWithExtension(unsignedEvent: UnsignedEvent) {
-        return (await (window as any).nostr.signEvent(unsignedEvent)) || {}
-    }
-
-    async signDMWithExtension(pubkey: string, content: string) {
-        return (await (window as any).nostr.nip04.encrypt(pubkey, content))
-    }
-
-    async login(): Promise<boolean> {
-        if (window.webln && !window.webln.enabled) {
-            await window.webln.enable();
+        if (window.nostr) {
+            const pubkey = await window.nostr.getPublicKey().catch(() => {
+                return "";
+            });
+            if (pubkey === "") {
+                return false;
+            }
+            this.setPublicKeyFromExtension(pubkey);
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    async signEventWithExtension(unsignedEvent: UnsignedEvent): Promise<Event> {
+        if (window.nostr) {
+            const signedEvent = await window.nostr.signEvent(unsignedEvent)
+            return signedEvent;
+        } else {
+            throw new Error("Tried to sign event with extension but failed");
+        }
+    }
+
+    async signDMWithExtension(pubkey: string, content: string): Promise<string> {
+        if (window.nostr && window.nostr.nip04?.encrypt) {
+            return await window.nostr.nip04.encrypt(pubkey, content)
+        }
+        throw new Error("Failed to Sign with extension");
     }
 
     async decryptDMWithExtension(pubkey: string, ciphertext: string): Promise<string> {
-        await this.login();
-        return (
-            await (window as any).nostr.nip04.decrypt(pubkey, ciphertext)
-            .catch((error: any) => {
-                console.log(error);
-                return "*Failed to Decrypted Content*"
-            })
-        )
+        if (window.nostr && window.nostr.nip04?.decrypt) {
+            const decryptedContent = await window.nostr.nip04.decrypt(pubkey, ciphertext)
+                .catch((error: any) => {
+                    console.log(error);
+                    return "*Failed to Decrypted Content*"
+                });
+            return decryptedContent;
+        }
+        return "Attempted Nostr Window decryption and failed."
     }
 
     async decryptWithPrivateKey(pubkey: string, ciphertext: string): Promise<string> {

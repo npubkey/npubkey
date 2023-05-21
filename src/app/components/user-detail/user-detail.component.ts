@@ -8,6 +8,8 @@ import { nip19 } from 'nostr-tools';
 import { Paginator } from 'src/app/utils';
 import { SignerService } from 'src/app/services/signer.service';
 import { Content } from 'src/app/types/post';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-detail',
@@ -15,7 +17,7 @@ import { Content } from 'src/app/types/post';
   styleUrls: ['./user-detail.component.css']
 })
 export class UserDetailComponent implements OnInit {
-
+    welcomeMessage: string = "Welcome to the nostr network. Create a profile or start looking around";
     user: User | null = null;
     npub: string = "";
     posts: Post[] = [];
@@ -24,24 +26,28 @@ export class UserDetailComponent implements OnInit {
     followingCount: number = 0;
     followerCount: number = 0;
     paginator: Paginator;
+    viewingSelf: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
         private nostrService: NostrService,
-        private signerService: SignerService
+        private signerService: SignerService,
+        private snackBar: MatSnackBar,
+        private router: Router
     ) {
         this.npub = this.route.snapshot.paramMap.get('npub') || "";
         if (this.npub === "") {
+            this.viewingSelf = true;
             this.npub = this.signerService.npub();
         }
-        console.log(this.npub);
         this.paginator = new Paginator(0, 24*60, 24*60);
         route.params.subscribe(val => {
             this.user = null;
             this.posts = [];
-            if (val) {
-                this.npub = val["npub"];
-            } else {
+            this.viewingSelf = false;
+            this.npub = val["npub"];
+            if (this.npub === undefined) {
+                this.viewingSelf = true;
                 this.npub = this.signerService.npub();
             }
             this.paginator = new Paginator(0, 24*60, 24*60);
@@ -53,6 +59,16 @@ export class UserDetailComponent implements OnInit {
 
     ngOnInit() {
         this.getUser();
+    }
+
+    signOut() {
+        this.signerService.clearKeys();
+        this.openSnackBar("Successfully signed out", "dismiss");
+        this.router.navigate(["/login"]);
+    }
+
+    openSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {duration: 1300});
     }
 
     async onScroll() {
@@ -79,7 +95,6 @@ export class UserDetailComponent implements OnInit {
         }
         const pubkey: string = nip19.decode(this.npub).data.toString();
         this.user = await this.nostrService.getUser(pubkey);
-        console.log(this.user);
         if (this.user) {
             this.getUserPosts(this.user);
         } else {
@@ -99,61 +114,13 @@ export class UserDetailComponent implements OnInit {
     }
 
     async queryForMorePostInfo(user: User, posts: Post[]) {
-        let noteIds: string[] = [];
-        posts.forEach(p => {
-            noteIds.push(p.noteId)
-            if (p.nip10Result.root) {
-                noteIds.push(p.nip10Result.root.id)
-            }
-        })
-        console.log(noteIds);
-        let replyFilter: Filter = {
-            kinds: [1], "#e": noteIds
-        }
-        this.posts.push(...posts);
-        this.posts.sort((a,b) => a.createdAt - b.createdAt).reverse();
         this.paginator.incrementFilterTimes(this.posts);
-        let replies = await this.nostrService.getKind1(replyFilter)
-        this.patchPostsWithMoreInfo(posts, replies);
+        this.posts.push(...posts);
         this.posts = this.posts.filter((value, index, self) =>
             index === self.findIndex((t) => (
                 t.noteId === value.noteId
             ))
         )
         this.loading = false;
-    }
-
-    patchPostsWithMoreInfo(posts: Post[], replies: Post[]) {
-        let counts: {[id: string]: number} = {}
-        for (const r of replies) {
-            if (r.nip10Result?.reply?.id) {
-                counts[r.nip10Result.reply.id] = counts[r.nip10Result.reply.id] ? counts[r.nip10Result.reply.id] + 1 : 1;
-            }
-        }
-        posts.forEach(p => {
-            console.log(p);
-            if (p.isARepost) {
-                console.log("is a repost")
-                if (p.nip10Result.root) {
-                    console.log("has a root")
-                    const rootId = p.nip10Result.root.id
-                    console.log(rootId);
-                    let reposts = replies.filter(r => {
-                        console.log(r.noteId);
-                        return r.noteId === rootId;
-                    });
-                    console.log("responsts")
-                    console.log(reposts)
-                    if (reposts) {
-                        const repost = reposts[0];
-                        console.log(repost)
-                        console.log(p.content)
-                        p.content = p.content.replace(`nostr:${p.nostrEventId}`, new Content(1, repost.content, repost.nip10Result).getParsedContent())
-                        console.log(p.content)
-                    }
-                }
-            }
-            p.setReplyCount(counts[p.noteId]);
-        });
     }
 }

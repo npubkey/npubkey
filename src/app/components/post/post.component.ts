@@ -43,6 +43,7 @@ export class PostComponent implements OnInit {
     smallScreen: boolean = false;
     Breakpoints = Breakpoints;
     currentBreakpoint:string = '';
+    userReposted: boolean = false;
 
     readonly breakpoint$ = this.breakpointObserver
         .observe([Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, '(min-width: 500px)'])
@@ -70,7 +71,6 @@ export class PostComponent implements OnInit {
         if (this.post) {
             this.rootEvent = this.post.nip10Result?.root?.id || "";
         }
-        console.log(this.inPostDetail)
         if (this.inPostDetail === undefined) {
             this.inPostDetail = false;
         } else {
@@ -187,7 +187,6 @@ export class PostComponent implements OnInit {
             this.lightning.getLightning(lightningAddress)
             .subscribe(response => {
                 this.lightningResponse = response;
-                console.log(response);
                 if (this.lightningResponse.status && this.lightningResponse.status == "Failed") {
                     this.showZapForm = false;
                     this.openSnackBar("Failed to lookup lightning address", "dismiss");
@@ -228,12 +227,8 @@ export class PostComponent implements OnInit {
     }
 
     sendZap() {
-        console.log(this.lightningResponse)
-        console.log(this.lightningResponse?.allowsNostr)
-        console.log(this.lightningResponse?.nostrPubkey)
         if (this.lightningResponse?.allowsNostr && this.lightningResponse.nostrPubkey) {
             // should also check if nostrPubkey is valid
-            console.log("can be nostr aware zap");
             this.createZapRequest();
         } else {
             this.getLightningInvoice(String(Number(this.sats)*1000));
@@ -268,7 +263,6 @@ export class PostComponent implements OnInit {
             }
             this.lightning.sendZapRequest(this.lightningResponse.callback, signedEvent, amount, lnurl)
                 .subscribe(response => {
-                    console.log(response);
                     this.lightningInvoice = response;
                     this.paymentInvoice = this.lightningInvoice.pr;
                     this.setInvoiceAmount(this.paymentInvoice);

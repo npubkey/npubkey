@@ -24,7 +24,8 @@ export class HeaderComponent implements OnInit {
     Breakpoints = Breakpoints;
     currentBreakpoint: string = '';
     showHeader: boolean = true;
-
+    pubkey: string;
+    userImage: string;
     readonly breakpoint$ = this.breakpointObserver
         .observe([Breakpoints.XLarge, Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, Breakpoints.XSmall])
         .pipe(
@@ -37,8 +38,11 @@ export class HeaderComponent implements OnInit {
         private nostrService: NostrService,
         private breakpointObserver: BreakpointObserver
     ) {
+        this.pubkey = this.signerService.getPublicKey();
+        this.userImage = this.signerService.getLoggedInUserImage();
         const relay = this.signerService.getRelay() // will get from storage or default
         this.signerService.setRelay(relay); // incase its not there
+
     }
 
     ngOnInit(): void {
@@ -47,11 +51,10 @@ export class HeaderComponent implements OnInit {
         this.breakpoint$.subscribe(() => {
             this.breakpointChanged()
         });
-        let pubkey = this.signerService.getPublicKey();
-        if (pubkey) {
+        if (this.pubkey) {
             // poorly named but this will save our following list
-            this.nostrService.getContactList(pubkey);
-            this.getMuteList(pubkey);
+            this.nostrService.getContactList(this.pubkey);
+            this.getMuteList(this.pubkey);
         }
     }
 
