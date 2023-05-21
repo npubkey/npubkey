@@ -5,7 +5,6 @@ import { UsersComponent } from './components/users/users.component';
 import { FeedComponent } from './components/feed/feed.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { LoginComponent } from './components/login/login.component';
-import { GenerateComponent } from './components/generate/generate.component';
 import { UserDetailComponent } from './components/user-detail/user-detail.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ProfileEditComponent } from './components/profile-edit/profile-edit.component';
@@ -30,7 +29,7 @@ const routes: Routes = [
     { path: 'users/:npub/followers', component: FollowingComponent},
     { path: 'users/:npub', component: UserDetailComponent },
     { path: 'users', component: UsersComponent },
-    { path: 'profile', component: ProfileComponent},
+    { path: 'profile', component: UserDetailComponent},
     { path: 'profile-edit', component: ProfileEditComponent},
     { path: 'search', component: SearchComponent},
     { path: 'settings', component: SettingsComponent},

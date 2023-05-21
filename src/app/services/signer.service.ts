@@ -67,6 +67,28 @@ export class SignerService {
         return following;
     }
 
+    getMuteList() {
+        return (localStorage.getItem("muteList") || "").split(',');
+    }
+
+    setMuteListFromTags(tags: string[][]): void {
+        let muteList: string[] = []
+        tags.forEach(t => {
+            muteList.push(t[1]);
+        })
+        this.setMuteList(muteList);
+    }
+
+    setMuteList(muteList: string[]) {
+        console.log('updating mute list')
+        if (muteList.length === 0) {
+            localStorage.setItem("muteList", "");
+        } else {
+            let muteSet = Array.from(new Set(muteList));
+            localStorage.setItem("muteList", muteSet.filter(s => s).join(','));
+        }
+    }
+
     getRelay() {
         return localStorage.getItem("relay") || "wss://relay.damus.io/";
     }

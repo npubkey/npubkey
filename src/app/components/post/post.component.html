@@ -17,6 +17,9 @@
                 <button mat-menu-item (click)="showEventJson()">
                     <span>Event Json</span>
                 </button>
+                <button mat-menu-item (click)="addToMuteList()">
+                    <span>Mute User</span>
+                </button>
             </mat-menu>
         </div>
         <mat-card-subtitle>{{post.fromNow}}</mat-card-subtitle>
@@ -64,7 +67,7 @@
         <div (click)="copyLink()" class="click-icon">
             <mat-icon>share</mat-icon>
         </div>
-        <div routerLink="/posts/{{post.noteId|nevent}}" class="click-icon">
+        <div *ngIf="!inPostDetail" routerLink="/posts/{{post.noteId|nevent}}" class="click-icon">
             <mat-icon>open_in_full</mat-icon>
         </div>
     </div>

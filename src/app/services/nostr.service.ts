@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { relayInit, Event, Filter, nip10, UnsignedEvent, signEvent } from 'nostr-tools';
+import { relayInit, Event, Filter, nip10, UnsignedEvent, signEvent, getEventHash } from 'nostr-tools';
 import { User } from '../types/user';
 import { Post, Zap } from '../types/post';
 import { SignerService } from './signer.service';
@@ -89,18 +89,20 @@ export class NostrService {
         );
     }
 
-    async getUserPosts(pubkey: string): Promise<Post[]> {
+    async getUserPosts(pubkey: string, since: number, until: number): Promise<Post[]> {
         let kind1: Filter = {
             kinds: [1],
             authors: [pubkey],
-            limit: 20,
-            //since: this.getSince(10)
+            limit: 100,
+            since: since,
+            until: until
         }
         let kind6: Filter = {
             kinds: [6],
             authors: [pubkey],
-            limit: 20,
-            //since: this.getSince(10)
+            limit: 100,
+            since: since,
+            until: until
         }
         const relay = await this.relayConnect();
         const response = await relay.list([kind6, kind1])
@@ -180,8 +182,13 @@ export class NostrService {
         const relay = await this.relayConnect();
         const response = await relay.list([filter])
         let posts: Post[] = [];
+        const muteList: string[] = this.signerService.getMuteList();
         response.forEach(e => {
-            posts.push(this.getPostFromResponse(e));
+            if (!muteList.includes(e.pubkey)) {
+                posts.push(this.getPostFromResponse(e));
+            } else {
+                console.log("muted user found not including");
+            }
         });
         return posts;
     }
@@ -200,6 +207,12 @@ export class NostrService {
                 content = JSON.parse(e.content);
                 user = new User(content, e.created_at, e.pubkey)
                 if (user.displayName.includes(searchTerm)) {
+                    users.push(user)
+                }
+                if (user.pubkey.includes(searchTerm)) {
+                    users.push(user)
+                }
+                if (user.npub.includes(searchTerm)) {
                     users.push(user)
                 }
                 this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture);
@@ -314,6 +327,43 @@ export class NostrService {
         }
         this.signerService.setFollowingList(following);
         return following
+    }
+
+    async getMuteList(pubkey: string): Promise<void> {
+        const filter: Filter = {
+            "authors": [pubkey],
+            "kinds": [10000],
+            "limit": 1
+        }
+        const relay = await this.relayConnect();
+        const response = await relay.get(filter)
+        console.log(response);
+        if (response) {
+            this.signerService.setMuteListFromTags(response.tags);
+        } else {
+            this.signerService.setMuteList([]);
+        }
+    }
+
+    async addToMuteList(pubkey: string): Promise<void> {
+        const muteList: string[] = this.signerService.getMuteList();
+        let tags: string[][] = [["p", pubkey]];
+        for (let m of muteList) {
+            if (m) {
+                tags.push(["p", m])
+            }
+        }
+        const unsignedEvent = this.getUnsignedEvent(10000, tags, "");
+        let signedEvent: Event;
+        const privateKey = this.signerService.getPrivateKey();
+        if (privateKey !== "") {
+            let eventId = getEventHash(unsignedEvent)
+            signedEvent = this.getSignedEvent(eventId, privateKey, unsignedEvent);
+        } else {
+            signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+        }
+        this.sendEvent(signedEvent);
+        await this.getMuteList(this.signerService.getPublicKey());
     }
 
     async search(searchTerm: string): Promise<Post[]> {

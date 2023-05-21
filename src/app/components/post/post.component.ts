@@ -26,6 +26,7 @@ export class PostComponent implements OnInit {
     @Input() post?: Post;
     @Input() zaps?: Zap[];
     @Input() zapsCount?: number;
+    @Input() inPostDetail?: boolean;
     viewingRoot: boolean = false;
     rootEvent: string = "";
     replyContent: string = "";
@@ -69,6 +70,12 @@ export class PostComponent implements OnInit {
         if (this.post) {
             this.rootEvent = this.post.nip10Result?.root?.id || "";
         }
+        console.log(this.inPostDetail)
+        if (this.inPostDetail === undefined) {
+            this.inPostDetail = false;
+        } else {
+            this.inPostDetail = true;
+        }
     }
 
     private breakpointChanged() {
@@ -92,6 +99,13 @@ export class PostComponent implements OnInit {
 
     showEventJson() {
         console.log(this.post);
+    }
+
+    async addToMuteList() {
+        if (this.post) {
+            await this.nostrService.addToMuteList(this.post.pubkey);
+            this.openSnackBar("Added to Mute List", "Dismiss");
+        }
     }
 
     setInvoiceAmount(invoice: string) {
@@ -316,15 +330,7 @@ export class PostComponent implements OnInit {
             } else {
                 tags.push(["e", this.post.noteId, "", "root"])
             }
-            tags.push(["p", this.post.pubkey])
-            // let rootAuthorTag = "#[0]";
-            // let otherOtherTags = "";
-            // for (let p in this.post.nip10Result.profiles) {
-            //     let pk = this.post.nip10Result.profiles[p].pubkey;
-            //     tags.push(["p", pk])
-            //     otherOtherTags = otherOtherTags + ` #[${p+1}]`;
-            // }
-            // this.replyContent = `${rootAuthorTag} ${otherOtherTags} ${this.replyContent}`;
+            tags.push(["p", this.post.pubkey]);
             let unsignedEvent = this.nostrService.getUnsignedEvent(1, tags, this.replyContent);
             let signedEvent: Event;
             if (privateKey !== "") {

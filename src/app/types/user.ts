@@ -13,7 +13,7 @@ export interface Kind0Content {
     lud06?: string;
     lud16?: string;
     nip05?: string;
-    // can have other random shit in here too
+    // can have other random stuff in here too
 }
 
 export interface SearchUser {
@@ -40,6 +40,7 @@ export class User {
     displayName: string = "";
     website: string = "";
     about: string = "";
+    aboutHTML: string;
     picture: string = "";
     banner: string = "";
     lud06: string = "";
@@ -62,7 +63,8 @@ export class User {
             mentions: [],
             profiles: []
         }
-        this.about = new Content(1, kind0.about || "", fake).getParsedContent();
+        this.about = kind0.about || "";
+        this.aboutHTML = new Content(1, kind0.about || "", fake).getParsedContent();
         this.picture = kind0.picture || "https://axiumradonmitigations.com/wp-content/uploads/2015/01/icon-user-default.png";
         this.banner = kind0.banner || "";
         this.lud06 = kind0.lud06 || "";

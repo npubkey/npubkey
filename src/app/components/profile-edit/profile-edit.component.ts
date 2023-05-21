@@ -6,7 +6,6 @@ import {
     UnsignedEvent,
     getEventHash,
     signEvent,
-    Filter
  } from 'nostr-tools';
 import { MatSnackBar } from '@angular/material/snack-bar';
 

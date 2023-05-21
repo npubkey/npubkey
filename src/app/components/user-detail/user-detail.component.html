@@ -5,27 +5,33 @@
         </div>
         <app-user [user]="user"></app-user>
         <mat-divider></mat-divider>
-        <mat-tab-group>
-            <mat-tab label="Posts">
-                <div *ngFor="let post of posts">
-                    <app-post *ngIf="!post.isAReply" [post]="post"></app-post>
-                </div>
-            </mat-tab>
-            <mat-tab label="Reposts / Replies">
-                <div *ngFor="let post of posts">
-                    <app-post *ngIf="post.isAReply" [post]="post"></app-post>
-                </div>
-            </mat-tab>
-        </mat-tab-group>
-        <div *ngIf="posts.length === 0 && loadingPosts">
+        <div
+            *ngIf="posts"
+            infiniteScroll
+            [infiniteScrollDistance]="2"
+            [infiniteScrollThrottle]="500"
+            (scrolled)="onScroll()"
+            [scrollWindow]="true"
+        >
+            <mat-tab-group>
+                <mat-tab label="Posts">
+                    <div *ngFor="let post of posts">
+                        <app-post *ngIf="!post.isAReply" [post]="post"></app-post>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Replies">
+                    <div *ngFor="let post of posts">
+                        <app-post *ngIf="post.isAReply" [post]="post"></app-post>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+        <div *ngIf="loading">
             <app-loading></app-loading>
         </div>
-        <div *ngIf="posts.length === 0 && !loadingPosts">
+        <div *ngIf="posts.length === 0 && !loading">
             <p>No posts</p>
         </div>
-    </div>
-    <div *ngIf="!user && loadingPosts">
-        <app-loading></app-loading>
     </div>
     <div *ngIf="userNotFound">
         <mat-card>

@@ -50,7 +50,7 @@
                         <app-post *ngIf="!post.isAReply" [post]="post"></app-post>
                     </div>
                 </mat-tab>
-                <mat-tab label="Reposts / Replies">
+                <mat-tab label="Replies">
                     <div class="feed" *ngFor="let post of posts">
                         <app-post *ngIf="post.isAReply" [post]="post"></app-post>
                     </div>

@@ -1,12 +1,12 @@
 <div class="router-container">
     <div *ngIf="!loading">
         <div *ngIf="root">
-            <app-post [post]="root" [zaps]="postZaps" [zapsCount]="postZapsCount"></app-post>
+            <app-post [post]="root" [zaps]="postZaps" [zapsCount]="postZapsCount" [inPostDetail]="true"></app-post>
         </div>
         <mat-tab-group>
             <mat-tab label="Replies ({{replies.length}})">
                 <div *ngFor="let reply of replies">
-                    <app-post [post]="reply" [root]="post"></app-post>
+                    <app-post [post]="reply" [root]="post" [inPostDetail]="true"></app-post>
                 </div>
             </mat-tab>
             <mat-tab label="Zaps ({{postZaps.length}})">

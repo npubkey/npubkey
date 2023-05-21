@@ -1,9 +1,8 @@
 import { NIP10Result } from 'nostr-tools/lib/nip10';
 import { Event, nip19, nip10 } from 'nostr-tools';
+import { decode } from "@gandlaf21/bolt11-decode";
 import * as dayjs from 'dayjs';
 import * as relativeTime from 'dayjs/plugin/relativeTime';
-import { decode } from "@gandlaf21/bolt11-decode";
-
 dayjs.extend(relativeTime);
 
 interface TextWrap {
@@ -232,9 +231,9 @@ export class Content {
 
     reposted(): string {
         if (this.nip10Result.root) {
-            return `re: nostr:${this.getNevent(this.nip10Result.root)}`;
+            return `nostr:${this.getNevent(this.nip10Result.root)}`;
         }
-        return "repost";
+        return "<repost but malformed>";
     }
 
     wrapTextInSpan(textWrap: TextWrap): string {
@@ -389,6 +388,7 @@ export class Post {
     nostrEventId: string;
     replyCount: number;
     isAReply: boolean = false;
+    isARepost: boolean = false;
     constructor(kind: number, pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result) {
         this.kind = kind;
         this.pubkey = pubkey;
@@ -405,6 +405,7 @@ export class Post {
         this.nostrEventId = nip19.neventEncode({id: this.noteId});
         this.replyCount = 0;
         this.setIsAReply();
+        this.setIsARepost();
     }
 
     setUsername(pubkey: string): void {
@@ -432,6 +433,12 @@ export class Post {
             this.isAReply = true;
         } else {
             this.isAReply = false;
+        }
+    }
+
+    setIsARepost(): void {
+        if (this.kind === 6) {
+            this.isARepost  = true;
         }
     }
 }

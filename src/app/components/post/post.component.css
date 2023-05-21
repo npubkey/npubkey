@@ -71,7 +71,7 @@ mat-card-header img {
     left: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    max-height: 450px;
+    max-height: 500px;
     max-width: 100vw;
     position: relative;
     right: 50%;
@@ -82,7 +82,7 @@ mat-card-header img {
     left: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    max-height: 450px;
+    max-height: 500px;
     max-width: 100vw;
     position: relative;
     right: 50%;
@@ -93,7 +93,7 @@ mat-card-header img {
     display: block;
     margin-top: 1em;
     background-size: cover;
-    max-height:450px;
+    max-height:500px;
     max-width:100%;
     min-width: 50%;
     margin-left: auto;
@@ -104,7 +104,7 @@ mat-card-header img {
     display: block;
     margin-top: 1em;
     background-size: cover;
-    max-height:400px;
+    max-height:500px;
     max-width:100%;
     min-width: 50%;
     margin-left: auto;

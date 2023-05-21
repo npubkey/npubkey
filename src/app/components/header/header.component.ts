@@ -51,7 +51,12 @@ export class HeaderComponent implements OnInit {
         if (pubkey) {
             // poorly named but this will save our following list
             this.nostrService.getContactList(pubkey);
+            this.getMuteList(pubkey);
         }
+    }
+
+    async getMuteList(pubkey: string) {
+        await this.nostrService.getMuteList(pubkey);
     }
 
     private breakpointChanged() {

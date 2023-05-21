@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Filter } from 'nostr-tools';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Filter, Sub } from 'nostr-tools';
 import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
 import { Post, Zap } from '../../types/post';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { Paginator } from 'src/app/utils';
 
 interface Chip {
     color?: string;
@@ -17,13 +18,12 @@ interface Chip {
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css']
 })
-export class FeedComponent implements OnInit {
+export class FeedComponent implements OnInit, OnDestroy {
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
     loading: boolean = false;
     posts: Post[] = [];
     zaps: Zap[] = [];
-    minutesAgo: number = 5;
-    previousSince: number = 0;
+    paginator: Paginator;
     selectedChip: Chip;
     chips: Chip[] = [
         {name: "Explore"},
@@ -33,16 +33,29 @@ export class FeedComponent implements OnInit {
     ]
     hashtags: Chip[] = [{name: 'bitcoin'}, {name: 'zaps'}, {name: 'nostr'}];
     addOnBlur = true;
+    subscription: Sub | null = null;
 
     constructor(
         private nostrService: NostrService,
         private signerService: SignerService,
     ) {
         this.selectedChip = this.getCurrentSelectedChip();
+        let baseTimeDiff = 5;
+        if (this.selectedChip.name !== "Explore") {
+            baseTimeDiff = 30;
+        }
+        this.paginator = new Paginator(baseTimeDiff=baseTimeDiff);
+        this.paginator.printVars();
     }
 
     ngOnInit() {
         this.getPosts();
+    }
+
+    ngOnDestroy(): void {
+        if (this.subscription) {
+            this.subscription.unsub();
+        }
     }
 
     toggleLoading = () => this.loading = !this.loading;
@@ -62,36 +75,36 @@ export class FeedComponent implements OnInit {
     }
 
     add(event: MatChipInputEvent): void {
-      const value = (event.value || '').trim();
-      // Add our hashtag
-      if (value) {
-        this.hashtags.push({name: value});
-      }
-      // Clear the input value
-      event.chipInput!.clear();
+        const value = (event.value || '').trim();
+        // Add hashtag
+        if (value) {
+            this.hashtags.push({name: value});
+        }
+        // Clear the input value
+        event.chipInput!.clear();
     }
 
     remove(hashtag: Chip): void {
-      const index = this.hashtags.indexOf(hashtag);
+        const index = this.hashtags.indexOf(hashtag);
 
-      if (index >= 0) {
-        this.hashtags.splice(index, 1);
-      }
+        if (index >= 0) {
+            this.hashtags.splice(index, 1);
+        }
     }
 
     edit(hashtag: Chip, event: MatChipEditedEvent) {
-      const value = event.value.trim();
+        const value = event.value.trim();
 
-      // Remove hashtag if it no longer has a name
-      if (!value) {
-        this.remove(hashtag);
-        return;
-      }
-      // Edit existing hashtag
-      const index = this.hashtags.indexOf(hashtag);
-      if (index >= 0) {
-        this.hashtags[index].name = value;
-      }
+        // Remove hashtag if it no longer has a name
+        if (!value) {
+            this.remove(hashtag);
+            return;
+        }
+        // Edit existing hashtag
+        const index = this.hashtags.indexOf(hashtag);
+        if (index >= 0) {
+            this.hashtags[index].name = value;
+        }
     }
 
     searchHashtags() {
@@ -100,37 +113,33 @@ export class FeedComponent implements OnInit {
         this.getPosts();
     }
 
-    getSince(minutesAgo: number) {
-        let now = new Date()
-        return Math.floor(now.setMinutes(now.getMinutes() - minutesAgo) / 1000)
-    }
-
     switchFeed(chipName: string) {
         this.setLastFeedChipName(chipName);
         if (chipName === "Hashtags") {
             this.posts = [];
             this.selectedChip = this.chips[2];
-            this.resetFilterTimes();
+            this.paginator.resetFilterTimes();
         } else if (chipName === "Explore") {
             this.posts = []
             this.selectedChip = this.chips[0];
-            this.resetFilterTimes();
+            this.paginator.resetFilterTimes();
             this.getPosts();
         } else if (chipName === "Following" ) {
             this.posts = []
             this.selectedChip = this.chips[1];
-            this.resetFilterTimes();
+            this.paginator.resetFilterTimes();
             this.getPosts();
         } else if (chipName === "Zaps") {
             this.posts = []
             this.selectedChip = this.chips[3];
-            this.resetFilterTimes();
+            this.paginator.resetFilterTimes();
             this.getPosts();
         }
     }
 
     async getPosts() {
         let filter = this.getFilter();
+        console.log(filter);
         this.toggleLoading();
         let waitPosts: Post[];
         let waitZaps: Zap[];
@@ -141,19 +150,6 @@ export class FeedComponent implements OnInit {
             waitZaps = await this.nostrService.getZaps(filter);
             this.zaps = waitZaps;
         }
-        this.incrementFilterTimes();
-    }
-
-    incrementFilterTimes() {
-        // its not perfect but it does work OK
-        // so we don't keep getting the same posts
-        this.previousSince = this.minutesAgo;
-        this.minutesAgo += 5;
-    }
-
-    resetFilterTimes() {
-        this.minutesAgo = 5;
-        this.previousSince = 0;
     }
 
     async onScroll() {
@@ -165,31 +161,32 @@ export class FeedComponent implements OnInit {
         if (this.selectedChip.name === "Zaps") {
             // zaps
             filter.kinds = [9735];
-            filter.limit = 40;
-            filter.since = this.getSince(this.minutesAgo);
-            filter.until = this.getSince(0);
+            filter.limit = 50;
+            filter.since = this.paginator.since;
+            filter.until = this.paginator.until;
         } else if (this.selectedChip.name == "Hashtags") {
             // hashtags
             let tags: string[] = [];
             this.hashtags.forEach(h => {tags.push(h.name)});
             filter.kinds = [1];
-            filter.limit = 40;
-            filter.until = this.getSince(0);
+            filter.limit = 50;
+            filter.until = this.paginator.until;
             filter["#t"] = tags;
         } else if (this.selectedChip.name === "Following") {
             // following
             filter.kinds = [1];
             filter.limit = 50;
             filter.authors = this.signerService.getFollowingList();
-            filter.since = this.getSince(120);  // two hours ago
-            filter.until = this.getSince(0);
+            filter.since = this.paginator.since;  // two hours ago
+            filter.until = this.paginator.until;
         } else {
             // explore
             filter.kinds = [1];
             filter.limit = 50;
-            filter.since = this.getSince(this.minutesAgo);
-            filter.until = this.getSince(this.previousSince);
+            filter.since = this.paginator.since;
+            filter.until = this.paginator.until;
         }
+        this.paginator.printTimes();
         return filter;
     }
 
@@ -204,15 +201,20 @@ export class FeedComponent implements OnInit {
         let replyFilter: Filter = {
             kinds: [1], "#e": noteIds, "#p": pubkeys
         }
-        this.posts.push(...posts);
-        this.posts.sort((a,b) => a.createdAt - b.createdAt).reverse();
-        let replies = await this.nostrService.getKind1(replyFilter)
-        this.patchPostsWithMoreInfo(posts, replies);
-        this.posts = this.posts.filter((value, index, self) =>
+        // join new posts and sort without ruining UI
+        let waitPosts = this.posts // existing posts
+        waitPosts = waitPosts.concat(posts) // incoming posts
+        waitPosts = waitPosts.filter((value, index, self) =>
             index === self.findIndex((t) => (
                 t.noteId === value.noteId
             ))
         )
+        waitPosts.sort((a,b) => a.createdAt - b.createdAt).reverse();
+        this.posts = waitPosts;
+        this.paginator.incrementFilterTimes(this.posts);
+        let replies = await this.nostrService.getKind1(replyFilter)
+        this.patchPostsWithMoreInfo(posts, replies);
+        // filter out dupes
         this.toggleLoading();
     }
 

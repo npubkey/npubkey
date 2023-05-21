@@ -58,8 +58,8 @@ export class ProfileComponent implements OnInit {
     }
 
     async getPosts() {
-        if (this.user) {
-            this.posts = await this.nostrService.getUserPosts(this.user.pubkey);
-        }
+        // if (this.user) {
+        //     this.posts = await this.nostrService.getUserPosts(this.user.pubkey);
+        // }
     }
 }

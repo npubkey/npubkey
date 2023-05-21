@@ -21,7 +21,7 @@
           {{user.npub|ellipsis}}
           <mat-icon [inline]="true">content_copy</mat-icon>
         </mat-card-subtitle>
-        <mat-card-subtitle [innerHTML]="user.about | safe"></mat-card-subtitle>
+        <mat-card-subtitle [innerHTML]="user.aboutHTML | safe"></mat-card-subtitle>
         <p class="user-info" *ngIf="user.website" fxLayout="row">
             <mat-icon [inline]="true">link</mat-icon>
             <a href="{{user.website}}" target="_blank">{{user.website}}</a>
