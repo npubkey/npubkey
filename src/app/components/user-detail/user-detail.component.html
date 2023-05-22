@@ -1,5 +1,5 @@
 <div class="router-container">
-    <div *ngIf="!user" class="no-profile-yet">
+    <div *ngIf="!user && !loading && viewingSelf" class="no-profile-yet">
         <p class="title-container">
             <small class="subtitle">{{welcomeMessage}}</small>
         </p>

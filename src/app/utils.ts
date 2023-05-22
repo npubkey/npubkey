@@ -19,7 +19,7 @@ export class Paginator {
         if (since === 0) {
             this.setDefaultSince()
         } else {
-            this.since = since;
+            this.setDefaultSince(since);
         }
         this.previousSince = since;
         this.previousUntil = until;

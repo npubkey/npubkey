@@ -275,7 +275,11 @@ export class Content {
     parseLightningInvoice(content: string): string {
         let invoices: string[] = content.match(/(lightning:|lnbc)[a-z0-9]+/gm) || []
         for (let invoice of invoices) {
-            content = content.replace(invoice, this.getReplacementInvoiceHtml(invoice));
+            try {
+                content = content.replace(invoice, this.getReplacementInvoiceHtml(invoice));
+            } catch (e) {
+                console.log("failed to decode lightning invoice");
+            }
         }
         return content;
     }

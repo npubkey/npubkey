@@ -19,6 +19,7 @@ export class SignerService {
     constructor() { }
 
     clearKeys() {
+        localStorage.removeItem(`${this.getPublicKey()}_img`);
         localStorage.removeItem(this.localStoragePrivateKeyName);
         localStorage.removeItem(this.localStoragePublicKeyName);
     }
@@ -65,6 +66,11 @@ export class SignerService {
     getLoggedInUserImage() {
         // gets from local storage if we have it
         return localStorage.getItem(`${this.getPublicKey()}_img`) || "";
+    }
+
+    setLoggedInUserImage(url: string) {
+        // gets from local storage if we have it
+        return localStorage.setItem(`${this.getPublicKey()}_img`, url);
     }
 
     usingPrivateKey() {

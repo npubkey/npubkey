@@ -192,7 +192,7 @@ export class MessengerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     async encryptContent(pubkey: string, content: string) {
-        if (await this.signerService.usingNostrBrowserExtension()) {
+        if (this.signerService.usingNostrBrowserExtension()) {
             return this.signerService.signDMWithExtension(pubkey, content);
         }
         let privateKey = this.signerService.getPrivateKey()
@@ -200,7 +200,7 @@ export class MessengerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     async decryptCipherText(pubkey: string, content: string) {
-        if (await this.signerService.usingNostrBrowserExtension()) {
+        if (this.signerService.usingNostrBrowserExtension()) {
             return await this.signerService.decryptDMWithExtension(pubkey, content);
         }
         return this.signerService.decryptWithPrivateKey(pubkey, content);

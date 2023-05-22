@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Filter, Sub } from 'nostr-tools';
+import { Filter, Sub, Event } from 'nostr-tools';
 import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
 import { Post, Zap } from '../../types/post';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Paginator } from 'src/app/utils';
 
 interface Chip {
@@ -41,11 +41,14 @@ export class FeedComponent implements OnInit, OnDestroy {
     ) {
         this.selectedChip = this.getCurrentSelectedChip();
         let baseTimeDiff = 5;
+        let since = 10;
         if (this.selectedChip.name !== "Explore") {
             baseTimeDiff = 30;
+            since = 120;
         }
-        this.paginator = new Paginator(baseTimeDiff=baseTimeDiff);
+        this.paginator = new Paginator(0, since, baseTimeDiff=baseTimeDiff);
         this.paginator.printVars();
+        console.log(this.selectedChip);
     }
 
     ngOnInit() {
@@ -137,18 +140,39 @@ export class FeedComponent implements OnInit, OnDestroy {
         }
     }
 
+    async listenForZaps() {
+        console.log("LISETING FOR ZAPS")
+        const relay = await this.nostrService.relayConnect()
+        // let's query for an event that exists
+        const filter: Filter = {
+            kinds: [9735],
+            since: Math.floor(Date.now() / 1000)
+        }
+        this.subscription = relay.sub([filter]);
+        this.subscription.on('event', (e: Event) => {
+            console.log(`Zap`);
+            console.log(e);
+            this.zaps.unshift(new Zap(e.id, e.kind, e.pubkey, e.created_at, e.sig, e.tags));
+        });
+        this.subscription.on('eose', () => {
+            console.log(`End of subscription events`)
+        });
+    }
+
     async getPosts() {
         let filter = this.getFilter();
-        console.log(filter);
         this.toggleLoading();
         let waitPosts: Post[];
         let waitZaps: Zap[];
         if (this.selectedChip.name !== "Zaps") {
             waitPosts = await this.nostrService.getKind1(filter);
-            this.queryForMorePostInfo(waitPosts);
+            await this.queryForMorePostInfo(waitPosts);
+            
         } else {
+            console.log("getting zaps")
             waitZaps = await this.nostrService.getZaps(filter);
             this.zaps = waitZaps;
+            this.listenForZaps();
         }
     }
 

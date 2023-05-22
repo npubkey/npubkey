@@ -12,6 +12,8 @@ import { LightningService } from 'src/app/services/lightning.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { decode } from "@gandlaf21/bolt11-decode";
+import { GifService } from 'src/app/services/gif.service';
+import { ImageServiceService } from 'src/app/services/image-service.service';
 
 
 @Component({
@@ -44,6 +46,17 @@ export class PostComponent implements OnInit {
     Breakpoints = Breakpoints;
     currentBreakpoint:string = '';
     userReposted: boolean = false;
+    canFollow: boolean = true;
+    followText: string = "Follow";
+    followList: string[];
+
+    // create reply stuff
+    gifSearch: string = "";
+    gifsFound: string[] = [];
+    selectedFiles?: FileList;
+    selectedFileNames: string[] = [];
+    showProgressBar: boolean = false;
+    preview: string = "";
 
     readonly breakpoint$ = this.breakpointObserver
         .observe([Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, '(min-width: 500px)'])
@@ -56,9 +69,12 @@ export class PostComponent implements OnInit {
         private snackBar: MatSnackBar,
         private router: Router,
         private lightning: LightningService,
-        private breakpointObserver: BreakpointObserver
+        private breakpointObserver: BreakpointObserver,
+        private gifService: GifService,
+        private imageService: ImageServiceService
     ) {
         this.sats = this.signerService.getDefaultZap();
+        this.followList = this.signerService.getFollowingList();
     }
 
     ngOnInit() {
@@ -70,6 +86,13 @@ export class PostComponent implements OnInit {
         }
         if (this.post) {
             this.rootEvent = this.post.nip10Result?.root?.id || "";
+            if (this.followList.includes(this.post.pubkey)) {
+                this.canFollow = false;
+                this.followText = "Unfollow";
+            } else {
+                this.canFollow = true;
+                this.followText = "Follow";
+            }
         }
         if (this.inPostDetail === undefined) {
             this.inPostDetail = false;
@@ -143,6 +166,44 @@ export class PostComponent implements OnInit {
                     this.copyAny(invoice);
                 }
             }
+        }
+    }
+
+    followUser() {
+        if (this.canFollow) {
+            this.sendFollowEvent();
+            this.canFollow = false;
+            this.followText = "Unfollow";
+            this.openSnackBar("Followed user", "dismiss");
+        } else {
+            this.sendFollowEvent(true);
+            this.canFollow = true;
+            this.followText = "Follow";
+            this.openSnackBar("Unfollowed user", "dismiss");
+        }
+    }
+
+    async sendFollowEvent(unfollow=false) {
+        if (this.post) {
+            let tags: string[][] = this.signerService.getFollowingListAsTags()
+            if (unfollow) {
+                tags = tags.filter(tag => {
+                    return tag[1] !== this.post?.pubkey
+                });
+            } else {
+                tags.push(["p", this.post.pubkey, "wss://relay.damus.io/", this.post.username]);
+            }
+            this.signerService.setFollowingListFromTags(tags);
+            let unsignedEvent = this.nostrService.getUnsignedEvent(3, tags, "");
+            let signedEvent: Event;
+            const privateKey = this.signerService.getPrivateKey();
+            if (privateKey !== "") {
+                let eventId = getEventHash(unsignedEvent)
+                signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
+            } else {
+                signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+            }
+            this.nostrService.sendEvent(signedEvent);
         }
     }
 
@@ -309,6 +370,55 @@ export class PostComponent implements OnInit {
         } else {
             this.showReplyForm = true;
             this.showZapForm = false;
+        }
+    }
+
+    addGifToPostContent(g: string) {
+        this.replyContent = this.replyContent + " " + g;
+        this.openSnackBar("GIF added!", "dismiss");
+    }
+
+    addImageToPostContent(imgUrl: string) {
+        this.replyContent = this.replyContent + " " + imgUrl;
+        this.openSnackBar("Image added!", "dismiss");
+    }
+
+    selectFiles(event: any): void {
+        this.selectedFileNames = [];
+        this.selectedFiles = event.target.files;
+        if (this.selectedFiles && this.selectedFiles[0]) {
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                this.preview = e.target.result;
+            };
+            reader.readAsDataURL(this.selectedFiles[0]);
+            this.selectedFileNames.push(this.selectedFiles[0].name);
+        }
+    }
+
+    upload(file: File): void {
+        if (file) {
+          this.imageService.uploadImage(file)
+            .subscribe(response => this.addImageToPostContent(response));
+        }
+    }
+
+    uploadImage(): void {
+        if (this.selectedFiles) {
+            this.upload(this.selectedFiles[0]);
+        }
+    }
+
+    async searchGif() {
+        this.gifsFound = [];
+        if (this.post) {
+            const wow = await this.gifService.getTopGifs(this.gifSearch, "LIVDSRZULELA")
+            wow.subscribe(response => {
+                const results = response.results;
+                results.forEach(gif => {
+                    this.gifsFound.push(gif.media[0].gif.url);
+                })
+            });
         }
     }
 

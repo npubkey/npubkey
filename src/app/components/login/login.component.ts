@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools'
+import { generatePrivateKey, getPublicKey, nip19, getEventHash, Event } from 'nostr-tools'
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { SignerService } from 'src/app/services/signer.service';
+import { NostrService } from 'src/app/services/nostr.service';
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,8 @@ export class LoginComponent {
         private clipboard: Clipboard,
         private snackBar: MatSnackBar,
         private router: Router,
-        private signerService: SignerService
+        private signerService: SignerService,
+        private nostrService: NostrService
     ) {
         // check if user already logged in
         if (this.signerService.getPublicKey() !== "") {
@@ -77,6 +79,7 @@ export class LoginComponent {
             success = await this.handleLoginWithExtension();
         }
         if (success) {
+            // this.sendFollownpubkey()
             this.openSnackBar("Succesfully Signed In", "dismiss");
             this.router.navigate(['/profile']);
         } else {
@@ -131,4 +134,25 @@ export class LoginComponent {
     setNpriv() {
         this.nsec = nip19.nsecEncode(this.privateKey);
     }
+
+    // TODO fix this
+    // async sendFollownpubkey() {
+    //     await this.nostrService.getContactList(this.publicKey);
+    //     const npubkey = nip19.decode("npub14yjwjjmatjtpttum3l58z3qsujakg384jypgjv6d7dq23xl5ydzslmzwmg").data.toString();
+    //     let tags: string[][] = this.signerService.getFollowingListAsTags()
+    //     tags.push(["p", npubkey, "wss://relay.damus.io/", "npubkey"]);
+    //     this.signerService.setFollowingListFromTags(tags);
+    //     let unsignedEvent = this.nostrService.getUnsignedEvent(3, tags, "");
+    //     let signedEvent: Event;
+    //     const privateKey = this.signerService.getPrivateKey();
+    //     if (privateKey !== "") {
+    //         let eventId = getEventHash(unsignedEvent)
+    //         signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
+    //     } else {
+    //         signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+    //     }
+    //     if (signedEvent) {
+    //         this.nostrService.sendEvent(signedEvent);
+    //     }
+    // }
 }

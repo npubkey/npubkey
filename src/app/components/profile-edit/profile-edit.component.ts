@@ -91,6 +91,7 @@ export class ProfileEditComponent implements OnInit {
             signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
         }
         this.nostrService.sendEvent(signedEvent);
+        this.signerService.setLoggedInUserImage(x.picture);
         this.openSnackBar("Profile Updated!", "dismiss");
     }
 
