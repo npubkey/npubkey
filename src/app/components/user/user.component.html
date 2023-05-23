@@ -30,6 +30,9 @@
         <p class="user-info" *ngIf="user.lud16" class="lightning-address" fxLayout="row">
             <mat-icon [inline]="true">bolt</mat-icon><span>{{user.lud16}}</span>
         </p>
+        <p class="user-info" *ngIf="nip05Verified" class="nip05" fxLayout="row">
+            <mat-icon [inline]="true">verified</mat-icon><span> {{user.nip05}}</span>
+        </p>
     </mat-card-content>
     <mat-card-content>
         <button *ngIf="nsec && isMyProfile" mat-icon-button color="warn" (click)="showNsec()">

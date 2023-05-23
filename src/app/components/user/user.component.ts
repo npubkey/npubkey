@@ -17,6 +17,7 @@ import { decode } from "@gandlaf21/bolt11-decode";
 export class UserComponent implements OnInit {
 
     @Input() user?: User;
+    @Input() nip05Verified?: boolean;
     canEdit: boolean = false;
     nsec: string = "";
     displaynsec: boolean = false;

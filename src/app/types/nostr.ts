@@ -8,3 +8,13 @@ export interface NostrWindow {
         decrypt?: (pubkey: string, ciphertext: string) => Promise<string>
     }
 }
+
+
+export interface NIP05Names {
+    [key: string]: string;
+}
+
+export interface NIP05 {
+    names: NIP05Names;
+    relays?: {};
+}

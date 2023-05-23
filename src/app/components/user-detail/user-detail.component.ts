@@ -3,13 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { NostrService } from 'src/app/services/nostr.service';
 import { User } from '../../types/user';
 import { Post } from '../../types/post';
-import { Filter } from 'nostr-tools';
 import { nip19 } from 'nostr-tools';
 import { Paginator } from 'src/app/utils';
 import { SignerService } from 'src/app/services/signer.service';
-import { Content } from 'src/app/types/post';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Nip05Service } from 'src/app/services/nip05.service';
 
 @Component({
   selector: 'app-user-detail',
@@ -27,13 +26,15 @@ export class UserDetailComponent implements OnInit {
     followerCount: number = 0;
     paginator: Paginator;
     viewingSelf: boolean = false;
+    nip05Verified: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
         private nostrService: NostrService,
         private signerService: SignerService,
         private snackBar: MatSnackBar,
-        private router: Router
+        private router: Router,
+        private nip05: Nip05Service
     ) {
         this.npub = this.route.snapshot.paramMap.get('npub') || "";
         if (this.npub === "") {
@@ -96,10 +97,29 @@ export class UserDetailComponent implements OnInit {
         const pubkey: string = nip19.decode(this.npub).data.toString();
         this.user = await this.nostrService.getUser(pubkey);
         if (this.user) {
-            this.getUserPosts(this.user);
+            this.verifyNIP05(this.user);
+            await this.getUserPosts(this.user);
+            //this.user = waitUser;
         } else {
             this.userNotFound = true;
             this.loading = false;
+        }
+    }
+
+    verifyNIP05(user: User) {
+        if (user && user.nip05) {
+            this.nip05.getNIP05(user.nip05)
+                .subscribe(response => {
+                    console.log(response);
+                    console.log(user);
+                    if (user && user.name) {
+                        const nip05Pub: any = response.names[user.name]
+                        console.log(nip05Pub)
+                        if (nip05Pub === user.pubkey) {
+                            this.nip05Verified = true;
+                        }
+                    }
+                });
         }
     }
 
