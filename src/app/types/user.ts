@@ -16,6 +16,23 @@ export interface Kind0Content {
     // can have other random stuff in here too
 }
 
+export interface DBUser {
+    name: string;
+    username: string;
+    displayName: string;
+    website: string;
+    about: string;
+    picture: string;
+    banner: string;
+    lud06: string;
+    lud16: string;
+    nip05: string;
+    pubkey: string;
+    npub: string;
+    createdAt: string;
+    apiKey: string;
+}
+
 export interface SearchUser {
     pubkey: string,
     picture: string
@@ -29,6 +46,23 @@ export class BaseUser {
         this.pubkey = pubkey;
         this.name = name;
     }
+}
+
+
+export function dbUserToUser(dbUser: DBUser): User {
+    const kind0Content: Kind0Content = {
+        name: dbUser.name,
+        username: dbUser.username,
+        displayName: dbUser.displayName,
+        website: dbUser.website,
+        about: dbUser.about,
+        picture: dbUser.picture,
+        banner: dbUser.banner,
+        lud06: dbUser.lud06,
+        lud16: dbUser.lud16,
+        nip05: dbUser.nip05
+    }
+    return new User(kind0Content, Number(dbUser.createdAt), dbUser.pubkey);
 }
 
 /* 

@@ -64,6 +64,33 @@ import { LoadingComponent } from './components/loading/loading.component';
 import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.component';
 import { ZapComponent } from './components/zap/zap.component';
 
+// indexed db
+import { NgxIndexedDBModule, DBConfig } from 'ngx-indexed-db';
+
+const dbConfig: DBConfig  = {
+    name: 'npubkeydb',
+    version: 1,
+    objectStoresMeta: [{
+        store: 'users',
+        storeConfig: { keyPath: 'id', autoIncrement: true },
+        storeSchema: [
+            { name: 'name', keypath: 'name', options: { unique: false } },
+            { name: 'username', keypath: 'username', options: { unique: false } },
+            { name: 'displayName', keypath: 'displayName', options: { unique: false } },
+            { name: 'website', keypath: 'website', options: { unique: false } },
+            { name: 'about', keypath: 'about', options: { unique: false } },
+            { name: 'picture', keypath: 'picture', options: { unique: false } },
+            { name: 'banner', keypath: 'banner', options: { unique: false } },
+            { name: 'lud06', keypath: 'lud06', options: { unique: false } },
+            { name: 'lud16', keypath: 'lud16', options: { unique: false } },
+            { name: 'nip05', keypath: 'nip05', options: { unique: false } },
+            { name: 'pubkey', keypath: 'pubkey', options: { unique: true } },
+            { name: 'npub', keypath: 'npub', options: { unique: true } },
+            { name: 'createdAt', keypath: 'createdAt', options: { unique: false } },
+            { name: 'apiKey', keypath: 'apiKey', options: { unique: false } },
+        ]
+    }]
+};
 
 @NgModule({
   declarations: [
@@ -130,7 +157,8 @@ import { ZapComponent } from './components/zap/zap.component';
     MatSnackBarModule,
     AppRoutingModule,
     QRCodeModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    NgxIndexedDBModule.forRoot(dbConfig)
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
   bootstrap: [AppComponent]

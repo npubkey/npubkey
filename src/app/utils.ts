@@ -1,7 +1,13 @@
 import { Post } from 'src/app/types/post';
+import { User } from 'src/app/types/user';
 import * as dayjs from 'dayjs';
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
+
+
+export function range (start: number, end: number) { 
+    return [...Array(1+end-start).keys()].map(v => start+v)
+}
 
 
 export class Paginator {
@@ -27,6 +33,21 @@ export class Paginator {
 
     incrementFilterTimes(posts: Post[]): void {
         const oldestPost = posts.at(-1);
+        if (oldestPost) {
+            this.revertBackToOriginalBaseTimeDiff();
+            this.setUntil(oldestPost.createdAt);
+            this.setSince(oldestPost.createdAt);
+        } else {
+            // posts must be empty so increment more
+            this.updateBaseTimeToFindPosts();
+            this.setDefaultUntil();
+            // expand time until we find something
+            this.setDefaultSince();
+        }
+    }
+
+    incrementUserTimes(users: User[]): void {
+        const oldestPost = users.at(-1);
         if (oldestPost) {
             this.revertBackToOriginalBaseTimeDiff();
             this.setUntil(oldestPost.createdAt);

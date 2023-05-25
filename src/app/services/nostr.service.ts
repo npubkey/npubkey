@@ -4,7 +4,8 @@ import { relayInit, Event, Filter, nip10, UnsignedEvent, signEvent, getEventHash
 import { User } from '../types/user';
 import { Post, Zap } from '../types/post';
 import { SignerService } from './signer.service';
-
+import { NgxIndexedDBService } from 'ngx-indexed-db';
+import { DBUser, dbUserToUser } from '../types/user';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,8 @@ import { SignerService } from './signer.service';
 export class NostrService {
 
   constructor(
-    private signerService: SignerService
+    private signerService: SignerService,
+    private dbService: NgxIndexedDBService
   ) { }
 
     async relayConnect() {
@@ -49,7 +51,12 @@ export class NostrService {
             users.push(user)
             this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture)
         });
+        this.storeUsersInDB(users);
         return users;
+    }
+
+    storeUsersInDB(users: User[]) {
+        this.dbService.bulkAdd('users', users);
     }
 
     storeUserInLocalStorage(pubkey: string, displayName: string, picture: string) {
@@ -58,8 +65,25 @@ export class NostrService {
         localStorage.setItem(`${pubkey}_img`, picture);
     }
 
+    getUserFromDB(pubkey: string): User | null {
+        let user: User | null = null;
+        this.dbService.getByIndex("users", "pubkey", pubkey)
+            .subscribe((result: DBUser | any) => {
+                console.log(result);
+                if (result !== undefined) {
+                    user = dbUserToUser(result)
+                }
+            });
+        return user;
+    }
+
     async getUser(pubkey: string): Promise<User | null> {
         // user metadata
+        let user = this.getUserFromDB(pubkey);
+        if (user) {
+            console.log('user found in db');
+            return user;
+        }
         const filter: Filter = {kinds: [0], authors: [pubkey], limit: 1}
         const relay = await this.relayConnect();
         const response = await relay.get(filter)
@@ -67,7 +91,8 @@ export class NostrService {
             return null;
         }
         let kind0 = JSON.parse(response.content)
-        let user = new User(kind0, response.created_at, response.pubkey);
+        user = new User(kind0, response.created_at, response.pubkey);
+        this.storeUsersInDB([user]);
         this.storeUserInLocalStorage(user.pubkey, user.displayName, user.picture);
         return user;
     }

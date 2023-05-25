@@ -110,11 +110,8 @@ export class UserDetailComponent implements OnInit {
         if (user && user.nip05) {
             this.nip05.getNIP05(user.nip05)
                 .subscribe(response => {
-                    console.log(response);
-                    console.log(user);
                     if (user && user.name) {
                         const nip05Pub: any = response.names[user.name]
-                        console.log(nip05Pub)
                         if (nip05Pub === user.pubkey) {
                             this.nip05Verified = true;
                         }

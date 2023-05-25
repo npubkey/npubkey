@@ -141,7 +141,6 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
 
     async listenForZaps() {
-        console.log("LISETING FOR ZAPS")
         const relay = await this.nostrService.relayConnect()
         // let's query for an event that exists
         const filter: Filter = {
@@ -150,8 +149,6 @@ export class FeedComponent implements OnInit, OnDestroy {
         }
         this.subscription = relay.sub([filter]);
         this.subscription.on('event', (e: Event) => {
-            console.log(`Zap`);
-            console.log(e);
             this.zaps.unshift(new Zap(e.id, e.kind, e.pubkey, e.created_at, e.sig, e.tags));
         });
         this.subscription.on('eose', () => {
@@ -167,9 +164,7 @@ export class FeedComponent implements OnInit, OnDestroy {
         if (this.selectedChip.name !== "Zaps") {
             waitPosts = await this.nostrService.getKind1(filter);
             await this.queryForMorePostInfo(waitPosts);
-            
         } else {
-            console.log("getting zaps")
             waitZaps = await this.nostrService.getZaps(filter);
             this.zaps = waitZaps;
             this.listenForZaps();
