@@ -43,9 +43,6 @@
                 </mat-tab>
             </mat-tab-group>
         </div>
-        <div *ngIf="loading">
-            <app-loading></app-loading>
-        </div>
         <div *ngIf="posts.length === 0 && !loading">
             <p>Nothing here...</p>
         </div>
@@ -54,5 +51,8 @@
         <mat-card>
             <mat-card-content>User Not Found</mat-card-content>
         </mat-card>
+    </div>
+    <div *ngIf="loading">
+        <app-loading></app-loading>
     </div>
 </div>

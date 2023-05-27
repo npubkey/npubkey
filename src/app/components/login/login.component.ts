@@ -70,6 +70,7 @@ export class LoginComponent {
     }
 
     async goToApp() {
+        this.signerService.clearKeys();
         let success: boolean = true;
         if (this.generateNewKeyView) {
             success = this.signerService.handleLoginWithNsec(this.nsec);
@@ -113,6 +114,7 @@ export class LoginComponent {
     }
 
     setKeys() {
+        this.signerService.clearKeys();
         this.setPrivateKey();
         this.setPublicKey();
         this.setNpub()

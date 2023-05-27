@@ -19,6 +19,10 @@ export class SignerService {
     constructor() { }
 
     clearKeys() {
+        console.log("clearing some local storage");
+        localStorage.removeItem("muteList");
+        localStorage.removeItem("currentChip");
+        localStorage.removeItem("following");
         localStorage.removeItem(`${this.getPublicKey()}_img`);
         localStorage.removeItem(this.localStoragePrivateKeyName);
         localStorage.removeItem(this.localStoragePublicKeyName);

@@ -6,7 +6,6 @@ import { FeedComponent } from './components/feed/feed.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { LoginComponent } from './components/login/login.component';
 import { UserDetailComponent } from './components/user-detail/user-detail.component';
-import { ProfileComponent } from './components/profile/profile.component';
 import { ProfileEditComponent } from './components/profile-edit/profile-edit.component';
 import { SearchComponent } from './components/search/search.component';
 import { FollowingComponent } from './components/following/following.component';
@@ -14,25 +13,25 @@ import { PostDetailComponent } from './components/post-detail/post-detail.compon
 import { ContactListComponent } from './components/contact-list/contact-list.component';
 import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { authGuard } from './auth.guard';
 
 const routes: Routes = [
     { path: '', component: LoginComponent },
     { path: 'login', component: LoginComponent },
-    { path: 'generate', component: LoginComponent },
-    { path: 'create', component: CreateEventComponent },
+    { path: 'create', component: CreateEventComponent, canActivate: [authGuard] },
     { path: 'posts/:nevent', component: PostDetailComponent},
-    { path: 'messages/:npub', component: MessengerComponent},
+    { path: 'messages/:npub', component: MessengerComponent, canActivate: [authGuard]},
     { path: 'feed/:hashtag', component: HashtagFeedComponent},
     { path: 'feed', component: FeedComponent },
-    { path: 'messages', component: ContactListComponent },
+    { path: 'messages', component: ContactListComponent, canActivate: [authGuard]},
     { path: 'users/:npub/following', component: FollowingComponent},
     { path: 'users/:npub/followers', component: FollowingComponent},
     { path: 'users/:npub', component: UserDetailComponent },
     { path: 'users', component: UsersComponent },
-    { path: 'profile', component: UserDetailComponent},
-    { path: 'profile-edit', component: ProfileEditComponent},
+    { path: 'profile', component: UserDetailComponent, canActivate: [authGuard]},
+    { path: 'profile-edit', component: ProfileEditComponent, canActivate: [authGuard]},
     { path: 'search', component: SearchComponent},
-    { path: 'settings', component: SettingsComponent},
+    { path: 'settings', component: SettingsComponent, canActivate: [authGuard]},
 ];
 
 

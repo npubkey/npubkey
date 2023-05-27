@@ -47,8 +47,6 @@ export class FeedComponent implements OnInit, OnDestroy {
             since = 120;
         }
         this.paginator = new Paginator(0, since, baseTimeDiff=baseTimeDiff);
-        this.paginator.printVars();
-        console.log(this.selectedChip);
     }
 
     ngOnInit() {
@@ -64,7 +62,10 @@ export class FeedComponent implements OnInit, OnDestroy {
     toggleLoading = () => this.loading = !this.loading;
 
     getCurrentSelectedChip() {
-        const currentChip = localStorage.getItem("currentChip") || "Following";
+        let currentChip = localStorage.getItem("currentChip") || "Following";
+        if (currentChip === "Following" && this.signerService.getFollowingList().length < 5) {
+            currentChip = "Explore";
+        }
         for (let chip of this.chips) {
             if (chip.name === currentChip) {
                 return chip;
@@ -195,6 +196,7 @@ export class FeedComponent implements OnInit, OnDestroy {
             // following
             filter.kinds = [1];
             filter.limit = 50;
+            console.log(this.signerService.getFollowingList())
             filter.authors = this.signerService.getFollowingList();
             filter.since = this.paginator.since;  // two hours ago
             filter.until = this.paginator.until;

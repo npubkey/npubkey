@@ -16,7 +16,7 @@ import { Nip05Service } from 'src/app/services/nip05.service';
   styleUrls: ['./user-detail.component.css']
 })
 export class UserDetailComponent implements OnInit {
-    welcomeMessage: string = "Welcome to the nostr network. Create a profile or start looking around";
+    welcomeMessage: string = "Welcome to the nostr network. Create a profile or start exploring";
     user: User | null = null;
     npub: string = "";
     posts: Post[] = [];
@@ -51,7 +51,7 @@ export class UserDetailComponent implements OnInit {
                 this.viewingSelf = true;
                 this.npub = this.signerService.npub();
             }
-            this.paginator = new Paginator(0, 24*60, 24*60);
+            this.paginator = new Paginator(0, 24*60*5, 24*60*5);
             this.getUser();
         });
     }
