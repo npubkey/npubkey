@@ -1,14 +1,16 @@
 <div class="router-container">
-    <h1>Search</h1>
-    <p>
-        <mat-form-field appearance="outline">
-            <mat-label>Search</mat-label>
-            <input matInput placeholder="search" [(ngModel)]="search">
-        </mat-form-field>
-    </p>
-    <p>
-        <button mat-fab extended color="primary" (click)="submit()">Submit</button>
-    </p>
+    <div class="page-header">
+        <h1>Search</h1>
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Search</mat-label>
+                <input matInput placeholder="search" [(ngModel)]="search">
+            </mat-form-field>
+        </p>
+        <p>
+            <button mat-fab extended color="primary" (click)="submit()">Submit</button>
+        </p>
+    </div>
     <div *ngIf="!loading">
         <h2>Results</h2>
         <mat-divider></mat-divider>

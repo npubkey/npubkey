@@ -1,13 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
-import { 
-    Event,
-    UnsignedEvent,
-    getEventHash,
-    signEvent,
- } from 'nostr-tools';
+import { Event, UnsignedEvent, getEventHash, signEvent } from 'nostr-tools';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormBuilder, Validators } from '@angular/forms';
 
 
 @Component({
@@ -15,28 +11,28 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './profile-edit.component.html',
   styleUrls: ['./profile-edit.component.css']
 })
-export class ProfileEditComponent implements OnInit {
+export class ProfileEditComponent {
 
-    // Form Fields
-    name: string = "";
-    username: string = "";
-    displayName: string = "";
-    website: string = "";
-    about: string = "";
-    picture: string = "";
-    banner: string = "";
-    lud06: string = ""; // lnurl
-    lud16: string = ""; // lightning address
-    nip05: string = "";
-    content: string = "";
+    profileForm = this.fb.group({
+        name: ['', Validators.required],
+        username: ['', Validators.required],
+        displayName: [''],
+        website: [''],
+        about: [''],
+        picture: [''],
+        banner: [''],
+        lud06: [''],
+        lud16: ['', Validators.pattern("^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,4}$")],
+        nip05: ['', Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")],
+    });
+    content: string;
 
     constructor(
+        private fb: FormBuilder,
         private signerService: SignerService,
         private nostrService: NostrService,
         private snackBar: MatSnackBar
-    ) {}
-
-    ngOnInit() {
+    ) {
         // need to make sure we have pubkey
         if (this.signerService.usingNostrBrowserExtension()) {
             // TODO probably make this whole thing flow better 
@@ -46,6 +42,11 @@ export class ProfileEditComponent implements OnInit {
         this.setValues();
     }
 
+    onSubmit() {
+        console.log(this.profileForm);
+        this.submit();
+    }
+
     openSnackBar(message: string, action: string) {
         this.snackBar.open(message, action, {duration: 1300});
     }
@@ -53,39 +54,41 @@ export class ProfileEditComponent implements OnInit {
     async setValues() {
         let kind0 = await this.nostrService.getUser(this.signerService.getPublicKey());
         if (kind0) {
-            this.name = kind0.name
-            this.username = kind0.username
-            this.displayName = kind0.displayName
-            this.website = kind0.website
-            this.about = kind0.about
-            this.picture = kind0.picture
-            this.banner = kind0.banner
-            this.lud06 = kind0.lud06
-            this.lud16 = kind0.lud16
-            this.nip05 = kind0.nip05
+            this.profileForm.setValue({
+                name: kind0.name,
+                username: kind0.username,
+                displayName: kind0.displayName,
+                website: kind0.website,
+                about: kind0.about,
+                picture: kind0.picture,
+                banner: kind0.banner,
+                lud06: kind0.lud06,
+                lud16: kind0.lud16,
+                nip05: kind0.nip05,
+            });
         }
     }
 
     async submit() {
         let x = {
-            name: this.name,
-            username: this.username,
-            displayName: this.displayName,
-            website: this.website,
-            about: this.about,
-            picture: this.picture,
-            banner: this.banner,
-            lud06: this.lud06,
-            lud16: this.lud16,
-            nip05: this.nip05
+            name: this.profileForm.value.name,
+            username: this.profileForm.value.username,
+            displayName: this.profileForm.value.displayName,
+            website: this.profileForm.value.website,
+            about: this.profileForm.value.about,
+            picture: this.profileForm.value.picture,
+            banner: this.profileForm.value.banner,
+            lud06: this.profileForm.value.lud06,
+            lud16: this.profileForm.value.lud16,
+            nip05: this.profileForm.value.nip05
         }
         this.content = JSON.stringify(x)
         const privateKey = this.signerService.getPrivateKey();
-        let unsignedEvent = this.getUnsignedEvent(0, []);
+        let unsignedEvent = this.nostrService.getUnsignedEvent(0, [], this.content);
         let signedEvent: Event;
         if (privateKey !== "") {
             let eventId = getEventHash(unsignedEvent)
-            signedEvent = this.getSignedEvent(eventId, privateKey, unsignedEvent);
+            signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
         } else {
             console.log('using extension');
             signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
@@ -93,30 +96,5 @@ export class ProfileEditComponent implements OnInit {
         this.nostrService.sendEvent(signedEvent);
         this.signerService.setLoggedInUserImage(x.picture);
         this.openSnackBar("Profile Updated!", "dismiss");
-    }
-
-    getUnsignedEvent(kind: number, tags: any) {
-        const eventUnsigned: UnsignedEvent = {
-            kind: kind,
-            pubkey: this.signerService.getPublicKey(),
-            tags: tags,
-            content: this.content,
-            created_at: Math.floor(Date.now() / 1000),
-        }
-        return eventUnsigned
-    }
-
-    getSignedEvent(eventId: string, privateKey: string, eventUnsigned: UnsignedEvent) {
-        let signature = signEvent(eventUnsigned, privateKey);
-        const signedEvent: Event = {
-            id: eventId,
-            kind: eventUnsigned.kind,
-            pubkey: eventUnsigned.pubkey,
-            tags: eventUnsigned.tags,
-            content: eventUnsigned.content,
-            created_at: eventUnsigned.created_at,
-            sig: signature,
-          };
-          return signedEvent;
     }
 }

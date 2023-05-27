@@ -8,6 +8,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import {APP_BASE_HREF} from '@angular/common';
 import { QRCodeModule } from 'angularx-qrcode';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { ReactiveFormsModule } from '@angular/forms';
 
 // Material
 import { MatDialogModule } from '@angular/material/dialog';
@@ -158,7 +159,8 @@ const dbConfig: DBConfig  = {
     AppRoutingModule,
     QRCodeModule,
     InfiniteScrollModule,
-    NgxIndexedDBModule.forRoot(dbConfig)
+    NgxIndexedDBModule.forRoot(dbConfig),
+    ReactiveFormsModule,
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
   bootstrap: [AppComponent]

@@ -1,5 +1,5 @@
 <div class="router-container">
-    <div class="feed-chips">
+    <div class="feed-chips page-header">
         <mat-chip-listbox aria-label="Feed selection">
             <div *ngFor="let chip of chips;" >
                 <mat-chip-option *ngIf="chip.name === selectedChip.name" selected (click)="switchFeed(chip.name)">{{chip.name}}</mat-chip-option>

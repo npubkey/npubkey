@@ -2,6 +2,10 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: 'Courier New', Courier, monospace; }
+.page-header {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {

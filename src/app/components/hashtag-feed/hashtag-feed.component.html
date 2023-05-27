@@ -1,8 +1,8 @@
 <div class="router-container">
-    <h1>#{{hashtag}}</h1>
-    <p>
+    <div class="page-header">
+        <h1>#{{hashtag}}</h1>
         <mat-divider></mat-divider>
-    </p>
+    </div>
     <div class="feed" *ngFor="let post of posts">
         <app-post [post]="post"></app-post>
     </div>
