@@ -16,8 +16,6 @@ export class UsersComponent implements OnInit {
     loading: boolean = true;
     minutesAgo: number = 10;
     previousSince: number = 0;
-    dbCounter: number = 1;
-    increment: number = 10;
     dbOut: boolean = false;
     paginator: Paginator;
     constructor(
@@ -43,19 +41,13 @@ export class UsersComponent implements OnInit {
         if (this.dbOut) {
             this.getUsersFromNostr();
         } else {
-            this.dbService.bulkGet("users", range(this.dbCounter, this.dbCounter + this.increment))
+            this.dbService.getAll("users")
             .subscribe((results: DBUser[]) => {
                 for(const u of results) {
-                    if (u === undefined) {
-                        this.dbOut = true;
-                        break;
-                    } else {
-                        this.users.push(dbUserToUser(u));
-                        this.dbOut = false;
-                    }
+                    this.users.push(dbUserToUser(u));
                 }
+                this.dbOut = true;
             });
-            this.dbCounter = this.dbCounter + this.increment;
         }
     }
 

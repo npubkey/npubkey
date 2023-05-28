@@ -85,7 +85,14 @@ export class SignerService {
     }
 
     getFollowingList() {
-        let following = (localStorage.getItem("following") || "").split(',');
+        const followingRaw = localStorage.getItem("following");
+        console.log("RAW")
+        console.log(followingRaw)
+        if (followingRaw === null || followingRaw === "") {
+            return [];
+        }
+        const following = (followingRaw).split(',');
+        console.log(following);
         return following;
     }
 
@@ -146,7 +153,8 @@ export class SignerService {
 
     setFollowingList(following: string[]) {
         let followingSet = Array.from(new Set(following));
-        localStorage.setItem("following", followingSet.filter(s => s).join(','));
+        let newFollowingList = followingSet.filter(s => s).join(',')
+        localStorage.setItem("following", newFollowingList);
     }
 
     savePublicKeyToSession(publicKey: string) {

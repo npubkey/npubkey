@@ -38,7 +38,7 @@
         <button *ngIf="nsec && isMyProfile" mat-icon-button color="warn" (click)="showNsec()">
             <mat-icon>{{nsecButton}}</mat-icon>
         </button>
-        <app-follow [user]="user"></app-follow>
+        <app-follow [user]="user" [following]="following"></app-follow>
         <button mat-icon-button color="primary" routerLink="/users/{{user.npub}}/following">
             <mat-icon>view_list</mat-icon>
         </button>

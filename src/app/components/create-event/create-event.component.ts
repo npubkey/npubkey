@@ -6,6 +6,7 @@ import { SignerService } from 'src/app/services/signer.service';
 import { User } from 'src/app/types/user';
 import { GifService } from 'src/app/services/gif.service';
 import { ImageServiceService } from 'src/app/services/image-service.service';
+import { P } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-create-event',
@@ -95,17 +96,21 @@ export class CreateEventComponent {
     async sendEvent() {
         const privateKey = this.signerService.getPrivateKey();
         let finalContent: string = `${this.content}`;
-        let unsignedEvent = this.nostrService.getUnsignedEvent(1, [], finalContent);
-        let signedEvent: Event;
-        if (privateKey !== "") {
-            let eventId = getEventHash(unsignedEvent)
-            signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
+        if (finalContent === "") {
+            this.openSnackBar("Message Empty", "dismiss");
         } else {
-            signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+            let unsignedEvent = this.nostrService.getUnsignedEvent(1, [], finalContent);
+            let signedEvent: Event;
+            if (privateKey !== "") {
+                let eventId = getEventHash(unsignedEvent)
+                signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
+            } else {
+                signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+            }
+            this.nostrService.sendEvent(signedEvent);
+            this.openSnackBar("Message Sent!", "dismiss")
+            this.content = "";
+            this.gifsFound = [];
         }
-        this.nostrService.sendEvent(signedEvent);
-        this.openSnackBar("Message Sent!", "dismiss")
-        this.content = "";
-        this.gifsFound = [];
     }
 }

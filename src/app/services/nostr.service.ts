@@ -6,6 +6,7 @@ import { Post, Zap } from '../types/post';
 import { SignerService } from './signer.service';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { DBUser, dbUserToUser } from '../types/user';
+import { P } from '@angular/cdk/keycodes';
 
 @Injectable({
   providedIn: 'root'
@@ -37,17 +38,20 @@ export class NostrService {
         return await relay.list([filter])
     }
 
-    async getKind0(filter: Filter): Promise<User[]> {
+    async getKind0(filter: Filter, followingList: boolean = false): Promise<User[]> {
         // user metadata
         filter.kinds = [0];  // force this regardless
         const relay = await this.relayConnect();
         const response = await relay.list([filter])
         let users: User[] = [];
-        let content;
-        let user;
+        let content: any;  // json parsed
+        let user: User;
         response.forEach(e => {
             content = JSON.parse(e.content)
             user = new User(content, e.created_at, e.pubkey)
+            if (followingList) {
+                user.setFollowing(followingList);
+            }
             users.push(user)
             this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture)
         });
@@ -56,6 +60,7 @@ export class NostrService {
     }
 
     storeUsersInDB(users: User[]) {
+        console.log(users);
         this.dbService.bulkAdd('users', users);
     }
 
@@ -358,7 +363,16 @@ export class NostrService {
             });
         }
         this.signerService.setFollowingList(following);
+        await this.getContactListUser();
         return following
+    }
+
+    async getContactListUser() {
+        const filter: Filter = {
+            kinds: [0],
+            authors: this.signerService.getFollowingList()
+        }
+        await this.getKind0(filter, true);
     }
 
     async getMuteList(pubkey: string): Promise<void> {

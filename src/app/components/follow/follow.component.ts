@@ -13,7 +13,8 @@ import { getEventHash, Event } from 'nostr-tools';
 export class FollowComponent implements OnInit {
     canFollow: boolean = true;
     buttonText: string = "person_add";
-    @Input() user?: User;
+    @Input() user: User;
+    @Input() following: boolean;
 
     constructor(
         private snackBar: MatSnackBar,
@@ -21,16 +22,13 @@ export class FollowComponent implements OnInit {
         private nostrService: NostrService
     ) {}
 
-    async ngOnInit() {
-        let followList = this.signerService.getFollowingList();
-        if (this.user) {
-            if (followList.includes(this.user.pubkey)) {
-                this.canFollow = false;
-                this.buttonText = "person_remove";
-            } else {
-                this.canFollow = true;
-                this.buttonText = "person_add";
-            }
+    ngOnInit() {
+        if (this.following) {
+            this.canFollow = false;
+            this.buttonText = "person_remove";
+        } else {
+            this.canFollow = true;
+            this.buttonText = "person_add";
         }
     }
 
@@ -65,7 +63,7 @@ export class FollowComponent implements OnInit {
     followUser() {
         this.sendFollowEvent()
         if (this.user) {
-            this.buttonText = "Unfollow";
+            this.buttonText = "person_remove";
             this.canFollow = false;
             this.openSnackBar(`Followed: ${this.user.displayName}`, "Dismiss")
         }
@@ -74,7 +72,7 @@ export class FollowComponent implements OnInit {
     unFollowUser() {
         this.sendFollowEvent(true);
         if (this.user) {
-            this.buttonText = "Follow";
+            this.buttonText = "person_add";
             this.canFollow = true;
             this.openSnackBar(`Unfollowed: ${this.user.displayName}`, "Dismiss")
         }

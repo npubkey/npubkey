@@ -42,7 +42,11 @@ export class HeaderComponent implements OnInit {
         this.userImage = this.signerService.getLoggedInUserImage();
         const relay = this.signerService.getRelay() // will get from storage or default
         this.signerService.setRelay(relay); // incase its not there
-
+        if (this.pubkey) {
+            // poorly named but this will save our following list
+            this.getContactList(this.pubkey);
+            this.getMuteList(this.pubkey);
+        }
     }
 
     ngOnInit(): void {
@@ -51,11 +55,10 @@ export class HeaderComponent implements OnInit {
         this.breakpoint$.subscribe(() => {
             this.breakpointChanged()
         });
-        if (this.pubkey) {
-            // poorly named but this will save our following list
-            this.nostrService.getContactList(this.pubkey);
-            this.getMuteList(this.pubkey);
-        }
+    }
+
+    async getContactList(pubkey: string) {
+        await this.nostrService.getContactList(pubkey);
     }
 
     async getMuteList(pubkey: string) {

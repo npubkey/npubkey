@@ -1,7 +1,12 @@
 <div class="router-container">
     <h1>{{followPath}}</h1>
-    <div class="users-container" *ngFor="let user of users">
-        <app-user [user]="user"></app-user>
-        <mat-divider></mat-divider>
+    <div *ngIf="!loading">
+        <div  class="users-container" *ngFor="let user of users">
+            <app-user [user]="user"></app-user>
+            <mat-divider></mat-divider>
+        </div>
+    </div>
+    <div *ngIf="loading">
+        <app-loading></app-loading>
     </div>
 </div>

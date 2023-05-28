@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SignerService } from 'src/app/services/signer.service';
 import { NostrService } from 'src/app/services/nostr.service';
 
 import { Filter } from 'nostr-tools';
-import { User } from 'src/app/types/user';
+import { User, dbUserToUser } from 'src/app/types/user';
 import { filter } from 'rxjs';
+import { NgxIndexedDBService } from 'ngx-indexed-db';
+import { DBUser } from '../../types/user';
 
 @Component({
   selector: 'app-contact-list',
@@ -24,7 +26,8 @@ export class ContactListComponent {
 
     constructor(
         private signerService: SignerService,
-        private nostrService: NostrService
+        private nostrService: NostrService,
+        private dbService: NgxIndexedDBService
     ) {
         this.getFollowingUsers();
     }
@@ -43,6 +46,33 @@ export class ContactListComponent {
     }
 
     async getFollowingUsers() {
+        if (this.signerService.getFollowingList().length === 0) {
+            await this.getFollowingUsersFromNostr();
+        } else {
+            console.log("getting from db")
+            this.getFollowingUsersFromDB();
+            if (this.users.length === 0) {
+                await this.getFollowingUsersFromNostr();
+            }
+        }
+    }
+
+    getFollowingUsersFromDB() {
+        this.dbService.getAll("users")
+        .subscribe((results: DBUser[]) => {
+            for(const u of results) {
+                if (u === undefined) {
+                    continue;
+                }
+                if (u.following) {
+                    this.users.push(dbUserToUser(u));
+                }
+            }
+            this.displayedUsers = this.users;
+        });
+    }
+
+    async getFollowingUsersFromNostr() {
         let contactList: string[] = this.signerService.getFollowingList()
         let filter: Filter = {authors: contactList}
         this.users = await this.nostrService.getKind0(filter);

@@ -31,6 +31,7 @@ export interface DBUser {
     npub: string;
     createdAt: string;
     apiKey: string;
+    following?: boolean;
 }
 
 export interface SearchUser {
@@ -62,7 +63,7 @@ export function dbUserToUser(dbUser: DBUser): User {
         lud16: dbUser.lud16,
         nip05: dbUser.nip05
     }
-    return new User(kind0Content, Number(dbUser.createdAt), dbUser.pubkey);
+    return new User(kind0Content, Number(dbUser.createdAt), dbUser.pubkey, dbUser.following);
 }
 
 /* 
@@ -84,7 +85,8 @@ export class User {
     npub: string;
     createdAt: number;
     apiKey: string;
-    constructor(kind0: Kind0Content, createdAt: number, pubkey: string) {
+    following: boolean = false;
+    constructor(kind0: Kind0Content, createdAt: number, pubkey: string, following?: boolean) {
         this.pubkey = pubkey;
         this.npub = nip19.npubEncode(this.pubkey);
         this.name = kind0.name || "";
@@ -105,9 +107,11 @@ export class User {
         this.lud16 = kind0.lud16 || "";
         this.nip05 = kind0.nip05 || "";
         this.createdAt = createdAt;
-
         this.cachePubkeyDisplayName()
         this.apiKey = "LIVDSRZULELA" // TODO;
+        if (following) {
+            this.setFollowing(true);
+        }
     }
 
     getClickableWebsite(link: string) {
@@ -124,5 +128,9 @@ export class User {
 
     setLightningInfo(lud06: string, lud16: string) {
         // decode one into the other and vice versa if only has one
+    }
+
+    setFollowing(following: boolean) {
+        this.following = following
     }
 }

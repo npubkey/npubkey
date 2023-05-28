@@ -222,8 +222,8 @@ export class Content {
     }
 
     ellipsis(value: string): string {
-        if (value.length < 25) return value;
-        let section: number = value.length / 10;
+        if (value.length < 40) return value;
+        let section: number = value.length / 8;
         let finalSection: number = value.length - section;
         return value.substring(0, section) + ":" +  value.substring(finalSection)
     }

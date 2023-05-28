@@ -33,6 +33,8 @@ export class UserComponent implements OnInit {
     showInvoiceSection: boolean = false;
     displayUserQR: boolean = false;
     userQRLink: string = "";
+    followList: string[];
+    following: boolean;
 
     constructor(
         private signerService: SignerService,
@@ -40,12 +42,20 @@ export class UserComponent implements OnInit {
         private snackBar: MatSnackBar,
         private lightning: LightningService
     ) {
+        this.followList = this.signerService.getFollowingList();
         this.sats = this.signerService.getDefaultZap();
     }
 
     ngOnInit() {
         let pubkey = this.signerService.getPublicKey()
         if (this.user) {
+            console.log("WOW")
+            console.log(this.user.pubkey);
+            if (this.followList.includes(this.user.pubkey)) {
+                this.following = true;
+            } else {
+                this.following = false;
+            }
             if (pubkey === this.user.pubkey) {
                 this.canEdit = true;
                 this.isMyProfile = true;
