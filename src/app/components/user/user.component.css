@@ -47,3 +47,12 @@ mat-card-header img {
     margin-right: 0;
     margin-left: auto;
 }
+
+.nsec-display:hover {
+    cursor: pointer;
+}
+
+.wrap-text {
+    max-width: 100%;
+    word-wrap: break-word;
+}

@@ -24,14 +24,14 @@
         <mat-card-subtitle [innerHTML]="user.aboutHTML | safe"></mat-card-subtitle>
         <p class="user-info" *ngIf="user.website" fxLayout="row">
             <mat-icon [inline]="true">link</mat-icon>
-            <a href="{{user.website}}" target="_blank">{{user.website}}</a>
+            <a class="wrap-text" href="{{user.website}}" target="_blank"> {{user.website}}</a>
         </p>
         <!-- <mat-card-subtitle class="nip15">NIP05: {{user.nip05}}</mat-card-subtitle> -->
         <p class="user-info" *ngIf="user.lud16" class="lightning-address" fxLayout="row">
-            <mat-icon [inline]="true">bolt</mat-icon><span>{{user.lud16}}</span>
+            <mat-icon [inline]="true">bolt</mat-icon><span class="wrap-text"> {{user.lud16}}</span>
         </p>
         <p class="user-info" *ngIf="nip05Verified" class="nip05" fxLayout="row">
-            <mat-icon [inline]="true">verified</mat-icon><span> {{user.nip05}}</span>
+            <mat-icon [inline]="true">verified</mat-icon><span class="wrap-text"> {{user.nip05}}</span>
         </p>
     </mat-card-content>
     <mat-card-content>
@@ -52,7 +52,9 @@
             <mat-icon>qr_code_2</mat-icon>
         </button>
         <p>
-            <mat-card-subtitle *ngIf="displaynsec">{{nsec}}</mat-card-subtitle>
+            <span *ngIf="displaynsec" class="nsec-display" (click)="copynsec()">
+                {{nsec}}<mat-icon [inline]="true">content_copy</mat-icon>
+            </span>
         </p>
         <div *ngIf="displayUserQR">
             <p class="qrcode">

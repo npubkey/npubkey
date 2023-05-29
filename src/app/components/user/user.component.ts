@@ -49,8 +49,6 @@ export class UserComponent implements OnInit {
     ngOnInit() {
         let pubkey = this.signerService.getPublicKey()
         if (this.user) {
-            console.log("WOW")
-            console.log(this.user.pubkey);
             if (this.followList.includes(this.user.pubkey)) {
                 this.following = true;
             } else {
@@ -144,6 +142,13 @@ export class UserComponent implements OnInit {
         if (this.paymentInvoice) {
             this.clipboard.copy(this.paymentInvoice);
             this.openSnackBar("Invoice copied", "dismiss");
+        }
+    }
+
+    copynsec() {
+        if (this.user && this.displaynsec) {
+            this.clipboard.copy(this.nsec);
+            this.openSnackBar("nsec copied. keep it private!", "dismiss");
         }
     }
 

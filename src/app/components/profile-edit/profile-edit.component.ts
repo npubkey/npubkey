@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
-import { Event, UnsignedEvent, getEventHash, signEvent } from 'nostr-tools';
+import { Event, getEventHash } from 'nostr-tools';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -31,7 +32,8 @@ export class ProfileEditComponent {
         private fb: FormBuilder,
         private signerService: SignerService,
         private nostrService: NostrService,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private router: Router
     ) {
         // need to make sure we have pubkey
         if (this.signerService.usingNostrBrowserExtension()) {
@@ -96,5 +98,6 @@ export class ProfileEditComponent {
         this.nostrService.sendEvent(signedEvent);
         this.signerService.setLoggedInUserImage(x.picture);
         this.openSnackBar("Profile Updated!", "dismiss");
+        this.router.navigate([`/users/${this.signerService.npub()}`])
     }
 }
