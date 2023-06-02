@@ -1,0 +1,9 @@
+.picture-container {
+    width: 98%;
+    max-height: 600px;
+}
+
+.picture {
+    max-width: 100vw;
+    max-height: 100vh;
+}

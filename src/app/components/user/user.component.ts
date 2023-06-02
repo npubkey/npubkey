@@ -7,6 +7,8 @@ import { LightningService } from 'src/app/services/lightning.service';
 import { LightningResponse, LightningInvoice } from 'src/app/types/post';
 import { bech32 } from '@scure/base'
 import { decode } from "@gandlaf21/bolt11-decode";
+import { MatDialog } from '@angular/material/dialog';
+import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 
 
 @Component({
@@ -40,7 +42,8 @@ export class UserComponent implements OnInit {
         private signerService: SignerService,
         private clipboard: Clipboard,
         private snackBar: MatSnackBar,
-        private lightning: LightningService
+        private lightning: LightningService,
+        private dialog: MatDialog
     ) {
         this.followList = this.signerService.getFollowingList();
         this.sats = this.signerService.getDefaultZap();
@@ -150,6 +153,10 @@ export class UserComponent implements OnInit {
             this.clipboard.copy(this.nsec);
             this.openSnackBar("nsec copied. keep it private!", "dismiss");
         }
+    }
+
+    enlargeUserPicture() {
+        this.dialog.open(ImageDialogComponent, {data: {picture: this.user.picture}})
     }
 
     async getLightningInvoice(amount: string) {

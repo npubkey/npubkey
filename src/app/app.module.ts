@@ -67,6 +67,7 @@ import { ZapComponent } from './components/zap/zap.component';
 
 // indexed db
 import { NgxIndexedDBModule, DBConfig } from 'ngx-indexed-db';
+import { ImageDialogComponent } from './components/image-dialog/image-dialog.component';
 
 const dbConfig: DBConfig  = {
     name: 'npubkeydb',
@@ -132,7 +133,9 @@ const dbConfig: DBConfig  = {
     LoadingComponent,
     HashtagFeedComponent,
     ZapComponent,
+    ImageDialogComponent,
   ],
+  entryComponents: [ImageDialogComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

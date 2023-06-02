@@ -4,7 +4,8 @@
             *ngIf="user.picture"
             class="header-image"
             mat-card-avatar
-            src="{{user.picture}}"/>
+            src="{{user.picture}}"
+            (click)="enlargeUserPicture()"/>
         <div class="more-vert">
             <button *ngIf="canEdit" mat-icon-button color="primary" routerLink="/profile-edit">
                 <mat-icon>edit</mat-icon>

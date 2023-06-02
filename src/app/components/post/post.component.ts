@@ -14,7 +14,8 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import { decode } from "@gandlaf21/bolt11-decode";
 import { GifService } from 'src/app/services/gif.service';
 import { ImageServiceService } from 'src/app/services/image-service.service';
-
+import { MatDialog } from '@angular/material/dialog';
+import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 
 @Component({
   selector: 'app-post',
@@ -71,7 +72,8 @@ export class PostComponent implements OnInit {
         private lightning: LightningService,
         private breakpointObserver: BreakpointObserver,
         private gifService: GifService,
-        private imageService: ImageServiceService
+        private imageService: ImageServiceService,
+        private dialog: MatDialog
     ) {
         this.sats = this.signerService.getDefaultZap();
         this.followList = this.signerService.getFollowingList();
@@ -120,6 +122,10 @@ export class PostComponent implements OnInit {
         }
     }
 
+    enlargePicture(imgUrl: string) {
+        this.dialog.open(ImageDialogComponent, {data: {picture: imgUrl}})
+    }
+
     showEventJson() {
         console.log(this.post);
     }
@@ -165,6 +171,13 @@ export class PostComponent implements OnInit {
                 } else {
                     this.copyAny(invoice);
                 }
+            }
+        }
+        if (element.nodeName === "IMG") {
+            e.preventDefault();
+            const imgUrl = element.getAttribute('src');
+            if (imgUrl) {
+                this.enlargePicture(imgUrl);
             }
         }
     }
