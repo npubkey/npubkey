@@ -53,10 +53,16 @@
             <span class="extras">root: </span>
             <span routerLink="/posts/{{post.nip10Result.root.id|nevent}}" class="extras">{{post.nip10Result.root.id|nevent|ellipsis}}</span>
         </div>
-        <div *ngIf="smallScreen" class="small-post-content-container">
+        <div *ngIf="smallScreen && !imageBlurred" class="small-post-content-container">
             <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
         </div>
-        <div *ngIf="!smallScreen" class="large-post-content-container">
+        <div *ngIf="smallScreen && imageBlurred" class="small-post-content-container-blur">
+            <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
+        </div>
+        <div *ngIf="!smallScreen && !imageBlurred" class="large-post-content-container">
+            <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
+        </div>
+        <div *ngIf="!smallScreen && imageBlurred" class="large-post-content-container-blur">
             <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
         </div>
     </mat-card-content>

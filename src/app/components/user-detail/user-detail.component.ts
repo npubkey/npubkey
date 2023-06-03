@@ -9,6 +9,9 @@ import { SignerService } from 'src/app/services/signer.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Nip05Service } from 'src/app/services/nip05.service';
+import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-user-detail',
@@ -34,7 +37,8 @@ export class UserDetailComponent implements OnInit {
         private signerService: SignerService,
         private snackBar: MatSnackBar,
         private router: Router,
-        private nip05: Nip05Service
+        private nip05: Nip05Service,
+        private dialog: MatDialog
     ) {
         this.npub = this.route.snapshot.paramMap.get('npub') || "";
         if (this.npub === "") {
@@ -60,6 +64,10 @@ export class UserDetailComponent implements OnInit {
 
     ngOnInit() {
         this.getUser();
+    }
+
+    enlargeBanner() {
+        this.dialog.open(ImageDialogComponent, {data: {picture: this.user.banner}});
     }
 
     signOut() {

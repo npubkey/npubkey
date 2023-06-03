@@ -50,6 +50,7 @@ export class PostComponent implements OnInit {
     canFollow: boolean = true;
     followText: string = "Follow";
     followList: string[];
+    imageBlurred: boolean = true;
 
     // create reply stuff
     gifSearch: string = "";
@@ -87,6 +88,7 @@ export class PostComponent implements OnInit {
             this.viewingRoot = true;
         }
         if (this.post) {
+            this.setImageBlurred();
             this.rootEvent = this.post.nip10Result?.root?.id || "";
             if (this.followList.includes(this.post.pubkey)) {
                 this.canFollow = false;
@@ -100,6 +102,15 @@ export class PostComponent implements OnInit {
             this.inPostDetail = false;
         } else {
             this.inPostDetail = true;
+        }
+    }
+
+    setImageBlurred() {
+        const blurImagesIfNotFollowing = this.signerService.getBlurImagesIfNotFollowing();
+        if (!this.followList.includes(this.post.pubkey) && blurImagesIfNotFollowing) {
+            this.imageBlurred = true;
+        } else {
+            this.imageBlurred = false;
         }
     }
 
@@ -120,6 +131,10 @@ export class PostComponent implements OnInit {
             this.currentBreakpoint = Breakpoints.XSmall;
             this.smallScreen = true;
         }
+    }
+
+    switchCSSLarge() {
+
     }
 
     enlargePicture(imgUrl: string) {
@@ -177,9 +192,13 @@ export class PostComponent implements OnInit {
         }
         if (element.nodeName === "IMG") {
             e.preventDefault();
-            const imgUrl = element.getAttribute('src');
-            if (imgUrl) {
-                this.enlargePicture(imgUrl);
+            if (this.imageBlurred) {
+                this.imageBlurred = false;
+            } else {
+                const imgUrl = element.getAttribute('src');
+                if (imgUrl) {
+                    this.enlargePicture(imgUrl);
+                }
             }
         }
     }

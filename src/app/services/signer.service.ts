@@ -164,6 +164,22 @@ export class SignerService {
         this.savePublicKeyToSession(publicKey);
     }
 
+    setBlurImagesIfNotFollowing(blur: boolean) {
+        if (blur) {
+            localStorage.setItem("blur", "true");
+        } else {
+            localStorage.setItem("blur", "false");
+        }
+    }
+
+    getBlurImagesIfNotFollowing() {
+        const blur = localStorage.getItem("blur") || "true";
+        if (blur === "false") {
+            return false;
+        }
+        return true;
+    }
+
     handleLoginWithNsec(nsec: string) {
         try {
             let privateKey = nip19.decode(nsec).data.toString();

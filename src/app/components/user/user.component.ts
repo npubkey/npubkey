@@ -157,7 +157,7 @@ export class UserComponent implements OnInit {
 
     enlargeUserPicture() {
         if (this.canEnlarge) {
-            this.dialog.open(ImageDialogComponent, {data: {panelClass: "picture-container", picture: this.user.picture}});
+            this.dialog.open(ImageDialogComponent, {data: {picture: this.user.picture}});
         }
     }
 

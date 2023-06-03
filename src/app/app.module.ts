@@ -12,6 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 // Material
 import { MatDialogModule } from '@angular/material/dialog';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
@@ -142,6 +143,7 @@ const dbConfig: DBConfig  = {
     FormsModule,
     HttpClientModule,
     MatIconModule,
+    MatCheckboxModule,
     MatSliderModule,
     MatToolbarModule,
     MatMenuModule,

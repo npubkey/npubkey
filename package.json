@@ -25,6 +25,7 @@
     "@material/chips": "^15.0.0-canary.684e33d25.0",
     "@types/qrcode": "^1.5.0",
     "angularx-qrcode": "^15.0.1",
+    "blurhash": "^2.0.5",
     "dayjs": "^1.11.7",
     "ngx-indexed-db": "^16.0.0",
     "ngx-infinite-scroll": "^15.0.0",

@@ -27,6 +27,13 @@
         <p>
             <button mat-fab extended color="accent" (click)="setZap()">Set Default Zap</button>
         </p>
+        <p>
+            <mat-divider></mat-divider>
+        </p>
+        <p>
+            <span>Blur Images if not following user</span>
+            <mat-checkbox class="example-margin" [(ngModel)]="blurChecked" (click)="setBlurImages()"></mat-checkbox>
+        </p>
     </div>
 </div>
 

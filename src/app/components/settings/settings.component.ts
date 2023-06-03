@@ -15,6 +15,7 @@ export class SettingsComponent {
 
     relay: string;
     zap: string;
+    blurChecked: any;
 
     constructor(
         private signerService: SignerService,
@@ -25,6 +26,7 @@ export class SettingsComponent {
         this.relay = this.signerService.getRelay();
         this.zap = this.signerService.getDefaultZap();
         let pubkey = this.signerService.getPublicKey()
+        this.blurChecked = this.signerService.getBlurImagesIfNotFollowing();
         if (pubkey === "") {
             this.router.navigate(["/login"])
         }
@@ -39,6 +41,10 @@ export class SettingsComponent {
         } else {
             this.setRelay();
         }
+    }
+
+    setBlurImages() {
+        this.signerService.setBlurImagesIfNotFollowing(this.blurChecked);
     }
 
     setRelay() {
