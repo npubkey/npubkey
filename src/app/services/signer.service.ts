@@ -19,7 +19,6 @@ export class SignerService {
     constructor() { }
 
     clearKeys() {
-        console.log("clearing some local storage");
         localStorage.removeItem("muteList");
         localStorage.removeItem("currentChip");
         localStorage.removeItem("following");
@@ -86,13 +85,10 @@ export class SignerService {
 
     getFollowingList() {
         const followingRaw = localStorage.getItem("following");
-        console.log("RAW")
-        console.log(followingRaw)
         if (followingRaw === null || followingRaw === "") {
             return [];
         }
         const following = (followingRaw).split(',');
-        console.log(following);
         return following;
     }
 
@@ -109,7 +105,6 @@ export class SignerService {
     }
 
     setMuteList(muteList: string[]) {
-        console.log('updating mute list')
         if (muteList.length === 0) {
             localStorage.setItem("muteList", "");
         } else {
@@ -225,7 +220,6 @@ export class SignerService {
         if (window.nostr && window.nostr.nip04?.decrypt) {
             const decryptedContent = await window.nostr.nip04.decrypt(pubkey, ciphertext)
                 .catch((error: any) => {
-                    console.log(error);
                     return "*Failed to Decrypted Content*"
                 });
             return decryptedContent;
@@ -236,7 +230,6 @@ export class SignerService {
     async decryptWithPrivateKey(pubkey: string, ciphertext: string): Promise<string> {
         let privateKey = this.getPrivateKey()
         return await nip04.decrypt(privateKey, pubkey, ciphertext).catch((error) => {
-            console.log(error);
             return "*Failed to Decrypted Content*";
         });
     }

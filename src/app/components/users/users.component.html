@@ -12,7 +12,7 @@
         [scrollWindow]="true"
     >
         <div class="users-container" *ngFor="let user of users">
-            <app-user [user]="user"></app-user>
+            <app-user [user]="user" routerLink="/users/{{user.pubkey|npub}}"></app-user>
         </div>
     </div>
     <div *ngIf="users.length === 0">

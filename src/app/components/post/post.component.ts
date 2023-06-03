@@ -123,7 +123,9 @@ export class PostComponent implements OnInit {
     }
 
     enlargePicture(imgUrl: string) {
-        this.dialog.open(ImageDialogComponent, {data: {picture: imgUrl}})
+        if (!this.smallScreen) {
+            this.dialog.open(ImageDialogComponent, {data: {picture: imgUrl}})
+        }
     }
 
     showEventJson() {

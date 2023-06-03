@@ -11,7 +11,6 @@ export class ImageServiceService {
 
     uploadImage(file: File | Blob): Observable<string> {
         // returns url of uploaded image
-        console.log('upload image')
         let url = "https://nostr.build/api/upload/snort.php";
         const fd = new FormData();
         fd.append("fileToUpload", file);

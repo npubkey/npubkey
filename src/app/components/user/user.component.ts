@@ -17,7 +17,7 @@ import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
-
+    @Input() canEnlarge = false;
     @Input() user?: User;
     @Input() nip05Verified?: boolean;
     canEdit: boolean = false;
@@ -156,7 +156,9 @@ export class UserComponent implements OnInit {
     }
 
     enlargeUserPicture() {
-        this.dialog.open(ImageDialogComponent, {data: {picture: this.user.picture}})
+        if (this.canEnlarge) {
+            this.dialog.open(ImageDialogComponent, {data: {panelClass: "picture-container", picture: this.user.picture}});
+        }
     }
 
     async getLightningInvoice(amount: string) {

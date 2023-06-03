@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { NostrService } from 'src/app/services/nostr.service';
 import { User, dbUserToUser } from "../../types/user";
 import { Filter} from 'nostr-tools';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { DBUser } from '../../types/user';
-import { Paginator, range } from '../../utils';
+import { Paginator } from '../../utils';
 
 @Component({
   selector: 'app-users',
@@ -37,7 +37,6 @@ export class UsersComponent implements OnInit {
     }
 
     getUsers() {
-        console.log(this.dbOut);
         if (this.dbOut) {
             this.getUsersFromNostr();
         } else {

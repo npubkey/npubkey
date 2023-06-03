@@ -20,7 +20,7 @@
         <div class="banner">
             <img class="banner-image" src="{{user.banner}}"/>
         </div>
-        <app-user [user]="user" [nip05Verified]="nip05Verified"></app-user>
+        <app-user [user]="user" [nip05Verified]="nip05Verified" [canEnlarge]="true"></app-user>
         <mat-divider></mat-divider>
         <div
             *ngIf="posts"

@@ -49,7 +49,6 @@ export class ContactListComponent {
         if (this.signerService.getFollowingList().length === 0) {
             await this.getFollowingUsersFromNostr();
         } else {
-            console.log("getting from db")
             this.getFollowingUsersFromDB();
             if (this.users.length === 0) {
                 await this.getFollowingUsersFromNostr();

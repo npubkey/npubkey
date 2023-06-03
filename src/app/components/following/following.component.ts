@@ -67,7 +67,6 @@ export class FollowingComponent {
     }
 
     getUsersFromDB() {
-        console.log("getting users from db");
         this.dbService.getAll("users")
         .subscribe((results: DBUser[]) => {
             for(const u of results) {
@@ -78,7 +77,6 @@ export class FollowingComponent {
                     this.users.push(dbUserToUser(u));
                 }
             }
-            console.log(this.users);
             if (this.users.length === 0) {
                 this.getUsersFromNostr();
             }

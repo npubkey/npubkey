@@ -60,7 +60,6 @@ export class NostrService {
     }
 
     storeUsersInDB(users: User[]) {
-        console.log(users);
         this.dbService.bulkAdd('users', users);
     }
 
@@ -74,7 +73,6 @@ export class NostrService {
         let user: User | null = null;
         this.dbService.getByIndex("users", "pubkey", pubkey)
             .subscribe((result: DBUser | any) => {
-                console.log(result);
                 if (result !== undefined) {
                     user = dbUserToUser(result)
                 }
