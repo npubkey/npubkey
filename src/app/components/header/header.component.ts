@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit {
     showHeader: boolean = true;
     pubkey: string;
     userImage: string;
+    notificationCount: number = 0;
     readonly breakpoint$ = this.breakpointObserver
         .observe([Breakpoints.XLarge, Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, Breakpoints.XSmall])
         .pipe(
@@ -47,6 +48,7 @@ export class HeaderComponent implements OnInit {
             this.getContactList(this.pubkey);
             this.getMuteList(this.pubkey);
         }
+        this.getNotificationCount();
     }
 
     ngOnInit(): void {
@@ -55,6 +57,11 @@ export class HeaderComponent implements OnInit {
         this.breakpoint$.subscribe(() => {
             this.breakpointChanged()
         });
+    }
+
+    async getNotificationCount() {
+        const notifications = await this.nostrService.getNotifications();
+        this.notificationCount = notifications.length;
     }
 
     async getContactList(pubkey: string) {

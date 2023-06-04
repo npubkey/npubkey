@@ -6,7 +6,7 @@ import { Post, Zap } from '../types/post';
 import { SignerService } from './signer.service';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { DBUser, dbUserToUser } from '../types/user';
-import { P } from '@angular/cdk/keycodes';
+import { NostrNotification } from '../types/notification';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +19,6 @@ export class NostrService {
   ) { }
 
     async relayConnect() {
-        // TODO: relay should be in settings / stored on relays
-        // pull from there
         const relay = relayInit(this.signerService.getRelay());
         relay.on('connect', () => {
             console.log(`connected to ${relay.url}`)
@@ -326,7 +324,7 @@ export class NostrService {
                 following.push(tag[1]);
             });
         }
-        return following
+        return following;
     }
 
     async getKind4(filter1: Filter, filter2: Filter): Promise<Event[]> {
@@ -458,6 +456,23 @@ export class NostrService {
             sig: signature,
           };
           return signedEvent;
+    }
+
+    async getNotifications(): Promise<Zap[]> {
+        // currently only gets zaps
+        const pubkey = this.signerService.getPublicKey();
+        // check for replies
+        // check for zaps
+        // check for mentions?
+        // check for new followers
+        const zapFilter: Filter = {kinds: [9735], "#p": [pubkey]}
+        const relay = await this.relayConnect();
+        const response = await relay.list([zapFilter])
+        let notifications: Zap[] = [];
+        response.forEach(e => {
+            notifications.push(new Zap(e.id, e.kind, e.pubkey, e.created_at, e.sig, e.tags));
+        });
+        return notifications;
     }
 
     async sendEvent(event: Event) {

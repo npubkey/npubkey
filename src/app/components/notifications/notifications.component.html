@@ -1,0 +1,11 @@
+<div class="router-container">
+    <div class="page-header">
+        <h1>Notifications</h1>
+        <mat-divider></mat-divider>
+    </div>
+    <div class="notification-container">
+        <div *ngFor="let zap of notifications">
+            <app-zap [zap]="zap"></app-zap>
+        </div>
+    </div>
+</div>

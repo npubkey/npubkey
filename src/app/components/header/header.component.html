@@ -23,6 +23,16 @@
                     <button mat-icon-button routerLink='/create'>
                         <mat-icon>{{ create_icon }}</mat-icon>
                     </button>
+                    <span *ngIf="notificationCount">
+                        <button mat-icon-button routerLink='/notifications'>
+                            <mat-icon matBadge="{{notificationCount}}" matBadgeColor="warn">{{ notifications_icon }}</mat-icon>
+                        </button>
+                    </span>
+                    <span *ngIf="notificationCount === 0">
+                        <button mat-icon-button routerLink='/notifications'>
+                            <mat-icon>{{ notifications_icon }}</mat-icon>
+                        </button>
+                    </span>
                     <button mat-icon-button routerLink='/profile'>
                         <div *ngIf="userImage" class="header-user-image">
                             <img src="{{userImage}}" />
@@ -48,6 +58,16 @@
                     <button mat-icon-button routerLink='/messages'>
                         <mat-icon>{{ messages_icon }}</mat-icon>
                     </button>
+                    <span *ngIf="notificationCount">
+                        <button mat-icon-button routerLink='/notifications'>
+                            <mat-icon matBadge="{{notificationCount}}" matBadgeColor="warn">{{ notifications_icon }}</mat-icon>
+                        </button>
+                    </span>
+                    <span *ngIf="notificationCount === 0">
+                        <button mat-icon-button routerLink='/notifications'>
+                            <mat-icon>{{ notifications_icon }}</mat-icon>
+                        </button>
+                    </span>
                 </div>
             </mat-toolbar-row>
         </mat-toolbar>

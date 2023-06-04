@@ -18,6 +18,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -69,6 +70,8 @@ import { ZapComponent } from './components/zap/zap.component';
 // indexed db
 import { NgxIndexedDBModule, DBConfig } from 'ngx-indexed-db';
 import { ImageDialogComponent } from './components/image-dialog/image-dialog.component';
+import { NotificationsComponent } from './components/notifications/notifications.component';
+import { NotificationComponent } from './components/notification/notification.component';
 
 const dbConfig: DBConfig  = {
     name: 'npubkeydb',
@@ -135,6 +138,8 @@ const dbConfig: DBConfig  = {
     HashtagFeedComponent,
     ZapComponent,
     ImageDialogComponent,
+    NotificationsComponent,
+    NotificationComponent,
   ],
   entryComponents: [ImageDialogComponent],
   imports: [
@@ -153,6 +158,7 @@ const dbConfig: DBConfig  = {
     MatDialogModule,
     MatChipsModule,
     MatButtonModule,
+    MatBadgeModule,
     MatDividerModule,
     MatListModule,
     MatExpansionModule,
