@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SignerService } from 'src/app/services/signer.service';
 import { User } from '../../types/user';
-import {Clipboard} from '@angular/cdk/clipboard';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LightningService } from 'src/app/services/lightning.service';
 import { LightningResponse, LightningInvoice } from 'src/app/types/post';

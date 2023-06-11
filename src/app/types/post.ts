@@ -192,10 +192,12 @@ export class Content {
     kind: number;
     content: string;
     nip10Result: NIP10Result;
-    constructor(kind: number, content: string, nip10Result: NIP10Result) {
+    addHash: boolean;
+    constructor(kind: number, content: string, nip10Result: NIP10Result, addHash: boolean = false) {
         this.kind = kind;
         this.content = content;
         this.nip10Result = nip10Result;
+        this.addHash = addHash
     }
 
     getParsedContent(): string {
@@ -238,6 +240,10 @@ export class Content {
     wrapTextInSpan(textWrap: TextWrap): string {
         if (textWrap.cssClass === undefined) {
             textWrap.cssClass = "hashtag"
+        }
+        if (this.addHash && textWrap.addLink) {
+            // this fixes an issue in user about not redirecting properly
+            textWrap.addLink = textWrap.addLink.replace('href="', 'href="/#/')
         }
         return `<a class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</a>`
     }
@@ -306,7 +312,7 @@ export class Content {
         let hashtags: string[] = content.match(/#\w+/g) || []
         hashtags.forEach(tag => {
             let tagId = tag.substring(1);  // remove #
-            let textWrap: TextWrap = {text: tag, addLink: `href="#/feed/${tagId}"`}
+            let textWrap: TextWrap = {text: tag, addLink: `href="/feed/${tagId}"`}
             content = content.replace(tag, this.wrapTextInSpan(textWrap))
         });
         return content

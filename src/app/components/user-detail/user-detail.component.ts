@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NostrService } from 'src/app/services/nostr.service';
 import { User } from '../../types/user';
@@ -16,7 +16,8 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-user-detail',
   templateUrl: './user-detail.component.html',
-  styleUrls: ['./user-detail.component.css']
+  styleUrls: ['./user-detail.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class UserDetailComponent implements OnInit {
     welcomeMessage: string = "Welcome to the nostr network. Create a profile or start exploring";
