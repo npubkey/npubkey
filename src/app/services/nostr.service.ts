@@ -61,6 +61,10 @@ export class NostrService {
         this.dbService.bulkAdd('users', users);
     }
 
+    storeNotificationsInDB(notifications: Zap[]) {
+        this.dbService.bulkAdd('notifications', notifications);
+    }
+
     storeUserInLocalStorage(pubkey: string, displayName: string, picture: string) {
         // hacky but store the data so its available in other places
         localStorage.setItem(pubkey, displayName);
@@ -472,6 +476,9 @@ export class NostrService {
         response.forEach(e => {
             notifications.push(new Zap(e.id, e.kind, e.pubkey, e.created_at, e.sig, e.tags));
         });
+        notifications.sort((a,b) => a.createdAt - b.createdAt).reverse();
+        console.log(notifications);
+        this.storeNotificationsInDB(notifications);
         return notifications;
     }
 

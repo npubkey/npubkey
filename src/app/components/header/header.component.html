@@ -25,7 +25,7 @@
                     </button>
                     <span *ngIf="notificationCount">
                         <button mat-icon-button routerLink='/notifications'>
-                            <mat-icon matBadge="{{notificationCount}}" matBadgeColor="warn">{{ notifications_icon }}</mat-icon>
+                            <mat-icon>{{ notifications_icon }}</mat-icon>
                         </button>
                     </span>
                     <span *ngIf="notificationCount === 0">
@@ -60,7 +60,7 @@
                     </button>
                     <span *ngIf="notificationCount">
                         <button mat-icon-button routerLink='/notifications'>
-                            <mat-icon matBadge="{{notificationCount}}" matBadgeColor="warn">{{ notifications_icon }}</mat-icon>
+                            <mat-icon>{{ notifications_icon }}</mat-icon>
                         </button>
                     </span>
                     <span *ngIf="notificationCount === 0">

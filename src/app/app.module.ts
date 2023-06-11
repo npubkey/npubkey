@@ -73,9 +73,27 @@ import { ImageDialogComponent } from './components/image-dialog/image-dialog.com
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { NotificationComponent } from './components/notification/notification.component';
 
+
+// Ahead of time compiles requires an exported function for factories
+export function migrationFactory() {
+    // The animal table was added with version 2 but none of the existing tables or data needed
+    // to be modified so a migrator for that version is not included.
+    return {
+      1: (db, transaction) => {
+        const store = transaction.objectStore('users');
+        store.createIndex('users', 'users', { unique: false });
+      },
+      3: (db, transaction) => {
+        const store = transaction.objectStore('notifications');
+        store.createIndex('notifications', 'notifications', { unique: false });
+      }
+    };
+}
+
+
 const dbConfig: DBConfig  = {
     name: 'npubkeydb',
-    version: 1,
+    version: 3,
     objectStoresMeta: [
         {
             store: 'users',
@@ -98,7 +116,32 @@ const dbConfig: DBConfig  = {
                 { name: 'following', keypath: 'following', options: {unique: false}}
             ]
         },
-    ]
+        {
+            store: 'notifications',
+            storeConfig: { keyPath: 'id', autoIncrement: true},
+            storeSchema: [
+                { name: 'kind', keypath: 'kind', options: {unique: false} },
+                { name: 'walletPubkey', keypath: 'walletPubkey', options: {unique: false} },
+                { name: 'walletNpub', keypath: 'walletNpub', options: {unique: false} },
+                { name: 'createdAt', keypath: 'createdAt', options: {unique: false} },
+                { name: 'username', keypath: 'username', options: {unique: false} },
+                { name: 'picture', keypath: 'picture', options: {unique: false} },
+                { name: 'receiverPubKey', keypath: 'receiverPubKey', options: {unique: false} },
+                { name: 'receiverNpub', keypath: 'receiverNpub', options: {unique: false} },
+                { name: 'receiverEventId', keypath: 'receiverEventId', options: {unique: false} },
+                { name: 'senderPubkey', keypath: 'senderPubkey', options: {unique: false} },
+                { name: 'senderNpub', keypath: 'senderNpub', options: {unique: false} },
+                { name: 'senderMessage', keypath: 'senderMessage', options: {unique: false} },
+                { name: 'bolt11', keypath: 'bolt11', options: {unique: false} },
+                { name: 'preImage', keypath: 'preImage', options: {unique: false} },
+                { name: 'description', keypath: 'description', options: {unique: false} },
+                { name: 'fromNow', keypath: 'fromNow', options: {unique: false} },
+                { name: 'content', keypath: 'content', options: {unique: false} },
+                { name: 'satAmount', keypath: 'satAmount', options: {unique: false}},
+            ]
+        }
+    ],
+    migrationFactory
 };
 
 @NgModule({
