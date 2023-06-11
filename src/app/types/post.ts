@@ -187,6 +187,10 @@ export class Zap {
     }
 }
 
+export function isYoutubeVideo(url: string): boolean {
+    var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/ig;
+    return (url.match(p)) ? true : false;
+}
 
 export class Content {
     kind: number;
@@ -316,7 +320,6 @@ export class Content {
             let tagId = tag.substring(1);  // remove #
             let textWrap: TextWrap = {text: tag, addLink: `href="/feed/${tagId}"`}
             content = content.replaceAll(tag, this.wrapTextInSpan(textWrap))
-            console.log(content)
         });
         return content
     }
@@ -335,7 +338,15 @@ export class Content {
                 return `<p><img src="${url}" /></p>`
             }
             if (url.toLowerCase().endsWith("mp4") || url.toLowerCase().endsWith("mov")) {
-                return `<p><video controls><source src="${url}#t=0.1" type="video/mp4"></video></p>`
+                return `<p><video controls><source src="${url}#t=0.1" type="video/mp4"></video></p>`;
+            }
+            if (isYoutubeVideo(url)) {
+                // kinda hacky but works
+                if (url.includes("youtu.be")) {
+                    url = url.replace("youtu.be/", "youtube.com/watch?v=")
+                }
+                url = url.replace("watch?v=", "embed/")
+                return `<p><iframe width="100%" height="350px" src="${url}"></iframe></p>`;
             }
             return `<p><a href="${url}" target="_blank">${url}</a></p>`;
         });
