@@ -9,6 +9,7 @@ import { bech32 } from '@scure/base'
 import { decode } from "@gandlaf21/bolt11-decode";
 import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
+import { webln } from 'alby-js-sdk';
 
 
 @Component({
@@ -177,11 +178,31 @@ export class UserComponent implements OnInit {
 
     async payInvoice() {
         let paid = false;
-        paid = await this.lightning.payInvoice(this.paymentInvoice);
+        const nwcURI = this.signerService.getNostrWalletConnectURI()
+        console.log("WOW")
+        console.log(nwcURI);
+        if (!nwcURI) {
+            paid = await this.lightning.payInvoice(this.paymentInvoice);
+        } else {
+            paid = await this.zapWithNWC(nwcURI, this.paymentInvoice);
+        }
         if (paid) {
             this.openSnackBar("Zapped!", "dismiss");
             this.hideInvoice();
         }
+    }
+
+    async zapWithNWC(nwcURI: string, invoice: string): Promise<boolean> {
+        const nwc = new webln.NWC({ nostrWalletConnectUrl: nwcURI });
+        // connect to the relay
+        await nwc.enable();
+        
+        // now you can send payments by passing in the invoice
+        const response = await nwc.sendPayment(invoice);
+        console.log(response);
+        // disconnect from the relay
+        nwc.close()
+        return true;
     }
 
     openSnackBar(message: string, action: string) {

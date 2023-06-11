@@ -316,7 +316,6 @@ export class Content {
         let hashtags: string[] = content.match(/#\w+/gm) || []
         hashtags = hashtags.sort((a,b) => b.length - a.length);
         hashtags.forEach(tag => {
-            console.log(tag)
             let tagId = tag.substring(1);  // remove #
             let textWrap: TextWrap = {text: tag, addLink: `href="/feed/${tagId}"`}
             content = content.replaceAll(tag, this.wrapTextInSpan(textWrap))

@@ -13,6 +13,7 @@ export class SignerService {
     constructor() { }
 
     clearKeys() {
+        localStorage.removeItem("nostrWalletConnect");
         localStorage.removeItem("muteList");
         localStorage.removeItem("currentChip");
         localStorage.removeItem("following");
@@ -121,6 +122,18 @@ export class SignerService {
 
     setDefaultZap(defaultZap: string) {
         localStorage.setItem("defaultZap", defaultZap)
+    }
+
+    setNostrWalletConnectURI(uri: string) {
+        localStorage.setItem("nostrWalletConnectURI", uri);
+    }
+
+    getNostrWalletConnectURI() {
+        const x = localStorage.getItem("nostrWalletConnectURI") || "";
+        if (x === "") {
+            return null;
+        }
+        return x;
     }
 
     getFollowingListAsTags(): string[][] {

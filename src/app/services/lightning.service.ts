@@ -81,6 +81,7 @@ export class LightningService {
     }
 
     async payInvoice(pr: string) {
+        console.log("paying invoice")
         await this.login();
         if (this.hasWebln()) {
           const rsp = await this.sendPayment(pr).catch((error) => {
