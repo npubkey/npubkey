@@ -309,11 +309,14 @@ export class Content {
     }
 
     hashtagContent(content: string): string {
-        let hashtags: string[] = content.match(/#\w+/g) || []
+        let hashtags: string[] = content.match(/#\w+/gm) || []
+        hashtags = hashtags.sort((a,b) => b.length - a.length);
         hashtags.forEach(tag => {
+            console.log(tag)
             let tagId = tag.substring(1);  // remove #
             let textWrap: TextWrap = {text: tag, addLink: `href="/feed/${tagId}"`}
-            content = content.replace(tag, this.wrapTextInSpan(textWrap))
+            content = content.replaceAll(tag, this.wrapTextInSpan(textWrap))
+            console.log(content)
         });
         return content
     }

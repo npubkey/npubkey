@@ -73,6 +73,9 @@ import { ImageDialogComponent } from './components/image-dialog/image-dialog.com
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { NotificationComponent } from './components/notification/notification.component';
 
+// webln and nostr window
+import { WebLN } from 'src/app/types/webln';
+import { NostrWindow } from './types/nostr';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -223,3 +226,11 @@ const dbConfig: DBConfig  = {
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+
+declare global {
+    interface Window {
+      webln?: WebLN;
+      nostr?: NostrWindow;
+    }
+}

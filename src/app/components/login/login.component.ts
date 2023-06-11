@@ -78,7 +78,9 @@ export class LoginComponent {
             success = this.signerService.handleLoginWithNsec(this.nsec);
         } else {
             success = await this.handleLoginWithExtension();
+            console.log(success);
         }
+        console.log(success);
         if (success) {
             // this.sendFollownpubkey()
             this.openSnackBar("Succesfully Signed In", "dismiss");
@@ -86,13 +88,13 @@ export class LoginComponent {
         } else {
             this.openSnackBar("Failed Signed In", "dismiss");
             this.signerService.clearKeys();
-            this.router.navigate(['/']);
+            this.router.navigate(['/login']);
         }
     }
 
     async handleLoginWithExtension(): Promise<boolean> {
         if (this.signerService.usingNostrBrowserExtension()) {
-            return await this.signerService.handleLoginWithExtension()
+            return this.signerService.handleLoginWithExtension()
         } else {
             this.openSnackBar("No Nostr Browser extension", "dismiss");
             return false;

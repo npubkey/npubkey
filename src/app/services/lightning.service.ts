@@ -7,12 +7,6 @@ import { WebLN } from 'src/app/types/webln';
 import { Event } from 'nostr-tools';
 
 
-declare global {
-    interface Window {
-      webln?: WebLN;
-    }
-}
-
 @Injectable({
   providedIn: 'root'
 })

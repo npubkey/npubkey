@@ -1,12 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UnsignedEvent, nip19, getPublicKey, nip04, Event } from 'nostr-tools';
-import { NostrWindow } from '../types/nostr';
 
-declare global {
-    interface Window {
-        nostr: NostrWindow | undefined
-    }
-}
 
 @Injectable({
   providedIn: 'root'
@@ -204,9 +198,11 @@ export class SignerService {
 
     async handleLoginWithExtension(): Promise<boolean> {
         if (window.nostr) {
-            const pubkey = await window.nostr.getPublicKey().catch(() => {
+            const pubkey = await window.nostr.getPublicKey().catch((e) => {
+                console.log(e);
                 return "";
             });
+            console.log(pubkey);
             if (pubkey === "") {
                 return false;
             }
