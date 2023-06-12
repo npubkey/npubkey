@@ -13,13 +13,15 @@ export class SignerService {
     constructor() { }
 
     clearKeys() {
-        localStorage.removeItem("nostrWalletConnect");
+        localStorage.removeItem("nostrWalletConnectURI");
         localStorage.removeItem("muteList");
         localStorage.removeItem("currentChip");
         localStorage.removeItem("following");
         localStorage.removeItem(`${this.getPublicKey()}_img`);
         localStorage.removeItem(this.localStoragePrivateKeyName);
         localStorage.removeItem(this.localStoragePublicKeyName);
+        console.log("data cleared")
+        console.log(localStorage.getItem("nostrWalletConnect"))
     }
 
     getUsername(pubkey: string) {

@@ -136,6 +136,4 @@ export class SettingsComponent {
     openSnackBar(message: string, action: string) {
         this.snackBar.open(message, action, {duration: 1300});
     }
-
-
 }

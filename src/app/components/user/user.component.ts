@@ -179,9 +179,8 @@ export class UserComponent implements OnInit {
     async payInvoice() {
         let paid = false;
         const nwcURI = this.signerService.getNostrWalletConnectURI()
-        console.log("WOW")
         console.log(nwcURI);
-        if (!nwcURI) {
+        if (nwcURI === null) {
             paid = await this.lightning.payInvoice(this.paymentInvoice);
         } else {
             paid = await this.zapWithNWC(nwcURI, this.paymentInvoice);
@@ -193,6 +192,7 @@ export class UserComponent implements OnInit {
     }
 
     async zapWithNWC(nwcURI: string, invoice: string): Promise<boolean> {
+        this.openSnackBar("Zapping with Nostr Wallet Connect..", "dismiss");
         const nwc = new webln.NWC({ nostrWalletConnectUrl: nwcURI });
         // connect to the relay
         await nwc.enable();

@@ -45,13 +45,17 @@ export class NostrService {
         let content: any;  // json parsed
         let user: User;
         response.forEach(e => {
-            content = JSON.parse(e.content)
-            user = new User(content, e.created_at, e.pubkey)
-            if (followingList) {
-                user.setFollowing(followingList);
+            try {
+                content = JSON.parse(e.content)
+                user = new User(content, e.created_at, e.pubkey)
+                if (followingList) {
+                    user.setFollowing(followingList);
+                }
+                users.push(user)
+                this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture)
+            } catch (e) {
+                console.log(e);
             }
-            users.push(user)
-            this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture)
         });
         this.storeUsersInDB(users);
         return users;

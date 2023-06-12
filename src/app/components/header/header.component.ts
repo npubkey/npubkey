@@ -3,6 +3,8 @@ import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -37,7 +39,8 @@ export class HeaderComponent implements OnInit {
     constructor(
         private signerService: SignerService,
         private nostrService: NostrService,
-        private breakpointObserver: BreakpointObserver
+        private breakpointObserver: BreakpointObserver,
+        private router: Router
     ) {
         this.pubkey = this.signerService.getPublicKey();
         this.userImage = this.signerService.getLoggedInUserImage();
@@ -49,6 +52,17 @@ export class HeaderComponent implements OnInit {
             this.getMuteList(this.pubkey);
         }
         this.getNotificationCount();
+        router.events.pipe(
+            filter(event => event instanceof NavigationEnd)  
+        ).subscribe((event: NavigationEnd) => {
+            console.log(event.url)
+                // refresh user image on change to ensure its shown in header
+                if (event.url === "/login") {
+                    this.userImage = "";
+                } else {
+                    this.userImage = this.signerService.getLoggedInUserImage();
+                }
+        });
     }
 
     ngOnInit(): void {

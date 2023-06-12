@@ -40,7 +40,6 @@ import { PostComponent } from './components/post/post.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { LoginComponent } from './components/login/login.component';
 import { RelayComponent } from './components/relay/relay.component';
-import { GenerateComponent } from './components/generate/generate.component';
 import { CreateEventComponent } from './components/create-event/create-event.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UsersComponent } from './components/users/users.component';
@@ -158,7 +157,6 @@ const dbConfig: DBConfig  = {
     SettingsComponent,
     LoginComponent,
     RelayComponent,
-    GenerateComponent,
     CreateEventComponent,
     UsersComponent,
     MessengerComponent,

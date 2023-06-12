@@ -16,6 +16,7 @@ import { GifService } from 'src/app/services/gif.service';
 import { ImageServiceService } from 'src/app/services/image-service.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
+import { webln } from 'alby-js-sdk';
 
 @Component({
   selector: 'app-post',
@@ -131,10 +132,6 @@ export class PostComponent implements OnInit {
             this.currentBreakpoint = Breakpoints.XSmall;
             this.smallScreen = true;
         }
-    }
-
-    switchCSSLarge() {
-
     }
 
     enlargePicture(imgUrl: string) {
@@ -384,7 +381,12 @@ export class PostComponent implements OnInit {
 
     async payInvoice(invoice: string) {
         let paid = false;
-        paid = await this.lightning.payInvoice(invoice);
+        const nwcURI = this.signerService.getNostrWalletConnectURI()
+        if (!nwcURI) {
+            paid = await this.lightning.payInvoice(invoice);
+        } else {
+            paid = await this.zapWithNWC(nwcURI, this.paymentInvoice);
+        }
         if (paid) {
             this.openSnackBar("Zapped!", "dismiss");
             this.hideInvoice();
@@ -392,6 +394,19 @@ export class PostComponent implements OnInit {
             this.openSnackBar("Payment Failed", "dismiss");
             this.copyAny(invoice);
         }
+    }
+
+    async zapWithNWC(nwcURI: string, invoice: string): Promise<boolean> {
+        this.openSnackBar("Zapping with Nostr Wallet Connect..", "dismiss");
+        const nwc = new webln.NWC({ nostrWalletConnectUrl: nwcURI });
+        // connect to the relay
+        await nwc.enable();
+        // now you can send payments by passing in the invoice
+        const response = await nwc.sendPayment(invoice);
+        console.log(response);
+        // disconnect from the relay
+        nwc.close()
+        return true;
     }
 
     openSnackBar(message: string, action: string) {
