@@ -327,6 +327,7 @@ export class Content {
         // TODO: could be improved
         let urlRegex =/(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
         return content.replace(urlRegex, function(url) {
+            // improve this?
             if (url.toLowerCase().endsWith(".png") ||
                 url.toLowerCase().endsWith(".jpg") ||
                 url.toLowerCase().endsWith(".jpeg") ||
