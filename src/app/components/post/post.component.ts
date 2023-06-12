@@ -271,6 +271,11 @@ export class PostComponent implements OnInit {
             let {prefix, words} = bech32.decode(this.user.lud06, 5000)
             let data = new Uint8Array(bech32.fromWords(words))
             lightningAddress =  new TextDecoder().decode(Uint8Array.from(data));
+        } else if (this.user && this.user.lud16 && this.user.lud16.toLowerCase().startsWith("lnurl")) {
+            // handle case where ppl put lnurl in lud06
+            let {prefix, words} = bech32.decode(this.user.lud16, 5000)
+            let data = new Uint8Array(bech32.fromWords(words))
+            lightningAddress =  new TextDecoder().decode(Uint8Array.from(data));
         }
         else if (this.user && this.user.lud16) {
             lightningAddress = this.lightning.getLightningAddress(this.user.lud16);

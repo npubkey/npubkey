@@ -109,6 +109,16 @@ mat-card-header img {
     width: 100vw;
 }
 
+.small-post-content-container iframe {
+    left: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    max-width: 100vw;
+    position: relative;
+    right: 50%;
+    width: 100vw;
+}
+
 .small-post-content-container-blur img {
     filter: blur(1.5rem);
     left: 50%;
