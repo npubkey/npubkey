@@ -190,15 +190,16 @@ export class SignerService {
     }
 
     handleLoginWithNsec(nsec: string) {
+        let privateKey: string;
         try {
-            let privateKey = nip19.decode(nsec).data.toString();
-            let pubkey = getPublicKey(privateKey);
-            this.savePrivateKeyToSession(privateKey);
-            this.savePublicKeyToSession(pubkey);
-            return true;
+            privateKey = nip19.decode(nsec).data.toString();
         } catch (e) {
             return false;
         }
+        let pubkey = getPublicKey(privateKey);
+        this.savePrivateKeyToSession(privateKey);
+        this.savePublicKeyToSession(pubkey);
+        return true;
     }
 
     usingNostrBrowserExtension() {
@@ -217,7 +218,6 @@ export class SignerService {
                 console.log(e);
                 return "";
             });
-            console.log(pubkey);
             if (pubkey === "") {
                 return false;
             }

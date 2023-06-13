@@ -35,7 +35,6 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FeedComponent } from './components/feed/feed.component';
-import { ProfileComponent } from './components/profile/profile.component';
 import { PostComponent } from './components/post/post.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { LoginComponent } from './components/login/login.component';
@@ -152,7 +151,6 @@ const dbConfig: DBConfig  = {
     HeaderComponent,
     SidebarComponent,
     FeedComponent,
-    ProfileComponent,
     PostComponent,
     SettingsComponent,
     LoginComponent,

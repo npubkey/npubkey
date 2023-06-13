@@ -71,7 +71,7 @@ export class LoginComponent {
 
     async goToApp() {
         this.signerService.clearKeys();
-        let success: boolean = true;
+        let success: boolean = false;
         if (this.generateNewKeyView) {
             success = this.signerService.handleLoginWithNsec(this.nsec);
         } else if (this.loginWithPrivateKeyView && this.nsec !== "") {
@@ -81,7 +81,7 @@ export class LoginComponent {
         }
         if (success) {
             // this.sendFollownpubkey()
-            this.openSnackBar("Succesfully Signed In", "dismiss");
+            this.openSnackBar("Successfully Signed In", "dismiss");
             this.router.navigate(['/profile']);
         } else {
             this.openSnackBar("Failed Signed In", "dismiss");
