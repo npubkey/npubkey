@@ -69,7 +69,7 @@ export class SignerService {
     }
 
     setLoggedInUserImage(url: string) {
-        // gets from local storage if we have it
+        // sets user image link in local storage
         return localStorage.setItem(`${this.getPublicKey()}_img`, url);
     }
 

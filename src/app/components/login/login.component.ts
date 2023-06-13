@@ -78,9 +78,7 @@ export class LoginComponent {
             success = this.signerService.handleLoginWithNsec(this.nsec);
         } else {
             success = await this.handleLoginWithExtension();
-            console.log(success);
         }
-        console.log(success);
         if (success) {
             // this.sendFollownpubkey()
             this.openSnackBar("Succesfully Signed In", "dismiss");
