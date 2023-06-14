@@ -79,6 +79,7 @@ export class LoginComponent {
         } else {
             success = await this.handleLoginWithExtension();
         }
+
         if (success) {
             // this.sendFollownpubkey()
             this.openSnackBar("Successfully Signed In", "dismiss");

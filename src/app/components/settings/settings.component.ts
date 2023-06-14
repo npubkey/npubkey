@@ -65,12 +65,11 @@ export class SettingsComponent {
             await nwc.initNWC({name: 'npubkey'});
         } catch(e) {
             console.warn("Prompt closed");
+            this.openSnackBar("Failed to connect alby", "dismiss");
         }
-        console.log(nwc);
         const url = nwc.getNostrWalletConnectUrl(true);
-        console.log(url);
-        console.log("saving")
         this.signerService.setNostrWalletConnectURI(url);
+        this.openSnackBar("Get Alby Wallet Connected!", "dismiss");
     }
 
     async publishSelfToNewRelay(kind0: User) {

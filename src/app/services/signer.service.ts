@@ -199,6 +199,8 @@ export class SignerService {
         let pubkey = getPublicKey(privateKey);
         this.savePrivateKeyToSession(privateKey);
         this.savePublicKeyToSession(pubkey);
+        console.log(this.getPublicKey())
+        console.log(this.getPrivateKey())
         return true;
     }
 
