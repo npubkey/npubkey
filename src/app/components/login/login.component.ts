@@ -81,6 +81,8 @@ export class LoginComponent {
         }
 
         if (success) {
+            await this.getContactList(this.signerService.getPublicKey());
+            await this.getMuteList(this.signerService.getPublicKey());
             // this.sendFollownpubkey()
             this.openSnackBar("Successfully Signed In", "dismiss");
             this.router.navigate(['/profile']);
@@ -136,6 +138,14 @@ export class LoginComponent {
 
     setNpriv() {
         this.nsec = nip19.nsecEncode(this.privateKey);
+    }
+
+    async getContactList(pubkey: string) {
+        await this.nostrService.getContactList(pubkey);
+    }
+
+    async getMuteList(pubkey: string) {
+        await this.nostrService.getMuteList(pubkey);
     }
 
     // TODO fix this

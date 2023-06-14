@@ -61,14 +61,6 @@ export class FeedComponent implements OnInit, OnDestroy {
 
     toggleLoading = () => this.loading = !this.loading;
 
-    async getContactList(pubkey: string) {
-        await this.nostrService.getContactList(pubkey);
-    }
-
-    async getMuteList(pubkey: string) {
-        await this.nostrService.getMuteList(pubkey);
-    }
-
     getCurrentSelectedChip() {
         let currentChip = localStorage.getItem("currentChip") || "Following";
         if (currentChip === "Following" && this.signerService.getFollowingList().length < 5) {
