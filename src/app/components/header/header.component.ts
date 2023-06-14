@@ -55,13 +55,12 @@ export class HeaderComponent implements OnInit {
         router.events.pipe(
             filter(event => event instanceof NavigationEnd)  
         ).subscribe((event: NavigationEnd) => {
-            console.log(event.url)
-                // refresh user image on change to ensure its shown in header
-                if (event.url === "/login") {
-                    this.userImage = "";
-                } else {
-                    this.userImage = this.signerService.getLoggedInUserImage();
-                }
+            // refresh user image on change to ensure its shown in header
+            if (event.url === "/login") {
+                this.userImage = "";
+            } else {
+                this.userImage = this.signerService.getLoggedInUserImage();
+            }
         });
     }
 
