@@ -2,7 +2,7 @@
     <h1>{{followPath}}</h1>
     <div *ngIf="!loading">
         <div  class="users-container" *ngFor="let user of users">
-            <app-user [user]="user" routerLink="/users/{{user.pubkey|npub}}"></app-user>
+            <app-listed-user [user]="user" routerLink="/users/{{user.pubkey|npub}}"></app-listed-user>
             <mat-divider></mat-divider>
         </div>
     </div>

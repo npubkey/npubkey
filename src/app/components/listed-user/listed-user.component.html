@@ -1,0 +1,11 @@
+<mat-card class="listed-user">
+    <mat-card-header>
+        <img 
+            *ngIf="user.picture"
+            class="header-image"
+            mat-card-avatar
+            src="{{user.picture}}"/>
+      <mat-card-title>{{user.displayName}}</mat-card-title>
+      <mat-card-subtitle class="npub" >{{user.npub|ellipsis}}</mat-card-subtitle>
+    </mat-card-header>
+</mat-card>

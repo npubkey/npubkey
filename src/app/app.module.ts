@@ -74,6 +74,7 @@ import { NotificationComponent } from './components/notification/notification.co
 // webln and nostr window
 import { WebLN } from 'src/app/types/webln';
 import { NostrWindow } from './types/nostr';
+import { ListedUserComponent } from './components/listed-user/listed-user.component';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -182,6 +183,7 @@ const dbConfig: DBConfig  = {
     ImageDialogComponent,
     NotificationsComponent,
     NotificationComponent,
+    ListedUserComponent,
   ],
   entryComponents: [ImageDialogComponent],
   imports: [
