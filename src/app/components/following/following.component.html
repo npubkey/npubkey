@@ -3,7 +3,6 @@
     <div *ngIf="!loading">
         <div  class="users-container" *ngFor="let user of users">
             <app-listed-user [user]="user" routerLink="/users/{{user.pubkey|npub}}"></app-listed-user>
-            <mat-divider></mat-divider>
         </div>
     </div>
     <div *ngIf="loading">

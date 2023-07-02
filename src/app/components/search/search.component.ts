@@ -27,27 +27,28 @@ export class SearchComponent {
         this.searchForUsers();
         this.searchUsers = [];
         const items = { ...localStorage };
+        let searchTerm = this.search
         for (let key of Object.keys(items)) {
             if (key.includes("_name")) continue;
             if (key.includes("following")) continue;
             if (key.includes("publicKey")) continue;
             if (key.includes("_img")) continue;
             if (this.search.startsWith("npub")) {
-                this.search = nip19.decode(this.search).data.toString();
+                searchTerm = nip19.decode(this.search).data.toString();
             }
             let value = (items as {[key: string]: string})[key].toLowerCase();
             key = key.toLowerCase();
-            this.search = this.search.toLowerCase();
-            if (key.toLowerCase().includes(this.search)) {
+            searchTerm = searchTerm.toLowerCase();
+            if (key.toLowerCase().includes(searchTerm)) {
                 this.addToFound(key);
             }
-            else if (value.includes(this.search)) {
+            else if (value.includes(searchTerm)) {
                 this.addToFound(key);
             }
-            else if (this.search.includes(key)) {
+            else if (searchTerm.includes(key)) {
                 this.addToFound(key);
             }
-            else if (this.search.includes(value)) {
+            else if (searchTerm.includes(value)) {
                 this.addToFound(key);
             }
         }
