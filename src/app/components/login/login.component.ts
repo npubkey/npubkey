@@ -70,6 +70,7 @@ export class LoginComponent {
     }
 
     async goToApp() {
+        this.openSnackBar("Loading! Please wait a moment", "dismiss");
         this.signerService.clearKeys();
         let success: boolean = false;
         if (this.generateNewKeyView) {
