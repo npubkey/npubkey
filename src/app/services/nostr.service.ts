@@ -163,7 +163,7 @@ export class NostrService {
         // let filter: Filter = {kinds: [3], authors: [pubkey]}
         // const relay = await this.relayConnect();
         // const response = await relay.count([filter]);
-        let following = await this.getFollowing(pubkey)
+        let following = await this.getFollowing(pubkey, 6969)
         return following.length
     }
 
@@ -173,12 +173,12 @@ export class NostrService {
         // const response = await relay.count([filter]);
         // console.log(response)
         // return 10;
-        let followers = await this.getFollowers(pubkey)
+        let followers = await this.getFollowers(pubkey, 6969)
         return followers.length
     }
 
-    async getFollowing(pubkey: string): Promise<string[]> {
-        let filter: Filter = {kinds: [3], authors: [pubkey]}
+    async getFollowing(pubkey: string, limit: number = 100): Promise<string[]> {
+        let filter: Filter = {kinds: [3], authors: [pubkey], limit: limit}
         const relay = await this.relayConnect();
         const response = await relay.get(filter);
         let following: string[] = []
@@ -191,8 +191,8 @@ export class NostrService {
     }
 
     // count do count here as well ...
-    async getFollowers(pubkey: string): Promise<string[]> {
-        let filter: Filter = {kinds: [3], "#p": [pubkey], limit: 100}
+    async getFollowers(pubkey: string, limit: number = 100): Promise<string[]> {
+        let filter: Filter = {kinds: [3], "#p": [pubkey], limit: limit}
         const relay = await this.relayConnect();
         const response = await relay.list([filter]);
         let followers: string[] = []

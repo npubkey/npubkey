@@ -5,6 +5,8 @@ body { margin: 0; font-family: 'Courier New', Courier, monospace; }
 .page-header {
     padding-top: 1em;
     padding-bottom: 1em;
+    margin-left: 1em;
+    margin-right: 1em;
 }
 
 /* Extra small devices (phones, 600px and down) */

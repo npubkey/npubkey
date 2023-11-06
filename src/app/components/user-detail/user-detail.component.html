@@ -17,9 +17,9 @@
         </p>
     </div>
     <div *ngIf="user">
-        <div class="banner">
+        <!-- <div class="banner">
             <img class="banner-image" (click)="enlargeBanner()" src="{{user.banner}}"/>
-        </div>
+        </div> -->
         <app-user [user]="user" [nip05Verified]="nip05Verified" [canEnlarge]="true"></app-user>
         <mat-divider></mat-divider>
         <div

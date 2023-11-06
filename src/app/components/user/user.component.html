@@ -7,9 +7,6 @@
             src="{{user.picture}}"
             (click)="enlargeUserPicture()"/>
         <div class="more-vert">
-            <button *ngIf="canEdit" mat-icon-button color="primary" routerLink="/profile-edit">
-                <mat-icon>edit</mat-icon>
-            </button>
             <button *ngIf="canEdit" mat-icon-button color="primary" routerLink="/settings">
                 <mat-icon>settings</mat-icon>
             </button>
@@ -17,41 +14,42 @@
         </div>
     </mat-card-header>
     <mat-card-content>
-        <mat-card-title>{{user.displayName}}</mat-card-title>
+        <div fxLayout="row" fxLayoutAlign="space-between center"> 
+            <mat-card-title>{{user.displayName}}</mat-card-title>
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+                <button *ngIf="nsec && isMyProfile" mat-icon-button color="warn" (click)="showNsec()">
+                    <mat-icon>{{nsecButton}}</mat-icon>
+                </button>
+                <button *ngIf="user.lud16" mat-icon-button class="orange-icon" (click)="zap()">
+                    <mat-icon>bolt</mat-icon>
+                </button>
+                <button mat-icon-button class="secondary" (click)="showUserQR()">
+                    <mat-icon>qr_code_2</mat-icon>
+                </button>
+                <button *ngIf="canEdit" mat-stroked-button color="primary" routerLink="/profile-edit">
+                    edit profile
+                </button>
+                <app-follow *ngIf="!isMyProfile" [user]="user" [following]="following"></app-follow>
+            </div>
+        </div>
+        <mat-card-subtitle class="user-info" *ngIf="nip05Verified" class="nip05" fxLayout="row">
+            <mat-icon [inline]="true">verified</mat-icon><span class="wrap-text"> {{user.nip05}}</span>
+        </mat-card-subtitle>
+        <mat-card-subtitle *ngIf="user.username">@{{user.username}}</mat-card-subtitle>
         <mat-card-subtitle class="npub" (click)="copynpub()">
           {{user.npub|ellipsis}}
           <mat-icon [inline]="true">content_copy</mat-icon>
         </mat-card-subtitle>
         <mat-card-subtitle [innerHTML]="user.aboutHTML | safe"></mat-card-subtitle>
-        <p class="user-info" *ngIf="user.website" fxLayout="row">
+        <p class="small-bio-info" *ngIf="user.website" fxLayout="row">
             <mat-icon [inline]="true">link</mat-icon>
             <a class="wrap-text" href="{{user.website}}" target="_blank"> {{user.website}}</a>
         </p>
-        <!-- <mat-card-subtitle class="nip15">NIP05: {{user.nip05}}</mat-card-subtitle> -->
-        <p class="user-info" *ngIf="user.lud16" class="lightning-address" fxLayout="row">
+        <p class="small-bio-info lightning-address" *ngIf="user.lud16" fxLayout="row">
             <mat-icon [inline]="true">bolt</mat-icon><span class="wrap-text"> {{user.lud16}}</span>
-        </p>
-        <p class="user-info" *ngIf="nip05Verified" class="nip05" fxLayout="row">
-            <mat-icon [inline]="true">verified</mat-icon><span class="wrap-text"> {{user.nip05}}</span>
         </p>
     </mat-card-content>
     <mat-card-content>
-        <button *ngIf="nsec && isMyProfile" mat-icon-button color="warn" (click)="showNsec()">
-            <mat-icon>{{nsecButton}}</mat-icon>
-        </button>
-        <app-follow [user]="user" [following]="following"></app-follow>
-        <button mat-icon-button color="primary" routerLink="/users/{{user.npub}}/following">
-            <mat-icon>view_list</mat-icon>
-        </button>
-        <button mat-icon-button color="accent" routerLink="/users/{{user.npub}}/followers">
-            <mat-icon>view_list</mat-icon>
-        </button>
-        <button *ngIf="user.lud16" mat-icon-button class="orange-icon" (click)="zap()">
-            <mat-icon>bolt</mat-icon>
-        </button>
-        <button mat-icon-button class="orange-icon" (click)="showUserQR()">
-            <mat-icon>qr_code_2</mat-icon>
-        </button>
         <p>
             <span *ngIf="displaynsec" class="nsec-display" (click)="copynsec()">
                 {{nsec}}<mat-icon [inline]="true">content_copy</mat-icon>
@@ -101,4 +99,12 @@
             </p>
         </div>
     </mat-card-content>
+    <div>
+        <button mat-button routerLink="/users/{{user.npub}}/following">
+            <span *ngIf="followingCount != 0">{{followingCount}}</span><span *ngIf="followingCount == 0">?</span> following
+        </button>
+        <button mat-button routerLink="/users/{{user.npub}}/followers">
+            <span *ngIf="followerCount != 0">{{followerCount}}</span><span *ngIf="followerCount == 0">?</span> followers
+        </button>
+    </div>
 </mat-card>

@@ -10,6 +10,7 @@ import { decode } from "@gandlaf21/bolt11-decode";
 import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { webln } from 'alby-js-sdk';
+import { NostrService } from 'src/app/services/nostr.service';
 
 
 @Component({
@@ -38,9 +39,12 @@ export class UserComponent implements OnInit {
     userQRLink: string = "";
     followList: string[];
     following: boolean;
+    followerCount: number = 0;
+    followingCount: number = 0;
 
     constructor(
         private signerService: SignerService,
+        private nostrService: NostrService,
         private clipboard: Clipboard,
         private snackBar: MatSnackBar,
         private lightning: LightningService,
@@ -64,6 +68,8 @@ export class UserComponent implements OnInit {
             }
             this.nsec = this.signerService.nsec();
             this.userQRLink = `https://npubkey.github.io/#/users/${this.user.npub}`;
+            this.getFollowerCount();
+            this.getFollowingCount();
         }
     }
 
@@ -80,6 +86,14 @@ export class UserComponent implements OnInit {
                 this.openSnackBar("user can't recieve zaps", "dismiss");
             }
         }
+    }
+
+    async getFollowerCount() {
+        this.followerCount = await this.nostrService.getFollowerCount(this.user.pubkey);
+    }
+
+    async getFollowingCount() {
+        this.followingCount = await this.nostrService.getFollowerCount(this.user.pubkey);
     }
 
     sendZap() {

@@ -6,6 +6,11 @@ mat-card {
     word-wrap: break-word;
 }
 
+.small-bio-info {
+    font-size: small;
+    word-wrap: break-word;
+}
+
 .orange-icon {
     color: #ff8c00;
 }
