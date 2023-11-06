@@ -453,7 +453,10 @@ export class PostComponent implements OnInit {
     upload(file: File): void {
         if (file) {
           this.imageService.uploadImage(file)
-            .subscribe(response => this.addImageToPostContent(response));
+            .subscribe(response => {
+                console.log(response)
+                this.addImageToPostContent(response['imageUrl'])
+            });
         }
     }
 
