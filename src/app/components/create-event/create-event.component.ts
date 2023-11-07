@@ -6,7 +6,8 @@ import { SignerService } from 'src/app/services/signer.service';
 import { User } from 'src/app/types/user';
 import { GifService } from 'src/app/services/gif.service';
 import { ImageServiceService } from 'src/app/services/image-service.service';
-import { P } from '@angular/cdk/keycodes';
+import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-create-event',
@@ -16,36 +17,38 @@ import { P } from '@angular/cdk/keycodes';
 export class CreateEventComponent {
 
     user: User | undefined | null = undefined;
+    showGifSearch: boolean = false;
     content: string = "";
     gifSearch: string = "";
     gifsFound: string[] = [];
     selectedFiles?: FileList;
     selectedFileNames: string[] = [];
     showProgressBar: boolean = false;
-    preview: string = "";
+    previews: Array<string> = [];
 
     constructor(
         private nostrService: NostrService,
         private signerService: SignerService,
         private snackBar: MatSnackBar,
         private gifService: GifService,
-        private imageService: ImageServiceService
+        private imageService: ImageServiceService,
+        private _bottomSheetRef: MatBottomSheetRef<HeaderComponent>
     ) {
         this.getUser();
     }
-
 
     openSnackBar(message: string, action: string) {
         this.snackBar.open(message, action, {duration: 1300});
     }
 
     addGifToPostContent(g: string) {
-        this.content = this.content + " " + g;
+        this.previews.push(g);
         this.openSnackBar("GIF added!", "dismiss");
+        this.closeGifSearch();
     }
 
     addImageToPostContent(imgUrl: string) {
-        this.content = this.content + " " + imgUrl;
+        this.previews.push(imgUrl);
         this.openSnackBar("Image added!", "dismiss");
     }
 
@@ -54,11 +57,12 @@ export class CreateEventComponent {
         this.selectedFiles = event.target.files;
         if (this.selectedFiles && this.selectedFiles[0]) {
             const reader = new FileReader();
-            reader.onload = (e: any) => {
-                this.preview = e.target.result;
-            };
+            // reader.onload = (e: any) => {
+                
+            // };
             reader.readAsDataURL(this.selectedFiles[0]);
             this.selectedFileNames.push(this.selectedFiles[0].name);
+            this.uploadImage();
         }
     }
 
@@ -76,6 +80,15 @@ export class CreateEventComponent {
         if (this.selectedFiles) {
             this.upload(this.selectedFiles[0]);
         }
+    }
+
+    openGifSearch() {
+        this.showGifSearch = true;
+    }
+
+    closeGifSearch() {
+        this.gifSearch = "";
+        this.showGifSearch = false;
     }
 
     async searchGif() {
@@ -98,8 +111,10 @@ export class CreateEventComponent {
 
     async sendEvent() {
         const privateKey = this.signerService.getPrivateKey();
-        let finalContent: string = `${this.content}`;
-        if (finalContent === "") {
+        let finalContent: string = `${this.content} ${this.previews.join(' ')}`;
+        console.log("WOW")
+        console.log(finalContent);
+        if (!/\S/.test(finalContent)) {
             this.openSnackBar("Message Empty", "dismiss");
         } else {
             let unsignedEvent = this.nostrService.getUnsignedEvent(1, [], finalContent);
@@ -114,6 +129,8 @@ export class CreateEventComponent {
             this.openSnackBar("Message Sent!", "dismiss")
             this.content = "";
             this.gifsFound = [];
+            this.previews = [];
+            this._bottomSheetRef.dismiss();
         }
     }
 }

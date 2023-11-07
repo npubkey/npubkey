@@ -8,7 +8,6 @@ import { filter } from 'rxjs/operators';
 import {
     MatBottomSheet,
     MatBottomSheetModule,
-    MatBottomSheetRef,
 } from '@angular/material/bottom-sheet';
 import { CreateEventComponent } from '../create-event/create-event.component';
 

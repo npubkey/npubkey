@@ -1,10 +1,39 @@
-<div class="router-container">
-    <div class="page-header">
-        <div *ngIf="user">
-            <mat-form-field appearance="outline">
-                <mat-label>Message</mat-label>
-                <textarea matInput [(ngModel)]="content" placeholder="message"></textarea>
-            </mat-form-field>
+<div class="page-header">
+    <div *ngIf="user">
+        <div *ngIf="!showGifSearch">
+            <textarea class="createNote" [(ngModel)]="content" placeholder="whats up?" autofocus></textarea>
+            <mat-divider></mat-divider>
+            <div>
+                <img *ngFor="let preview of previews" [src]="preview" class="preview">
+            </div>
+            <div fxLayout="row" fxLayoutAlign="space-between center" >
+                <div fxLayout="row" fxLayoutAlign="start center" >
+                    <button mat-icon-button (click)="openGifSearch()">
+                        <mat-icon>gif_box</mat-icon>
+                    </button>
+                    <button mat-icon-button>
+                        <mat-icon>image</mat-icon>
+                        <div>
+                            <input class="hide-me" matInput [value]="selectedFileNames.length ? selectedFileNames : ''" />
+                            <input
+                                type="file"
+                                id="fileInput"
+                                name="fileInput"
+                                accept="image/*, video/*"
+                                (change)="selectFiles($event)"
+                            />
+                        </div>
+                    </button>
+                </div>
+                <div>
+                    <button mat-flat-button color="primary" (click)="sendEvent()">Send</button>
+                </div>
+            </div>
+            <!-- <div fxLayout="row" fxLayoutAlign="end center" >
+                
+            </div> -->
+        </div>
+        <div *ngIf="showGifSearch">
             <p>
                 <mat-form-field appearance="outline">
                     <mat-label>GIF search</mat-label>
@@ -16,50 +45,27 @@
                 <mat-divider></mat-divider>
             </p>
             <div fxLayout="row" fxLayoutAlign="space-evenly center">
-                <button mat-fab extended (click)="searchGif()">Search Gif</button>
-                <button mat-fab extended color="primary" (click)="sendEvent()">Send</button>
+                <button mat-flat-button color="warn" (click)="closeGifSearch()">Back</button>
+                <button mat-flat-button color="primary" (click)="searchGif()">Search</button>
             </div>
-            <p>
-                <mat-divider></mat-divider>
-            </p>
-            <mat-form-field>
-                <div>
-                    <mat-toolbar class="mat-toolbar-single-row">
-                        <input class="mat-input-element" matInput [value]="selectedFileNames.length ? selectedFileNames : 'Add image'" />
-                    </mat-toolbar>
-                    <input
-                        type="file"
-                        id="fileInput"
-                        name="fileInput"
-                        accept="image/*, video/*"
-                        (change)="selectFiles($event)"
-                    />
+            <div *ngIf="gifsFound.length > 0">
+                <div class="gif-header">
+                    <p>click a gif to add</p>
                 </div>
-            </mat-form-field>
-            <button mat-flat-button color="primary" [disabled]="!selectedFiles" (click)="uploadImage()">
-                Upload
-            </button>
-            <div>
-                <img *ngIf="preview" [src]="preview" class="preview">
+                <p>
+                    <mat-divider></mat-divider>
+                </p>
+                <mat-grid-list cols="3" rowHeight="120px">
+                    <mat-grid-tile
+                        *ngFor="let g of gifsFound"
+                        [colspan]="1"
+                        [rowspan]="1">
+                        <div (click)="addGifToPostContent(g)">
+                            <img class="gif-preview" src="{{g}}" />
+                        </div>
+                    </mat-grid-tile>
+                </mat-grid-list>
             </div>
-        </div>
-        <div *ngIf="gifsFound.length > 0">
-            <div class="gif-header">
-                <p>click a gif to add</p>
-            </div>
-            <p>
-                <mat-divider></mat-divider>
-            </p>
-            <mat-grid-list cols="3" rowHeight="120px">
-                <mat-grid-tile
-                    *ngFor="let g of gifsFound"
-                    [colspan]="1"
-                    [rowspan]="1">
-                    <div (click)="addGifToPostContent(g)">
-                        <img class="gif-preview" src="{{g}}" />
-                    </div>
-                </mat-grid-tile>
-            </mat-grid-list>
         </div>
     </div>
 </div>

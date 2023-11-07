@@ -20,7 +20,7 @@
                     <button mat-icon-button routerLink="/messages">
                         <mat-icon>{{ messages_icon }}</mat-icon>
                     </button>
-                    <button mat-icon-button routerLink='/create'>
+                    <button mat-icon-button (click)="openBottomSheet()">
                         <mat-icon>{{ create_icon }}</mat-icon>
                     </button>
                     <span *ngIf="notificationCount">
