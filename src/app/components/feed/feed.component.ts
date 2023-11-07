@@ -40,8 +40,8 @@ export class FeedComponent implements OnInit, OnDestroy {
         private signerService: SignerService,
     ) {
         this.selectedChip = this.getCurrentSelectedChip();
-        let baseTimeDiff = 5;
-        let since = 10;
+        let baseTimeDiff = 30;
+        let since = 60;
         if (this.selectedChip.name !== "Explore") {
             baseTimeDiff = 30;
             since = 120;
