@@ -5,7 +5,7 @@ import * as dayjs from 'dayjs';
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
-interface TextWrap {
+export interface TextWrap {
     text: string;
     cssClass?: string;
     addLink?: string;
@@ -204,11 +204,13 @@ export class Content {
         this.addHash = addHash
     }
 
-    getParsedContent(): string {
+    getParsedContent(ignoreNIP10: boolean = false): string {
         if (this.kind === 6) {
             this.content = this.reposted();
         }
-        this.content = this.nip08Replace(this.content);
+        if (!ignoreNIP10) {
+            this.content = this.nip08Replace(this.content);
+        }
         this.content = this.parseLightningInvoice(this.content);
         this.content = this.hashtagContent(this.content);
         this.content = this.linkify(this.content);

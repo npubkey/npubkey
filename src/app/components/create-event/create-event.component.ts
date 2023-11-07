@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { Event, getEventHash } from "nostr-tools";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NostrService } from '../../services/nostr.service';
@@ -8,6 +8,9 @@ import { GifService } from 'src/app/services/gif.service';
 import { ImageServiceService } from 'src/app/services/image-service.service';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { HeaderComponent } from '../header/header.component';
+import { Content } from 'src/app/types/post';
+import { NIP10Result } from 'nostr-tools/lib/nip10';
+import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 
 @Component({
   selector: 'app-create-event',
@@ -25,6 +28,9 @@ export class CreateEventComponent {
     selectedFileNames: string[] = [];
     showProgressBar: boolean = false;
     previews: Array<string> = [];
+    showPlaceholder: boolean = true;
+    contentHTML: string = "";
+    emptyNIP10: NIP10Result;
 
     constructor(
         private nostrService: NostrService,
@@ -32,9 +38,24 @@ export class CreateEventComponent {
         private snackBar: MatSnackBar,
         private gifService: GifService,
         private imageService: ImageServiceService,
-        private _bottomSheetRef: MatBottomSheetRef<HeaderComponent>
+        private _bottomSheetRef: MatBottomSheetRef<HeaderComponent>,
+        @Inject(MAT_BOTTOM_SHEET_DATA) public data: JSON,
     ) {
         this.getUser();
+        console.log(data);
+    }
+
+    updateContent(newContent) {
+        this.content = newContent;
+    }
+
+    stylizeContent() {
+        let x = new Content(1, this.content, this.emptyNIP10).hashtagContent(this.content);
+        this.contentHTML = x
+    }
+
+    onFocus() {
+        this.showPlaceholder = false;
     }
 
     openSnackBar(message: string, action: string) {
@@ -116,8 +137,6 @@ export class CreateEventComponent {
     async sendEvent() {
         const privateKey = this.signerService.getPrivateKey();
         let finalContent: string = `${this.content} ${this.previews.join(' ')}`;
-        console.log("WOW")
-        console.log(finalContent);
         if (!/\S/.test(finalContent)) {
             this.openSnackBar("Message Empty", "dismiss");
         } else {
@@ -131,6 +150,37 @@ export class CreateEventComponent {
             }
             this.nostrService.sendEvent(signedEvent);
             this.openSnackBar("Message Sent!", "dismiss")
+            this.content = "";
+            this.gifsFound = [];
+            this.previews = [];
+            this.exitBottomSheet();
+        }
+    }
+
+    async sendReply() {
+        if (this.data) {
+            const privateKey = this.signerService.getPrivateKey();
+            let tags: string[][] = [];
+            if (this.data['rootEvent']) {
+                if (this.data['rootEvent'] !== this.data['post']['noteId']) {
+                    tags.push(["e", this.data['rootEvent'], "", "root"])
+                    tags.push(["e", this.data['post']['noteId'], "", "reply"])
+                }
+            } else {
+                tags.push(["e", this.data['post']['noteId'], "", "root"])
+            }
+            tags.push(["p", this.data['post']['pubkey']]);
+            let unsignedEvent = this.nostrService.getUnsignedEvent(1, tags, this.content);
+            let signedEvent: Event;
+            if (privateKey !== "") {
+                let eventId = getEventHash(unsignedEvent)
+                signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
+            } else {
+                signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+            }
+            this.nostrService.sendEvent(signedEvent);
+            this.content = "";
+            this.openSnackBar("Reply Sent!", "Dismiss");
             this.content = "";
             this.gifsFound = [];
             this.previews = [];

@@ -17,6 +17,11 @@ import { ImageServiceService } from 'src/app/services/image-service.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { webln } from 'alby-js-sdk';
+import { CreateEventComponent } from '../create-event/create-event.component';
+import {
+    MatBottomSheet,
+    MatBottomSheetModule,
+} from '@angular/material/bottom-sheet';
 
 @Component({
   selector: 'app-post',
@@ -76,7 +81,8 @@ export class PostComponent implements OnInit {
         private breakpointObserver: BreakpointObserver,
         private gifService: GifService,
         private imageService: ImageServiceService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private _bottomSheet: MatBottomSheet
     ) {
         this.sats = this.signerService.getDefaultZap();
         this.followList = this.signerService.getFollowingList();
@@ -427,93 +433,21 @@ export class PostComponent implements OnInit {
         this.snackBar.open(message, action, {duration: 1300});
     }
 
+    openBottomSheet(): void {
+        this._bottomSheet.open(CreateEventComponent, {
+            data: {
+                rootEvent: this.rootEvent,
+                post: {
+                    noteId: this.post.noteId,
+                    pubkey: this.post.pubkey
+                },
+                replyingTo: this.post.username
+            }
+        });
+    }
+
     clickShowReplyForm() {
-        if (this.showReplyForm) {
-            this.showReplyForm = false;
-        } else {
-            this.showReplyForm = true;
-            this.showZapForm = false;
-        }
-    }
-
-    addGifToPostContent(g: string) {
-        this.replyContent = this.replyContent + " " + g;
-        this.openSnackBar("GIF added!", "dismiss");
-    }
-
-    addImageToPostContent(imgUrl: string) {
-        this.replyContent = this.replyContent + " " + imgUrl;
-        this.openSnackBar("Image added!", "dismiss");
-    }
-
-    selectFiles(event: any): void {
-        this.selectedFileNames = [];
-        this.selectedFiles = event.target.files;
-        if (this.selectedFiles && this.selectedFiles[0]) {
-            const reader = new FileReader();
-            reader.onload = (e: any) => {
-                this.preview = e.target.result;
-            };
-            reader.readAsDataURL(this.selectedFiles[0]);
-            this.selectedFileNames.push(this.selectedFiles[0].name);
-        }
-    }
-
-    upload(file: File): void {
-        if (file) {
-          this.imageService.uploadImage(file)
-            .subscribe(response => {
-                console.log(response)
-                this.addImageToPostContent(response['imageUrl'])
-            });
-        }
-    }
-
-    uploadImage(): void {
-        if (this.selectedFiles) {
-            this.upload(this.selectedFiles[0]);
-        }
-    }
-
-    async searchGif() {
-        this.gifsFound = [];
-        if (this.post) {
-            const wow = await this.gifService.getTopGifs(this.gifSearch, "LIVDSRZULELA")
-            wow.subscribe(response => {
-                const results = response.results;
-                results.forEach(gif => {
-                    this.gifsFound.push(gif.media[0].gif.url);
-                })
-            });
-        }
-    }
-
-    async sendReply() {
-        if (this.post) {
-            const privateKey = this.signerService.getPrivateKey();
-            let tags: string[][] = [];
-            if (this.rootEvent) {
-                if (this.rootEvent !== this.post.noteId) {
-                    tags.push(["e", this.rootEvent, "", "root"])
-                    tags.push(["e", this.post.noteId, "", "reply"])
-                }
-            } else {
-                tags.push(["e", this.post.noteId, "", "root"])
-            }
-            tags.push(["p", this.post.pubkey]);
-            let unsignedEvent = this.nostrService.getUnsignedEvent(1, tags, this.replyContent);
-            let signedEvent: Event;
-            if (privateKey !== "") {
-                let eventId = getEventHash(unsignedEvent)
-                signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
-            } else {
-                signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
-            }
-            this.nostrService.sendEvent(signedEvent);
-            this.replyContent = "";
-            this.openSnackBar("Reply Sent!", "Dismiss");
-            this.showReplyForm = false;
-        }
+        this.openBottomSheet();
     }
 
     async repost() {

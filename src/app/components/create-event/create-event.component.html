@@ -1,7 +1,11 @@
 <div class="page-header">
     <div *ngIf="user">
+        <mat-card-subtitle *ngIf="!data">New Note</mat-card-subtitle>
+        <mat-card-subtitle *ngIf="data">Replying to {{data['replyingTo']|username|ellipsis}}</mat-card-subtitle>
         <div *ngIf="!showGifSearch">
-            <textarea class="createNote" [(ngModel)]="content" placeholder="whats up?" autofocus></textarea>
+            <div tabindex="0" (focus)="onFocus()" contenteditable="true" class="createNote" #note [innerHTML]="contentHTML" (input)="updateContent(note.innerText)">
+                <mat-card-subtitle *ngIf="showPlaceholder">whats up?</mat-card-subtitle>
+            </div>
             <mat-divider></mat-divider>
             <div>
                 <img *ngFor="let preview of previews" [src]="preview" class="preview">
@@ -28,8 +32,16 @@
                             </div>
                         </button>
                     </div>
+                    <div>
+                        <button mat-icon-button (click)="stylizeContent()">
+                            <mat-icon>tag</mat-icon>
+                        </button>
+                    </div>
                 </div>
-                <button mat-flat-button color="primary" (click)="sendEvent()">Send</button>
+                <div>
+                    <button *ngIf="data" mat-flat-button color="primary" (click)="sendReply()">Reply</button>
+                    <button *ngIf="!data" mat-flat-button color="primary" (click)="sendEvent()">Send</button>
+                </div>
             </div>
         </div>
         <div *ngIf="showGifSearch">

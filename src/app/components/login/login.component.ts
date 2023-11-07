@@ -32,7 +32,7 @@ export class LoginComponent {
         // check if user already logged in
         if (this.signerService.getPublicKey() !== "") {
             this.openSnackBar("You are already signed in!", "dismiss");
-            this.router.navigate(["/profile"]);
+            this.router.navigate(["/feed"]);
         }
     }
 
@@ -86,7 +86,7 @@ export class LoginComponent {
             await this.getMuteList(this.signerService.getPublicKey());
             // this.sendFollownpubkey()
             this.openSnackBar("Successfully Signed In", "dismiss");
-            this.router.navigate(['/profile']);
+            this.router.navigate(['/feed']);
         } else {
             this.openSnackBar("Failed Signed In", "dismiss");
             this.signerService.clearKeys();
