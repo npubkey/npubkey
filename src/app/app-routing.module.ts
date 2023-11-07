@@ -15,6 +15,7 @@ import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.com
 import { SettingsComponent } from './components/settings/settings.component';
 import { authGuard } from './auth.guard';
 import { NotificationsComponent } from './components/notifications/notifications.component';
+import { TrendingComponent } from './components/trending/trending.component';
 
 const routes: Routes = [
     { path: '', component: LoginComponent },
@@ -24,6 +25,7 @@ const routes: Routes = [
     { path: 'messages/:npub', component: MessengerComponent, canActivate: [authGuard]},
     { path: 'feed/:hashtag', component: HashtagFeedComponent},
     { path: 'feed', component: FeedComponent },
+    { path: 'trending', component: TrendingComponent },
     { path: 'messages', component: ContactListComponent, canActivate: [authGuard]},
     { path: 'notifications', component: NotificationsComponent, canActivate: [authGuard]},
     { path: 'users/:npub/following', component: FollowingComponent},

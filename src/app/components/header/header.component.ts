@@ -22,6 +22,7 @@ export class HeaderComponent implements OnInit {
     home_icon: string = 'home';
     key_icon: string = "key";
     explore_icon: string = 'explore';
+    trending_icon: string = "query_stats";
     users_icon: string = 'people_outline';
     create_icon: string = 'add_photo_alternate';
     menu_icon: string = 'account_circle';

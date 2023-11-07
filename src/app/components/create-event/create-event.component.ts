@@ -22,6 +22,7 @@ export class CreateEventComponent {
     user: User | undefined | null = undefined;
     showGifSearch: boolean = false;
     content: string = "";
+    contentHTML: string = "";
     gifSearch: string = "";
     gifsFound: string[] = [];
     selectedFiles?: FileList;
@@ -29,7 +30,6 @@ export class CreateEventComponent {
     showProgressBar: boolean = false;
     previews: Array<string> = [];
     showPlaceholder: boolean = true;
-    contentHTML: string = "";
     emptyNIP10: NIP10Result;
 
     constructor(
@@ -42,16 +42,16 @@ export class CreateEventComponent {
         @Inject(MAT_BOTTOM_SHEET_DATA) public data: JSON,
     ) {
         this.getUser();
-        console.log(data);
     }
 
-    updateContent(newContent) {
+    updateContent(newContent: string) {
         this.content = newContent;
+        console.log(this.content)
+        console.log(this.contentHTML)
     }
 
     stylizeContent() {
-        let x = new Content(1, this.content, this.emptyNIP10).hashtagContent(this.content);
-        this.contentHTML = x
+        this.contentHTML = new Content(1, this.content, this.emptyNIP10).hashtagContent(this.content);
     }
 
     onFocus() {
@@ -74,13 +74,11 @@ export class CreateEventComponent {
     }
 
     selectFiles(event: any): void {
+        this.stylizeContent();
         this.selectedFileNames = [];
         this.selectedFiles = event.target.files;
         if (this.selectedFiles && this.selectedFiles[0]) {
             const reader = new FileReader();
-            // reader.onload = (e: any) => {
-                
-            // };
             reader.readAsDataURL(this.selectedFiles[0]);
             this.selectedFileNames.push(this.selectedFiles[0].name);
             this.uploadImage();
@@ -104,6 +102,7 @@ export class CreateEventComponent {
     }
 
     openGifSearch() {
+        this.stylizeContent();
         this.showGifSearch = true;
     }
 

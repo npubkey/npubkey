@@ -9,6 +9,7 @@ import {APP_BASE_HREF} from '@angular/common';
 import { QRCodeModule } from 'angularx-qrcode';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpCacheInterceptorModule } from '@ngneat/cashew';
 
 // Material
 import { MatDialogModule } from '@angular/material/dialog';
@@ -74,6 +75,7 @@ import { NotificationComponent } from './components/notification/notification.co
 import { WebLN } from 'src/app/types/webln';
 import { NostrWindow } from './types/nostr';
 import { ListedUserComponent } from './components/listed-user/listed-user.component';
+import { TrendingComponent } from './components/trending/trending.component';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -182,6 +184,7 @@ const dbConfig: DBConfig  = {
     NotificationsComponent,
     NotificationComponent,
     ListedUserComponent,
+    TrendingComponent,
   ],
   entryComponents: [ImageDialogComponent],
   imports: [
@@ -189,6 +192,7 @@ const dbConfig: DBConfig  = {
     BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
+    HttpCacheInterceptorModule.forRoot(),
     MatIconModule,
     MatCheckboxModule,
     MatSliderModule,
