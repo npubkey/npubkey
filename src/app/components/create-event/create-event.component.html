@@ -7,31 +7,30 @@
                 <img *ngFor="let preview of previews" [src]="preview" class="preview">
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between center" >
-                <div fxLayout="row" fxLayoutAlign="start center" >
-                    <button mat-icon-button (click)="openGifSearch()">
-                        <mat-icon>gif_box</mat-icon>
-                    </button>
-                    <button mat-icon-button>
-                        <mat-icon>image</mat-icon>
-                        <div>
-                            <input class="hide-me" matInput [value]="selectedFileNames.length ? selectedFileNames : ''" />
-                            <input
-                                type="file"
-                                id="fileInput"
-                                name="fileInput"
-                                accept="image/*, video/*"
-                                (change)="selectFiles($event)"
-                            />
-                        </div>
-                    </button>
+                <div fxLayout="row" fxLayoutAlign="start center">
+                    <div>
+                        <button mat-icon-button (click)="openGifSearch()">
+                            <mat-icon>gif_box</mat-icon>
+                        </button>
+                    </div>
+                    <div>
+                        <button mat-icon-button>
+                            <mat-icon>image</mat-icon>
+                            <div>
+                                <input class="hide-me" matInput [value]="selectedFileNames.length ? selectedFileNames : ''" />
+                                <input
+                                    type="file"
+                                    id="fileInput"
+                                    name="fileInput"
+                                    accept="image/*, video/*"
+                                    (change)="selectFiles($event)"
+                                />
+                            </div>
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <button mat-flat-button color="primary" (click)="sendEvent()">Send</button>
-                </div>
+                <button mat-flat-button color="primary" (click)="sendEvent()">Send</button>
             </div>
-            <!-- <div fxLayout="row" fxLayoutAlign="end center" >
-                
-            </div> -->
         </div>
         <div *ngIf="showGifSearch">
             <p>

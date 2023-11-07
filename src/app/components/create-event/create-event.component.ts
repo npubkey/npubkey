@@ -91,6 +91,10 @@ export class CreateEventComponent {
         this.showGifSearch = false;
     }
 
+    exitBottomSheet() {
+        this._bottomSheetRef.dismiss();
+    }
+
     async searchGif() {
         this.gifsFound = [];
         if (this.user) {
@@ -130,7 +134,7 @@ export class CreateEventComponent {
             this.content = "";
             this.gifsFound = [];
             this.previews = [];
-            this._bottomSheetRef.dismiss();
+            this.exitBottomSheet();
         }
     }
 }
