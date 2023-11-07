@@ -340,6 +340,12 @@ export class NostrService {
         return await relay.list([filter1, filter2]);
     }
 
+    async getPostLikeCount(filter: Filter): Promise<number> {
+        const relay = await this.relayConnect();
+        let likes = await relay.list([filter]);
+        return likes.length
+    }
+
     async getKind11(limit: number) {
         // server meta data (what types of NIPs a server is supporting)
         const relay = await this.relayConnect();

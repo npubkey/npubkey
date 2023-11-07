@@ -21,6 +21,7 @@ export class PostDetailComponent implements OnInit {
     postNotFound: boolean = false;
     postZaps: Zap[] = [];
     postZapsCount: number = 0;
+    postLikesCount: number = 0;
     user: User | null = null;
 
     constructor(
@@ -63,6 +64,7 @@ export class PostDetailComponent implements OnInit {
         if (this.root === undefined) {
             this.addRoot(postList);
         }
+        this.getPostLikesCount()
         this.addReplies(postList);
         if (this.root) {
             this.getUser();
@@ -99,6 +101,18 @@ export class PostDetailComponent implements OnInit {
                 this.postZapsCount = this.postZaps.map(item => item.satAmount).reduce((prev, next) => prev + next);
             }
         }
+    }
+
+    async getPostLikesCount() {
+        console.log("GETTING LIKES COUNT")
+        if (this.root) {
+            let filter: Filter = {
+                kinds: [7],
+                "#e": [this.root.noteId]
+            }
+            this.postLikesCount = await this.nostrService.getPostLikeCount(filter);
+        }
+        console.log(this.postLikesCount);
     }
 
     addRoot(postList: Post[]): void {

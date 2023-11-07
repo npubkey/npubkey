@@ -5,6 +5,13 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import {
+    MatBottomSheet,
+    MatBottomSheetModule,
+    MatBottomSheetRef,
+} from '@angular/material/bottom-sheet';
+import { CreateEventComponent } from '../create-event/create-event.component';
+
 
 @Component({
   selector: 'app-header',
@@ -40,7 +47,8 @@ export class HeaderComponent implements OnInit {
         private signerService: SignerService,
         private nostrService: NostrService,
         private breakpointObserver: BreakpointObserver,
-        private router: Router
+        private router: Router,
+        private _bottomSheet: MatBottomSheet
     ) {
         this.pubkey = this.signerService.getPublicKey();
         this.userImage = this.signerService.getLoggedInUserImage();
@@ -70,6 +78,10 @@ export class HeaderComponent implements OnInit {
         this.breakpoint$.subscribe(() => {
             this.breakpointChanged()
         });
+    }
+
+    openBottomSheet(): void {
+        this._bottomSheet.open(CreateEventComponent);
     }
 
     async getNotificationCount() {

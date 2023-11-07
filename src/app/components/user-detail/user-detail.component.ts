@@ -61,8 +61,6 @@ export class UserDetailComponent implements OnInit {
         });
     }
 
-    toggleLoading = () => this.loading = !this.loading;
-
     ngOnInit() {
         this.getUser();
     }
@@ -130,7 +128,6 @@ export class UserDetailComponent implements OnInit {
     }
 
     async getUserPosts(user: User) {
-        this.loading = true;
         let posts: Post[] = await this.nostrService.getUserPosts(
             user.pubkey,
             this.paginator.since,

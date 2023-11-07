@@ -64,8 +64,8 @@
         </div>
         <div *ngIf="showZapForm">
             <p>
-                <mat-card-content fxLayout="row">
-                    <mat-form-field appearance="outline" fxFlex='90'>
+                <mat-card-content fxLayout="row" fxLayoutAlign="space-evenly">
+                    <mat-form-field appearance="outline">
                         <mat-label>Sats</mat-label>
                         <input matInput [(ngModel)]="sats" placeholder="sats">
                     </mat-form-field>

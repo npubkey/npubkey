@@ -31,6 +31,7 @@ export class PostComponent implements OnInit {
     @Input() zaps?: Zap[];
     @Input() zapsCount?: number;
     @Input() inPostDetail?: boolean;
+    @Input() likes?: number;
     viewingRoot: boolean = false;
     rootEvent: string = "";
     replyContent: string = "";
@@ -198,6 +199,14 @@ export class PostComponent implements OnInit {
                 }
             }
         }
+    }
+
+    likePost() {
+        if (this.post) {
+            let tags: string[][] = [];
+
+        }
+        this.openSnackBar("Reaction Sent", "dismiss");
     }
 
     followUser() {

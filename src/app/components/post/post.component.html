@@ -22,11 +22,14 @@
                 <!-- <button mat-menu-item (click)="showEventJson()">
                     <span>Log Event Json</span>
                 </button> -->
-                <button mat-menu-item (click)="addToMuteList()">
-                    <span>Mute User</span>
-                </button>
                 <button mat-menu-item (click)="followUser()">
                     <span>{{followText}}</span>
+                </button>
+                <button mat-menu-item (click)="copyLink()">
+                    <span>Copy link</span>
+                </button>
+                <button mat-menu-item (click)="addToMuteList()">
+                    <span>Mute User</span>
                 </button>
             </mat-menu>
         </div>
@@ -67,19 +70,20 @@
         </div>
     </mat-card-content>
     <div fxLayout="row" fxLayoutAlign="space-around center">
-        <div fxLayout="row" class="click-icon">
+        <div fxLayout="row" class="click-icon" fxLayoutAlign="space-around center">
             <mat-icon (click)="clickShowReplyForm()">mode_comment</mat-icon>
             <span *ngIf="post.replyCount > 0">{{post.replyCount}}</span>
         </div>
         <div (click)="repost()" class="click-icon">
             <mat-icon>autorenew</mat-icon>
         </div>
-        <div fxLayout="row" (click)="zap()" class="click-icon">
+        <div fxLayout="row" (click)="zap()" class="click-icon" fxLayoutAlign="space-around center">
             <mat-icon>bolt</mat-icon>
             <span *ngIf="zapsCount">{{zapsCount}}</span>
         </div>
-        <div (click)="copyLink()" class="click-icon">
-            <mat-icon>share</mat-icon>
+        <div fxLayout="row" (click)="likePost()" class="click-icon" fxLayoutAlign="space-around center">
+            <mat-icon>favorite_outline</mat-icon>
+            <span *ngIf="likes">{{likes}}</span>
         </div>
         <div *ngIf="!inPostDetail" routerLink="/posts/{{post.noteId|nevent}}" class="click-icon">
             <mat-icon>open_in_full</mat-icon>
@@ -152,8 +156,8 @@
     </div>
     <div *ngIf="showZapForm">
         <p>
-            <mat-card-content fxLayout="row">
-                <mat-form-field appearance="outline" fxFlex='90'>
+            <mat-card-content fxLayout="row" fxLayoutAlign="space-evenly">
+                <mat-form-field appearance="outline">
                     <mat-label>Sats</mat-label>
                     <input matInput [(ngModel)]="sats" placeholder="sats">
                 </mat-form-field>

@@ -410,6 +410,7 @@ export class Post {
     nostrNoteId: string;
     nostrEventId: string;
     replyCount: number;
+    likeCount: number;
     isAReply: boolean = false;
     repostingPubkey: string;
     constructor(kind: number, pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result, repostingPubkey: string) {
@@ -427,6 +428,7 @@ export class Post {
         this.nostrNoteId = nip19.noteEncode(this.noteId);
         this.nostrEventId = nip19.neventEncode({id: this.noteId});
         this.replyCount = 0;
+        this.likeCount = 0;
         this.setIsAReply();
         this.repostingPubkey = repostingPubkey;
     }
@@ -441,6 +443,10 @@ export class Post {
 
     setReplyCount(count: number): void {
         this.replyCount = count;
+    }
+
+    setLikeCount(count: number): void {
+        this.likeCount = count;
     }
 
     setFromNow(): void {

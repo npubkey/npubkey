@@ -1,7 +1,7 @@
 <div class="router-container">
     <div *ngIf="!loading">
         <div *ngIf="root">
-            <app-post [post]="root" [zaps]="postZaps" [zapsCount]="postZapsCount" [inPostDetail]="true"></app-post>
+            <app-post [post]="root" [zaps]="postZaps" [zapsCount]="postZapsCount" [inPostDetail]="true" [likes]="postLikesCount"></app-post>
         </div>
         <mat-tab-group>
             <mat-tab label="Replies ({{replies.length}})">

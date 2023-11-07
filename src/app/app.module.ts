@@ -56,7 +56,6 @@ import { TruncatePipe } from './pipes/truncate.pipe';
 import { FollowingComponent } from './components/following/following.component';
 import { PostDetailComponent } from './components/post-detail/post-detail.component';
 import { NeventPipe } from './pipes/nevent.pipe';
-import { FollowersComponent } from './components/followers/followers.component';
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
 import { ContactListComponent } from './components/contact-list/contact-list.component';
 import { HumantimePipe } from './pipes/humantime.pipe';
@@ -172,7 +171,6 @@ const dbConfig: DBConfig  = {
     FollowingComponent,
     PostDetailComponent,
     NeventPipe,
-    FollowersComponent,
     EllipsisPipe,
     ContactListComponent,
     HumantimePipe,
