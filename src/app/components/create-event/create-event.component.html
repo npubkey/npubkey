@@ -1,82 +1,90 @@
-<div class="page-header">
-    <div *ngIf="user">
-        <mat-card-subtitle *ngIf="!data">New Note</mat-card-subtitle>
-        <mat-card-subtitle *ngIf="data">Replying to {{data['replyingTo']|username|ellipsis}}</mat-card-subtitle>
-        <div *ngIf="!showGifSearch">
-            <div tabindex="0" (focus)="onFocus()" contenteditable="true" class="createNote" #note [innerHTML]="contentHTML" (input)="updateContent(note.innerText)">
-                <mat-card-subtitle *ngIf="showPlaceholder">whats up?</mat-card-subtitle>
-            </div>
-            <mat-divider></mat-divider>
-            <div>
-                <img *ngFor="let preview of previews" [src]="preview" class="preview">
-            </div>
-            <div fxLayout="row" fxLayoutAlign="space-between center" >
-                <div fxLayout="row" fxLayoutAlign="start center">
-                    <div>
-                        <button mat-icon-button (click)="openGifSearch()">
-                            <mat-icon>gif_box</mat-icon>
-                        </button>
-                    </div>
-                    <div>
-                        <button mat-icon-button>
-                            <mat-icon>image</mat-icon>
-                            <div>
-                                <input class="hide-me" matInput [value]="selectedFileNames.length ? selectedFileNames : ''" />
-                                <input
-                                    type="file"
-                                    id="fileInput"
-                                    name="fileInput"
-                                    accept="image/*, video/*"
-                                    (change)="selectFiles($event)"
-                                />
-                            </div>
-                        </button>
-                    </div>
-                    <div>
-                        <button mat-icon-button (click)="stylizeContent()">
-                            <mat-icon>tag</mat-icon>
-                        </button>
-                    </div>
+<div *ngIf="user">
+    <mat-card-subtitle *ngIf="!data">New Note</mat-card-subtitle>
+    <mat-card-subtitle *ngIf="data">Replying to {{data['replyingTo']|username|ellipsis}}</mat-card-subtitle>
+    <div *ngIf="!showGifSearch">
+        <div tabindex="0" (focus)="onFocus()" contenteditable="true" class="createNote" #note [innerHTML]="contentHTML" (input)="updateContent(note.innerText)">
+            <mat-card-subtitle *ngIf="showPlaceholder">whats up?</mat-card-subtitle>
+        </div>
+        <mat-divider></mat-divider>
+        <div>
+            <img *ngFor="let preview of previews" [src]="preview" class="preview">
+        </div>
+        <div fxLayout="row" fxLayoutAlign="space-between center" >
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <div>
+                    <button mat-icon-button (click)="openGifSearch()">
+                        <mat-icon>gif_box</mat-icon>
+                    </button>
                 </div>
                 <div>
-                    <button *ngIf="data" mat-flat-button color="primary" (click)="sendReply()">Reply</button>
-                    <button *ngIf="!data" mat-flat-button color="primary" (click)="sendEvent()">Send</button>
+                    <button mat-icon-button>
+                        <mat-icon>image</mat-icon>
+                        <div>
+                            <input class="hide-me" matInput [value]="selectedFileNames.length ? selectedFileNames : ''" />
+                            <input
+                                type="file"
+                                id="fileInput"
+                                name="fileInput"
+                                accept="image/*, video/*"
+                                (change)="selectFiles($event)"
+                            />
+                        </div>
+                    </button>
+                </div>
+                <div>
+                    <button mat-icon-button (click)="stylizeContent()">
+                        <mat-icon>tag</mat-icon>
+                    </button>
+                </div>
+                <div>
+                    <button mat-icon-button (click)="exitBottomSheet()">
+                        <mat-icon>close</mat-icon>
+                    </button>
                 </div>
             </div>
+            <div>
+                <button *ngIf="data" mat-flat-button color="primary" (click)="sendReply()">Reply</button>
+                <button *ngIf="!data" mat-flat-button color="primary" (click)="sendEvent()">Send</button>
+            </div>
         </div>
-        <div *ngIf="showGifSearch">
-            <p>
-                <mat-form-field appearance="outline">
-                    <mat-label>GIF search</mat-label>
-                    <input matInput [(ngModel)]="gifSearch" placeholder="GIF">
-                </mat-form-field>
-                
-            </p>
+        <div class="users-container">
+            <div class="potential-user" *ngFor="let user of potentialUsers">
+                <app-listed-user [user]="user" (click)="addUserToContent(user)"></app-listed-user>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="showGifSearch">
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>GIF search</mat-label>
+                <input matInput [(ngModel)]="gifSearch" placeholder="GIF">
+            </mat-form-field>
+            
+        </p>
+        <p>
+            <mat-divider></mat-divider>
+        </p>
+        <div fxLayout="row" fxLayoutAlign="space-evenly center">
+            <button mat-flat-button color="warn" (click)="closeGifSearch()">Back</button>
+            <button mat-flat-button color="primary" (click)="searchGif()">Search</button>
+        </div>
+        <div *ngIf="gifsFound.length > 0">
+            <div class="gif-header">
+                <p>click a gif to add</p>
+            </div>
             <p>
                 <mat-divider></mat-divider>
             </p>
-            <div fxLayout="row" fxLayoutAlign="space-evenly center">
-                <button mat-flat-button color="warn" (click)="closeGifSearch()">Back</button>
-                <button mat-flat-button color="primary" (click)="searchGif()">Search</button>
-            </div>
-            <div *ngIf="gifsFound.length > 0">
-                <div class="gif-header">
-                    <p>click a gif to add</p>
-                </div>
-                <p>
-                    <mat-divider></mat-divider>
-                </p>
-                <mat-grid-list cols="3" rowHeight="120px">
-                    <mat-grid-tile
-                        *ngFor="let g of gifsFound"
-                        [colspan]="1"
-                        [rowspan]="1">
-                        <div (click)="addGifToPostContent(g)">
-                            <img class="gif-preview" src="{{g}}" />
-                        </div>
-                    </mat-grid-tile>
-                </mat-grid-list>
-            </div>
+            <mat-grid-list cols="3" rowHeight="120px">
+                <mat-grid-tile
+                    *ngFor="let g of gifsFound"
+                    [colspan]="1"
+                    [rowspan]="1">
+                    <div (click)="addGifToPostContent(g)">
+                        <img class="gif-preview" src="{{g}}" />
+                    </div>
+                </mat-grid-tile>
+            </mat-grid-list>
         </div>
     </div>
 </div>

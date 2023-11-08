@@ -197,7 +197,7 @@ export class Content {
     content: string;
     nip10Result: NIP10Result;
     addHash: boolean;
-    constructor(kind: number, content: string, nip10Result: NIP10Result, addHash: boolean = false) {
+    constructor(kind: number, content: string, nip10Result: NIP10Result, addHash: boolean = true) {
         this.kind = kind;
         this.content = content;
         this.nip10Result = nip10Result;
@@ -215,6 +215,13 @@ export class Content {
         this.content = this.hashtagContent(this.content);
         this.content = this.linkify(this.content);
         this.content = this.replaceNostrThing(this.content);
+        this.content = this.styleUsername(this.content);
+        return this.content;
+    }
+
+    parseCreateNote() {
+        this.content = this.hashtagContent(this.content);
+        this.content = this.styleUsername(this.content);
         return this.content;
     }
 
@@ -250,8 +257,9 @@ export class Content {
         if (this.addHash && textWrap.addLink) {
             // this fixes an issue in user about not redirecting properly
             textWrap.addLink = textWrap.addLink.replace('href="', 'href="/#/')
+            return `<a class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</a>`
         }
-        return `<a class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</a>`
+        return `<span class="${textWrap.cssClass}">${textWrap.text}</span>`
     }
 
     getNpub(pubkey: string): string {
@@ -320,6 +328,17 @@ export class Content {
         hashtags.forEach(tag => {
             let tagId = tag.substring(1);  // remove #
             let textWrap: TextWrap = {text: tag, addLink: `href="/feed/${tagId}"`}
+            content = content.replaceAll(tag, this.wrapTextInSpan(textWrap))
+        });
+        return content
+    }
+
+    styleUsername(content: string): string {
+        let names: string[] = content.match(/@\w+/gm) || []
+        names = names.sort((a,b) => b.length - a.length);
+        names.forEach(tag => {
+            let tagId = tag.substring(1);  // remove #
+            let textWrap: TextWrap = {text: tag, cssClass: "hashtag"}
             content = content.replaceAll(tag, this.wrapTextInSpan(textWrap))
         });
         return content

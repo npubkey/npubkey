@@ -186,7 +186,7 @@ const dbConfig: DBConfig  = {
     ListedUserComponent,
     TrendingComponent,
   ],
-  entryComponents: [ImageDialogComponent],
+  entryComponents: [ImageDialogComponent, CreateEventComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

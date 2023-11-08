@@ -16,6 +16,11 @@ body { margin: 0; font-family: 'Courier New', Courier, monospace; }
         margin-top: 50px;
         padding-bottom: 5em;
     }
+    .mat-bottom-sheet-container {
+        min-height: 90vh;
+        min-width: 100vw !important;
+        margin-top: 80px;
+    }
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
@@ -25,6 +30,11 @@ body { margin: 0; font-family: 'Courier New', Courier, monospace; }
         margin-top: 50px;
         padding-bottom: 5em;
     }
+    .mat-bottom-sheet-container {
+        min-height: 90vh;
+        min-width: 100vw !important;
+        margin-top: 80px;
+    }
 }
 
 /* Medium devices (landscape tablets, 768px and up) */
@@ -33,6 +43,11 @@ body { margin: 0; font-family: 'Courier New', Courier, monospace; }
         width: 100%;
         margin-top: 50px;
         padding-bottom: 5em;
+    }
+    .mat-bottom-sheet-container {
+        min-height: 90vh;
+        min-width: 100vw !important;
+        margin-top: 80px;
     }
 }
 
@@ -45,6 +60,17 @@ body { margin: 0; font-family: 'Courier New', Courier, monospace; }
         margin-right: auto;
         padding-bottom: 5em;
     }
+    .mat-bottom-sheet-container {
+        padding: 8px 16px;
+        box-sizing: border-box;
+        display: block;
+        outline: 0;
+        max-height: 80vh;
+        min-height: 50vh;
+        overflow: auto;
+        min-width: 512px;
+        max-width: calc(100vw - 256px);
+    }
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
@@ -55,5 +81,16 @@ body { margin: 0; font-family: 'Courier New', Courier, monospace; }
         margin-left: auto;
         margin-right: auto;
         padding-bottom: 5em;
+    }
+    .mat-bottom-sheet-container {
+        padding: 8px 16px;
+        box-sizing: border-box;
+        display: block;
+        outline: 0;
+        max-height: 80vh;
+        min-height: 50vh;
+        overflow: auto;
+        min-width: 512px;
+        max-width: calc(100vw - 256px);
     }
 }
