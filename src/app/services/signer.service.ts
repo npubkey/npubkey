@@ -85,8 +85,8 @@ export class SignerService {
         if (followingRaw === null || followingRaw === "") {
             return [];
         }
-        const following = (followingRaw).split(',');
-        return following;
+        let following = (followingRaw).split(',');
+        return following.filter(value => /[a-f0-9]{64}/.test(value));
     }
 
     getMuteList() {

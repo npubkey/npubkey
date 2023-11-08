@@ -40,11 +40,11 @@ export class FeedComponent implements OnInit, OnDestroy {
         private signerService: SignerService,
     ) {
         this.selectedChip = this.getCurrentSelectedChip();
-        let baseTimeDiff = 30;
-        let since = 60;
+        let baseTimeDiff = 120;
+        let since = 120;
         if (this.selectedChip.name !== "Explore") {
-            baseTimeDiff = 30;
-            since = 120;
+            baseTimeDiff = 10;
+            since = 0;
         }
         this.paginator = new Paginator(0, since, baseTimeDiff=baseTimeDiff);
     }
@@ -189,21 +189,22 @@ export class FeedComponent implements OnInit, OnDestroy {
             let tags: string[] = [];
             this.hashtags.forEach(h => {tags.push(h.name)});
             filter.kinds = [1];
-            filter.limit = 50;
+            filter.limit = 100;
             filter.until = this.paginator.until;
             filter["#t"] = tags;
         } else if (this.selectedChip.name === "Following") {
             // following
             filter.kinds = [1];
-            filter.limit = 50;
-            console.log(this.signerService.getFollowingList())
+            filter.limit = 100;
             filter.authors = this.signerService.getFollowingList();
             filter.since = this.paginator.since;  // two hours ago
             filter.until = this.paginator.until;
+            console.log("WHY")
+            console.log(filter)
         } else {
             // explore
             filter.kinds = [1];
-            filter.limit = 50;
+            filter.limit = 100;
             filter.since = this.paginator.since;
             filter.until = this.paginator.until;
         }
