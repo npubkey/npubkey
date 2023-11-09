@@ -47,7 +47,7 @@
             <mat-tab-group>
                 <mat-tab label="Posts">
                     <div class="feed" *ngFor="let post of posts">
-                        <app-post *ngIf="!post.isAReply" [post]="post"></app-post>
+                        <app-post *ngIf="!post.isAReply" [post]="post" [likes]="post.likeCount"></app-post>
                     </div>
                 </mat-tab>
                 <mat-tab label="Replies">

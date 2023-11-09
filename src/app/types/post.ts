@@ -434,6 +434,7 @@ export class Post {
     likeCount: number;
     isAReply: boolean = false;
     repostingPubkey: string;
+    likedByMe: boolean = false;
     constructor(kind: number, pubkey: string, content: string, noteId: string, createdAt: number, nip10Result: NIP10Result, repostingPubkey: string) {
         this.kind = kind;
         this.pubkey = pubkey;
@@ -452,6 +453,10 @@ export class Post {
         this.likeCount = 0;
         this.setIsAReply();
         this.repostingPubkey = repostingPubkey;
+    }
+
+    getAllTags(): string[][] {
+        return [["e", this.noteId], ["p", this.pubkey]]
     }
 
     setUsername(pubkey: string): void {
@@ -476,6 +481,10 @@ export class Post {
 
     setReplyingTo(): void {
         //this.replyingTo = this.nip10Result.profiles;
+    }
+
+    setPostLikedByMe(val: boolean): void {
+        this.likedByMe = val;
     }
 
     setIsAReply(): void {

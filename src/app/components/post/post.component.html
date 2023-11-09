@@ -81,8 +81,12 @@
             <mat-icon>bolt</mat-icon>
             <span *ngIf="zapsCount">{{zapsCount}}</span>
         </div>
-        <div fxLayout="row" (click)="likePost()" class="click-icon" fxLayoutAlign="space-around center">
-            <mat-icon>favorite_outline</mat-icon>
+        <div *ngIf="!post.likedByMe" fxLayout="row" (click)="likePost()" class="click-icon" fxLayoutAlign="space-around center">
+            <mat-icon >favorite_outline</mat-icon>
+            <span *ngIf="likes">{{likes}}</span>
+        </div>
+        <div *ngIf="post.likedByMe" fxLayout="row" class="click-icon" fxLayoutAlign="space-around center">
+            <mat-icon color="warn">favorite</mat-icon>
             <span *ngIf="likes">{{likes}}</span>
         </div>
         <div *ngIf="!inPostDetail" routerLink="/posts/{{post.noteId|nevent}}" class="click-icon">

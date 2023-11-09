@@ -352,6 +352,12 @@ export class NostrService {
         return await relay.list([{kinds: [11], limit: limit}]);
     }
 
+    async getKind7(filter: Filter): Promise<Event[]> {
+        filter.kinds = [7];
+        const relay = await this.relayConnect();
+        return await relay.list([filter]);
+    }
+
     async getZaps(filter: Filter) {
         const relay = await this.relayConnect();
         const response = await relay.list([filter])
@@ -495,6 +501,8 @@ export class NostrService {
     async sendEvent(event: Event) {
         const relay = await this.relayConnect()
         let pub = relay.publish(event)
+        console.log(pub);
+        console.log(event);
         pub.on('ok', () => {
             console.log(`${relay.url} has accepted our event`)
         })

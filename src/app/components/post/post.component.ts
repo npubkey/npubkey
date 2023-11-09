@@ -59,7 +59,7 @@ export class PostComponent implements OnInit {
     followList: string[];
     imageBlurred: boolean = true;
 
-    // create reply stuff
+    // create reply stuff - // TODO delete all this I moved it to create-event-component
     gifSearch: string = "";
     gifsFound: string[] = [];
     selectedFiles?: FileList;
@@ -208,10 +208,8 @@ export class PostComponent implements OnInit {
     }
 
     likePost() {
-        if (this.post) {
-            let tags: string[][] = [];
-
-        }
+        this.sendLikeEvent();
+        this.post.setPostLikedByMe(true);
         this.openSnackBar("Reaction Sent", "dismiss");
     }
 
@@ -243,6 +241,23 @@ export class PostComponent implements OnInit {
             let unsignedEvent = this.nostrService.getUnsignedEvent(3, tags, "");
             let signedEvent: Event;
             const privateKey = this.signerService.getPrivateKey();
+            if (privateKey !== "") {
+                let eventId = getEventHash(unsignedEvent)
+                signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
+            } else {
+                signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+            }
+            this.nostrService.sendEvent(signedEvent);
+        }
+    }
+
+    async sendLikeEvent() {
+        if (this.post) {
+            const tags = this.post.getAllTags();
+            const privateKey = this.signerService.getPrivateKey();
+            const content = "+"  // "upvote" - can technically make a downvote but i dont want to
+            let unsignedEvent = this.nostrService.getUnsignedEvent(7, tags, content);
+            let signedEvent: Event;
             if (privateKey !== "") {
                 let eventId = getEventHash(unsignedEvent)
                 signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);

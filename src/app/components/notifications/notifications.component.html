@@ -3,9 +3,12 @@
         <h1>Notifications</h1>
         <mat-divider></mat-divider>
     </div>
-    <div class="notification-container">
+    <div *ngIf="!loading" class="notification-container">
         <div *ngFor="let zap of notifications">
             <app-zap [zap]="zap"></app-zap>
         </div>
+    </div>
+    <div *ngIf="loading">
+        <app-loading></app-loading>
     </div>
 </div>

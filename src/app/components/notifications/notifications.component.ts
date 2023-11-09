@@ -10,7 +10,7 @@ import { Zap } from 'src/app/types/post';
 export class NotificationsComponent {
 
     notifications: Zap[];
-
+    loading: boolean = true;
     constructor(
         private nostrService: NostrService
     ) {
@@ -19,6 +19,7 @@ export class NotificationsComponent {
 
     async getZapNotifications() {
         this.notifications = await this.nostrService.getNotifications();
+        this.loading = false;
     }
 
 }

@@ -34,6 +34,8 @@ export class FeedComponent implements OnInit, OnDestroy {
     hashtags: Chip[] = [{name: 'bitcoin'}, {name: 'zaps'}, {name: 'nostr'}];
     addOnBlur = true;
     subscription: Sub | null = null;
+    myLikes: Event[] = [];
+    myLikedNoteIds: string[] = [];
 
     constructor(
         private nostrService: NostrService,
@@ -47,6 +49,7 @@ export class FeedComponent implements OnInit, OnDestroy {
             since = 0;
         }
         this.paginator = new Paginator(0, since, baseTimeDiff=baseTimeDiff);
+
     }
 
     ngOnInit() {
@@ -57,6 +60,25 @@ export class FeedComponent implements OnInit, OnDestroy {
         if (this.subscription) {
             this.subscription.unsub();
         }
+    }
+
+    async getMyLikes() {
+        let myLikesFilter: Filter = {
+            kinds: [7], "authors": [this.signerService.getPublicKey()]
+        }
+        this.myLikes = await this.nostrService.getKind7(myLikesFilter);
+        this.myLikes.forEach(like => {
+            try {
+                let tag = like.tags[like.tags.length - 2]
+                if (tag[0] == "e") {
+                    let id = tag[1]
+                    this.myLikedNoteIds.push(id);
+                }
+
+            } catch {
+                console.log("err")
+            }
+        });
     }
 
     toggleLoading = () => this.loading = !this.loading;
@@ -164,6 +186,10 @@ export class FeedComponent implements OnInit, OnDestroy {
         let waitZaps: Zap[];
         if (this.selectedChip.name !== "Zaps") {
             waitPosts = await this.nostrService.getKind1(filter);
+            if (waitPosts.length < 2) {
+                filter.since += 5000;
+                waitPosts.push(...await this.nostrService.getKind1(filter));
+            }
             await this.queryForMorePostInfo(waitPosts);
         } else {
             waitZaps = await this.nostrService.getZaps(filter);
@@ -199,8 +225,6 @@ export class FeedComponent implements OnInit, OnDestroy {
             filter.authors = this.signerService.getFollowingList();
             filter.since = this.paginator.since;  // two hours ago
             filter.until = this.paginator.until;
-            console.log("WHY")
-            console.log(filter)
         } else {
             // explore
             filter.kinds = [1];
@@ -213,6 +237,7 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
 
     async queryForMorePostInfo(posts: Post[]) {
+        await this.getMyLikes();
         let pubkeys: string[] = [];
         let noteIds: string[] = [];
         posts.forEach(p => {
@@ -220,9 +245,6 @@ export class FeedComponent implements OnInit, OnDestroy {
             noteIds.push(p.noteId)
         })
         await this.nostrService.getKind0({kinds: [0], authors: pubkeys})
-        let replyFilter: Filter = {
-            kinds: [1], "#e": noteIds, "#p": pubkeys
-        }
         // join new posts and sort without ruining UI
         let waitPosts = this.posts // existing posts
         waitPosts = waitPosts.concat(posts) // incoming posts
@@ -234,23 +256,46 @@ export class FeedComponent implements OnInit, OnDestroy {
         waitPosts.sort((a,b) => a.createdAt - b.createdAt).reverse();
         this.posts = waitPosts;
         this.paginator.incrementFilterTimes(this.posts);
+        let replyFilter: Filter = {
+            kinds: [1], "#e": noteIds,
+        }
         let replies = await this.nostrService.getKind1(replyFilter)
-        this.patchPostsWithMoreInfo(posts, replies);
+        let likesFilter: Filter = {
+            kinds: [7], "#e": noteIds
+        }
+        let likes = await this.nostrService.getKind7(likesFilter);
+        this.patchPostsWithMoreInfo(posts, replies, likes);
         // filter out dupes
         this.toggleLoading();
     }
 
-    patchPostsWithMoreInfo(posts: Post[], replies: Post[]) {
+    patchPostsWithMoreInfo(posts: Post[], replies: Post[], likes: Event[]) {
         let counts: {[id: string]: number} = {}
         for (const r of replies) {
             if (r.nip10Result?.reply?.id) {
                 counts[r.nip10Result.reply.id] = counts[r.nip10Result.reply.id] ? counts[r.nip10Result.reply.id] + 1 : 1;
             }
         }
+        let likeCounts: {[id: string]: number} = {}
+        
+        for (const like of likes) {
+            let noteId = null;
+            like.tags.slice().reverse().forEach(x => {
+                if (x[0] == "e" && noteId === null) {
+                    noteId = x[1];
+                }
+            });
+            likeCounts[noteId] = likeCounts[noteId] ? likeCounts[noteId] + 1 : 1;
+        }
+
         posts.forEach(p => {
             p.setPicture(p.pubkey);
             p.setUsername(p.pubkey);
             p.setReplyCount(counts[p.noteId]);
+            p.setLikeCount(likeCounts[p.noteId]);
+            if (this.myLikedNoteIds.includes(p.noteId)) {
+                p.setPostLikedByMe(true);
+            }
         });
     }
 }
