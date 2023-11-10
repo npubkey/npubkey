@@ -77,6 +77,7 @@ import { NostrWindow } from './types/nostr';
 import { ListedUserComponent } from './components/listed-user/listed-user.component';
 import { TrendingComponent } from './components/trending/trending.component';
 import { ZapFeedComponent } from './components/zap-feed/zap-feed.component';
+import { HomeFeedComponent } from './components/home-feed/home-feed.component';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -187,6 +188,7 @@ const dbConfig: DBConfig  = {
     ListedUserComponent,
     TrendingComponent,
     ZapFeedComponent,
+    HomeFeedComponent,
   ],
   entryComponents: [ImageDialogComponent, CreateEventComponent],
   imports: [

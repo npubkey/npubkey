@@ -8,11 +8,11 @@
                     </span>
                 </div>
                 <div>
+                    <button mat-icon-button routerLink="/feed">
+                        <mat-icon [color]="currentRoute === 'feed' ? 'accent' : ''">{{ home_icon }}</mat-icon>
+                    </button>
                     <button mat-icon-button routerLink="/search">
                         <mat-icon [color]="currentRoute === 'search' ? 'accent' : ''">{{ search_icon }}</mat-icon>
-                    </button>
-                    <button mat-icon-button routerLink="/feed">
-                        <mat-icon [color]="currentRoute === 'feed' ? 'accent' : ''">{{ explore_icon }}</mat-icon>
                     </button>
                     <button mat-icon-button routerLink='/zaps'>
                         <mat-icon [color]="currentRoute === 'zaps' ? 'accent' : ''">{{ zap_icon }}</mat-icon>
@@ -80,7 +80,7 @@
         <mat-toolbar color="primary" class="footer-nav-bar">
             <mat-toolbar-row fxLayoutAlign='space-evenly center'>
                 <button mat-icon-button routerLink='/feed'>
-                    <mat-icon [color]="currentRoute === 'feed' ? 'accent' : ''">{{ explore_icon }}</mat-icon>
+                    <mat-icon [color]="currentRoute === 'feed' ? 'accent' : ''">{{ home_icon }}</mat-icon>
                 </button>
                 <button mat-icon-button routerLink="/trending">
                     <mat-icon [color]="currentRoute === 'trending' ? 'accent' : ''">{{ trending_icon }}</mat-icon>

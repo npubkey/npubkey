@@ -63,9 +63,7 @@ export class HeaderComponent implements OnInit {
         router.events.pipe(
             filter(event => event instanceof NavigationEnd)  
         ).subscribe((event: NavigationEnd) => {
-            console.log("navigated...")
-            console.log(event.url);
-            this.currentRoute = event.url.substring(1);
+            this.setIconToActive(event.url.substring(1));
             // refresh user image on change to ensure its shown in header
             if (event.url === "/login") {
                 this.userImage = "";
@@ -81,6 +79,10 @@ export class HeaderComponent implements OnInit {
         this.breakpoint$.subscribe(() => {
             this.breakpointChanged()
         });
+    }
+
+    setIconToActive(url: string): void {
+        this.currentRoute = url;
     }
 
     openBottomSheet(): void {

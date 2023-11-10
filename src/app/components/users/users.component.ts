@@ -5,6 +5,8 @@ import { Filter} from 'nostr-tools';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { DBUser } from '../../types/user';
 import { Paginator } from '../../utils';
+import { SearchUser } from '../../types/user';
+import { nip19 } from 'nostr-tools';
 
 @Component({
   selector: 'app-users',
@@ -18,6 +20,9 @@ export class UsersComponent implements OnInit {
     previousSince: number = 0;
     dbOut: boolean = false;
     paginator: Paginator;
+    search: string = "";
+    searchUsers: SearchUser[] = [];
+
     constructor(
         private nostrService: NostrService,
         private dbService: NgxIndexedDBService
@@ -29,6 +34,59 @@ export class UsersComponent implements OnInit {
 
     ngOnInit(): void {
         this.getUsers();
+    }
+
+    submit() {
+        this.users = [];
+        this.toggleLoading();
+        this.searchForUsers();
+        this.searchUsers = [];
+        const items = { ...localStorage };
+        let searchTerm = this.search
+        for (let key of Object.keys(items)) {
+            if (key.includes("_name")) continue;
+            if (key.includes("following")) continue;
+            if (key.includes("publicKey")) continue;
+            if (key.includes("_img")) continue;
+            if (this.search.startsWith("npub")) {
+                searchTerm = nip19.decode(this.search).data.toString();
+            }
+            let value = (items as {[key: string]: string})[key].toLowerCase();
+            key = key.toLowerCase();
+            searchTerm = searchTerm.toLowerCase();
+            if (key.toLowerCase().includes(searchTerm)) {
+                this.addToFound(key);
+            }
+            else if (value.includes(searchTerm)) {
+                this.addToFound(key);
+            }
+            else if (searchTerm.includes(key)) {
+                this.addToFound(key);
+            }
+            else if (searchTerm.includes(value)) {
+                this.addToFound(key);
+            }
+        }
+        this.toggleLoading();
+    }
+
+    addToFound(key: string): void {
+        let searchUser: SearchUser = {
+            pubkey: key,
+            picture: this.getPictureFromPublicKey(key)
+        }
+        if (!this.searchUsers.includes(searchUser)) {
+            this.searchUsers.push(searchUser);
+        }
+    }
+
+    getPictureFromPublicKey(pubkey: string): string {
+        return localStorage.getItem(`${pubkey}_img`) || "";
+    }
+
+    async searchForUsers() {
+        let users = await this.nostrService.searchUsers(this.search)
+        this.searchUsers.push(...users);
     }
 
     getSince(minutesAgo: number) {
@@ -46,6 +104,7 @@ export class UsersComponent implements OnInit {
                     this.users.push(dbUserToUser(u));
                 }
                 this.dbOut = true;
+                this.toggleLoading();
             });
         }
     }
@@ -64,6 +123,7 @@ export class UsersComponent implements OnInit {
             ))
         )
         this.paginator.incrementUserTimes(moreUsers);
+        this.toggleLoading();
     }
 
     async onScroll() {

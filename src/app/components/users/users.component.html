@@ -1,21 +1,42 @@
 <div class="router-container">
-    <div class="page-header">
-        <h1>Users</h1>
-        <mat-divider></mat-divider>
+    <div class="search-header">
+        <div class="search-div" fxLayout="row">
+            <mat-form-field appearance="outline">
+                <mat-label>Search users..</mat-label>
+                <input matInput placeholder="search" [(ngModel)]="search">
+            </mat-form-field>
+            <button mat-fab color="primary" (click)="submit()">
+                <mat-icon>search</mat-icon>
+            </button>
+        </div>
     </div>
-    <div
-        class="users-container"
+    <div *ngIf="!loading && users.length === 0">
+        <div *ngFor="let searchUser of searchUsers">
+            <mat-card routerLink="/users/{{searchUser.pubkey|npub}}">
+                <mat-card-header>
+                    <img 
+                        *ngIf="searchUser.picture"
+                        class="header-image"
+                        mat-card-avatar
+                        src="{{searchUser.picture}}"/>
+                    <mat-card-title>{{searchUser.pubkey|username|ellipsis}}</mat-card-title>
+                    <mat-card-subtitle class="npub">{{searchUser.pubkey|npub|ellipsis}}</mat-card-subtitle>
+                </mat-card-header>
+            </mat-card>
+        </div>
+    </div>
+    <div *ngIf="!loading && searchUsers.length === 0"
         infiniteScroll
         [infiniteScrollDistance]="2"
         [infiniteScrollThrottle]="500"
         (scrolled)="onScroll()"
         [scrollWindow]="true"
     >
-        <div class="users-container" *ngFor="let user of users">
+        <div *ngFor="let user of users">
             <app-listed-user [user]="user" routerLink="/users/{{user.pubkey|npub}}"></app-listed-user>
         </div>
     </div>
-    <div *ngIf="users.length === 0">
+    <div *ngIf="loading">
         <app-loading></app-loading>
     </div>
 </div>

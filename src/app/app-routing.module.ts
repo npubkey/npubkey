@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CreateEventComponent } from './components/create-event/create-event.component';
 import { UsersComponent } from './components/users/users.component';
 import { FeedComponent } from './components/feed/feed.component';
+import { HomeFeedComponent } from './components/home-feed/home-feed.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { LoginComponent } from './components/login/login.component';
 import { UserDetailComponent } from './components/user-detail/user-detail.component';
@@ -25,7 +26,7 @@ const routes: Routes = [
     { path: 'posts/:nevent', component: PostDetailComponent},
     { path: 'messages/:npub', component: MessengerComponent, canActivate: [authGuard]},
     { path: 'feed/:hashtag', component: HashtagFeedComponent},
-    { path: 'feed', component: FeedComponent },
+    { path: 'feed', component: HomeFeedComponent },
     { path: 'trending', component: TrendingComponent },
     { path: 'messages', component: ContactListComponent, canActivate: [authGuard]},
     { path: 'notifications', component: NotificationsComponent, canActivate: [authGuard]},

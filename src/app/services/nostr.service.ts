@@ -445,9 +445,7 @@ export class NostrService {
         let posts: Post[] = [];
         response.forEach(e => {
             const post = this.getPostFromResponse(e);
-            if (post.content.includes(searchTerm)) {
-                posts.push(post);
-            }
+            posts.push(post);
         });
         return posts;
     }
