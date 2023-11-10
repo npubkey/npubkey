@@ -1,7 +1,7 @@
 import { NIP10Result } from 'nostr-tools/lib/nip10';
 import { Event, nip19, nip10 } from 'nostr-tools';
 import { decode } from "@gandlaf21/bolt11-decode";
-import { ellipsis, humantime } from '../utils';
+import { humantime } from '../utils';
 import * as dayjs from 'dayjs';
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
@@ -157,7 +157,7 @@ export class Zap {
         if (this.description) {
             let content = "<div class='zap-generated-content'>"
             content = content + `<div><strong><span style="color: orange; font-size: 20px;">${this.satAmount} sats </span>ZAP!</strong><span class="zap-time"> ${humantime(this.createdAt)}</span></div>`;
-            content = content + `<p><strong> From: </strong><span>nostr:${this.receiverNpub}</span></p><p><strong> To: </strong><span>nostr:${this.senderNpub}</span></p>`;
+            content = content + `<p><strong> To: </strong><span>nostr:${this.receiverNpub}</span></p><p><strong> From: </strong><span>nostr:${this.senderNpub}</span></p>`;
             if (this.receiverEventId) {
                 content = content + `<p><strong>Note: </strong>nostr:${nip19.neventEncode({id: this.receiverEventId})}</p>`;
             }

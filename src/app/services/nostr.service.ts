@@ -438,7 +438,8 @@ export class NostrService {
         // }
         let filter3: Filter = {
             kinds: [1],
-            "#t": tags
+            "#t": tags,
+            limit: 50
         }
         const relay = await this.relayConnect();
         const response = await relay.list([filter3]);

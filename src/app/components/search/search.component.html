@@ -10,10 +10,16 @@
             </button>
         </div>
     </div>
-    <div *ngIf="!loading" class="search-notes-container">
-        <mat-divider></mat-divider>
-        <div *ngFor="let searchPost of searchPosts">
-            <app-post [post]="searchPost"></app-post>>
+    <div
+        class="feed-posts"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="500"
+        (scrolled)="onScroll()"
+        [scrollWindow]="true"
+    >
+        <div class="feed" *ngFor="let post of posts">
+            <app-post *ngIf="!post.isAReply" [post]="post" [likes]="post.likeCount"></app-post>
         </div>
     </div>
     <div *ngIf="loading">
