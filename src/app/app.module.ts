@@ -76,6 +76,7 @@ import { WebLN } from 'src/app/types/webln';
 import { NostrWindow } from './types/nostr';
 import { ListedUserComponent } from './components/listed-user/listed-user.component';
 import { TrendingComponent } from './components/trending/trending.component';
+import { ZapFeedComponent } from './components/zap-feed/zap-feed.component';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -185,6 +186,7 @@ const dbConfig: DBConfig  = {
     NotificationComponent,
     ListedUserComponent,
     TrendingComponent,
+    ZapFeedComponent,
   ],
   entryComponents: [ImageDialogComponent, CreateEventComponent],
   imports: [

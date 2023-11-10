@@ -43,7 +43,7 @@
       (scrolled)="onScroll()"
       [scrollWindow]="true"
     >
-        <div *ngIf="selectedChip.name !== 'Zaps'">
+        <div>
             <mat-tab-group>
                 <mat-tab label="Posts">
                     <div class="feed" *ngFor="let post of posts">
@@ -56,11 +56,6 @@
                     </div>
                 </mat-tab>
             </mat-tab-group>
-        </div>
-        <div *ngIf="selectedChip.name === 'Zaps'">
-            <div class="feed" *ngFor="let zap of zaps">
-                <app-zap [zap]="zap"></app-zap>
-            </div>
         </div>
     </div>
     <div *ngIf="loading">

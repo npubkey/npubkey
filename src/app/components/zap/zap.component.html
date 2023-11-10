@@ -1,17 +1,7 @@
-<mat-card class="zap" *ngIf="zap">
-    <mat-card-header>
-        <img 
-            *ngIf="zap.picture"
-            class="header-image"
-            routerLink="/users/{{zap.walletPubkey|npub}}"
-            mat-card-avatar
-            src="{{zap.picture}}"/>
-        <mat-card-subtitle routerLink="/users/{{zap.walletPubkey|npub}}">
-            <div class="username">{{zap.walletPubkey|username|ellipsis}}</div>
-        </mat-card-subtitle>
-        <mat-card-subtitle>{{zap.fromNow}}</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-        <p class="zap-content" [innerHTML]="zap.content | safe" (click)="processLinks($event)" routerLink="/posts/{{zap.receiverEventId|nevent}}"></p>
-    </mat-card-content>
-</mat-card>
+<div
+    *ngIf="zap"
+    class="zap-content"
+    [innerHTML]="zap.content | safe"
+    (click)="processLinks($event)"
+    routerLink="/posts/{{zap.receiverEventId|nevent}}">
+</div>

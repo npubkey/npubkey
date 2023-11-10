@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Filter, Sub, Event } from 'nostr-tools';
+import { Component, OnInit } from '@angular/core';
+import { Filter, Event } from 'nostr-tools';
 import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
-import { Post, Zap } from '../../types/post';
+import { Post } from '../../types/post';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Paginator } from 'src/app/utils';
@@ -18,22 +18,21 @@ interface Chip {
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css']
 })
-export class FeedComponent implements OnInit, OnDestroy {
+export class FeedComponent implements OnInit {
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
     loading: boolean = false;
     posts: Post[] = [];
-    zaps: Zap[] = [];
+    
     paginator: Paginator;
     selectedChip: Chip;
     chips: Chip[] = [
         {name: "Explore"},
         {name: "Following"},
         {name: "Hashtags"},
-        {name: "Zaps"},
     ]
     hashtags: Chip[] = [{name: 'bitcoin'}, {name: 'zaps'}, {name: 'nostr'}];
     addOnBlur = true;
-    subscription: Sub | null = null;
+    
     myLikes: Event[] = [];
     myLikedNoteIds: string[] = [];
 
@@ -54,12 +53,6 @@ export class FeedComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.getPosts();
-    }
-
-    ngOnDestroy(): void {
-        if (this.subscription) {
-            this.subscription.unsub();
-        }
     }
 
     async getMyLikes() {
@@ -163,39 +156,18 @@ export class FeedComponent implements OnInit, OnDestroy {
         }
     }
 
-    async listenForZaps() {
-        const relay = await this.nostrService.relayConnect()
-        // let's query for an event that exists
-        const filter: Filter = {
-            kinds: [9735],
-            since: Math.floor(Date.now() / 1000)
-        }
-        this.subscription = relay.sub([filter]);
-        this.subscription.on('event', (e: Event) => {
-            this.zaps.unshift(new Zap(e.id, e.kind, e.pubkey, e.created_at, e.sig, e.tags));
-        });
-        this.subscription.on('eose', () => {
-            console.log(`End of subscription events`)
-        });
-    }
+
 
     async getPosts() {
         let filter = this.getFilter();
         this.toggleLoading();
         let waitPosts: Post[];
-        let waitZaps: Zap[];
-        if (this.selectedChip.name !== "Zaps") {
-            waitPosts = await this.nostrService.getKind1(filter);
-            if (waitPosts.length < 2) {
-                filter.since += 5000;
-                waitPosts.push(...await this.nostrService.getKind1(filter));
-            }
-            await this.queryForMorePostInfo(waitPosts);
-        } else {
-            waitZaps = await this.nostrService.getZaps(filter);
-            this.zaps = waitZaps;
-            this.listenForZaps();
+        waitPosts = await this.nostrService.getKind1(filter);
+        if (waitPosts.length < 2) {
+            filter.since += 5000;
+            waitPosts.push(...await this.nostrService.getKind1(filter));
         }
+        await this.queryForMorePostInfo(waitPosts);
     }
 
     async onScroll() {
@@ -204,13 +176,7 @@ export class FeedComponent implements OnInit, OnDestroy {
 
     getFilter(): Filter {
         let filter: Filter = {};
-        if (this.selectedChip.name === "Zaps") {
-            // zaps
-            filter.kinds = [9735];
-            filter.limit = 50;
-            filter.since = this.paginator.since;
-            filter.until = this.paginator.until;
-        } else if (this.selectedChip.name == "Hashtags") {
+        if (this.selectedChip.name == "Hashtags") {
             // hashtags
             let tags: string[] = [];
             this.hashtags.forEach(h => {tags.push(h.name)});
@@ -243,7 +209,7 @@ export class FeedComponent implements OnInit, OnDestroy {
         posts.forEach(p => {
             pubkeys.push(p.pubkey);
             noteIds.push(p.noteId)
-        })
+        });
         await this.nostrService.getKind0({kinds: [0], authors: pubkeys})
         // join new posts and sort without ruining UI
         let waitPosts = this.posts // existing posts

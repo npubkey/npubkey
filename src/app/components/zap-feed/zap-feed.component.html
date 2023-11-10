@@ -1,0 +1,15 @@
+<div class="router-container">
+    <div class="page-header">
+        <h1>Live Zaps</h1>
+        <mat-divider></mat-divider>
+    </div>
+    <div *ngIf="loading">
+        <app-loading></app-loading>
+    </div>
+    <div *ngIf="!loading">
+        <div class="feed" *ngFor="let zap of zaps">
+            <app-zap [zap]="zap"></app-zap>
+            <mat-divider class="add-padding"></mat-divider>
+        </div>
+    </div>
+</div>

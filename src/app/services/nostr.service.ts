@@ -361,8 +361,10 @@ export class NostrService {
     async getZaps(filter: Filter) {
         const relay = await this.relayConnect();
         const response = await relay.list([filter])
+        console.log(response);
         let zaps: Zap[] = [];
         response.forEach(e => {
+            
             zaps.push(new Zap(e.id, e.kind, e.pubkey, e.created_at, e.sig, e.tags));
         });
         return zaps;
@@ -434,15 +436,12 @@ export class NostrService {
         //     kinds: [1],
         //     search: searchTerm,
         // }
-        let filter2: Filter = {
-            kinds: [1],
-        }
         let filter3: Filter = {
             kinds: [1],
             "#t": tags
         }
         const relay = await this.relayConnect();
-        const response = await relay.list([filter2, filter3]);
+        const response = await relay.list([filter3]);
         let posts: Post[] = [];
         response.forEach(e => {
             const post = this.getPostFromResponse(e);

@@ -1,6 +1,7 @@
 import { NIP10Result } from 'nostr-tools/lib/nip10';
 import { Event, nip19, nip10 } from 'nostr-tools';
 import { decode } from "@gandlaf21/bolt11-decode";
+import { ellipsis, humantime } from '../utils';
 import * as dayjs from 'dayjs';
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
@@ -154,15 +155,20 @@ export class Zap {
 
     setContent() {
         if (this.description) {
-            let content = `nostr:${this.senderNpub} zapped nostr:${this.receiverNpub} ${this.satAmount} sats`;
+            let content = "<div class='zap-generated-content'>"
+            content = content + `<div><strong><span style="color: orange; font-size: 20px;">${this.satAmount} sats </span>ZAP!</strong><span class="zap-time"> ${humantime(this.createdAt)}</span></div>`;
+            content = content + `<p><strong> From: </strong><span>nostr:${this.receiverNpub}</span></p><p><strong> To: </strong><span>nostr:${this.senderNpub}</span></p>`;
             if (this.receiverEventId) {
-                content = content + ` <p> for nostr:${nip19.neventEncode({id: this.receiverEventId})}</p>`;
+                content = content + `<p><strong>Note: </strong>nostr:${nip19.neventEncode({id: this.receiverEventId})}</p>`;
             }
             if (this.senderMessage) {
-                content = content + `<p> ${this.senderMessage}</p>`;
+                content = content + `<p><strong>Message: </strong>${this.senderMessage}</p>`;
             }
+            content = content + "</div>";
             let nip10Result = nip10.parse(this.description);
             this.content = new Content(this.kind, content, nip10Result).getParsedContent()
+        } else {
+            this.content = "<p>Anon Zap</p>";
         }
     }
 
@@ -215,7 +221,6 @@ export class Content {
         this.content = this.hashtagContent(this.content);
         this.content = this.linkify(this.content);
         this.content = this.replaceNostrThing(this.content);
-        this.content = this.styleUsername(this.content);
         return this.content;
     }
 
@@ -384,18 +389,18 @@ export class Content {
                 if (match.startsWith("nostr:npub")) {
                     let npub = match.substring(6)
                     let username = this.getUsername(npub)
-                    let textWrap: TextWrap = {text: this.ellipsis(username), addLink: `href="/users/${npub}"`}
+                    let textWrap: TextWrap = {text: this.ellipsis(username), addLink: `href="/users/${npub}"`, cssClass: "user-at"}
                     let htmlSpan = this.wrapTextInSpan(textWrap)
                     content = content.replace(match, htmlSpan);
                 }
                 if (match.startsWith("nostr:nevent")) {
                     let nevent = match.substring(6)
-                    let textWrap: TextWrap = {text: nevent, addLink: `href="/posts/${nevent}"`}
+                    let textWrap: TextWrap = {text: this.ellipsis(nevent), addLink: `href="/posts/${nevent}"`}
                     content = content.replace(match, this.wrapTextInSpan(textWrap));
                 }
                 if (match.startsWith("nostr:note")) {
                     let note = match.substring(6);
-                    let textWrap: TextWrap = {text: note, addLink: `href="/posts/${this.encodeNoteAsEvent(note)}"`}
+                    let textWrap: TextWrap = {text: this.ellipsis(note), addLink: `href="/posts/${this.encodeNoteAsEvent(note)}"`}
                     content = content.replace(match, this.wrapTextInSpan(textWrap));
                 }
             } catch (e) {

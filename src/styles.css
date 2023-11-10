@@ -9,6 +9,16 @@ body { margin: 0; font-family: 'Courier New', Courier, monospace; }
     margin-right: 1em;
 }
 
+.user-at {
+    color: rgb(191, 58, 193);
+}
+
+.zap-time {
+    color: gray;
+    font-weight: bold;
+    font-size: small;
+}
+
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
     .router-container { 

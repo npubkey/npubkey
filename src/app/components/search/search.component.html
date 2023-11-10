@@ -1,19 +1,21 @@
 <div class="router-container">
-    <div class="page-header">
-        <p>
+    <div class="search-header">
+        <div class="search-div" fxLayout="row">
             <mat-form-field appearance="outline">
-                <mat-label>Search</mat-label>
+                <mat-label>Search hastags..</mat-label>
                 <input matInput placeholder="search" [(ngModel)]="search">
             </mat-form-field>
-        </p>
-        <p>
-            <button mat-fab extended color="primary" (click)="submit()">Submit</button>
-        </p>
+            <button mat-fab color="primary" (click)="submit()">
+                <mat-icon>search</mat-icon>
+            </button>
+        </div>
     </div>
-    <div *ngIf="!loading">
-        <h2>Results</h2>
+    <div *ngIf="!loading" class="search-notes-container">
         <mat-divider></mat-divider>
-        <mat-tab-group>
+        <div *ngFor="let searchPost of searchPosts">
+            <app-post [post]="searchPost"></app-post>>
+        </div>
+        <!-- <mat-tab-group>
             <mat-tab label="Users">
                 <div *ngFor="let searchUser of searchUsers">
                     <mat-card routerLink="/users/{{searchUser.pubkey|npub}}">
@@ -29,12 +31,7 @@
                     </mat-card>
                 </div>
             </mat-tab>
-            <mat-tab label="Posts">
-                <div *ngFor="let searchPost of searchPosts">
-                    <app-post [post]="searchPost"></app-post>>
-                </div>
-            </mat-tab>
-          </mat-tab-group>
+          </mat-tab-group> -->
     </div>
     <div *ngIf="loading">
         <app-loading></app-loading>

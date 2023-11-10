@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit {
     messages_icon: string = 'forum';
     notifications_icon: string = 'notifications';
     search_icon: string = 'search';
+    zap_icon: string = 'bolt';
     smallScreen: boolean = false;
     Breakpoints = Breakpoints;
     currentBreakpoint: string = '';

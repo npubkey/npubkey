@@ -9,6 +9,19 @@ export function range (start: number, end: number) {
     return [...Array(1+end-start).keys()].map(v => start+v)
 }
 
+export function ellipsis(value: string): string {
+    // truncates the middle of the string
+    if (value.length < 40) return value;
+    let third: number = value.length / 8;
+    let finalThird: number = value.length - third;
+    return value.substring(0, third) + ":" + value.substring(finalThird)
+}
+
+
+export function humantime(value: number): string {
+    let date = new Date(value*1000)
+    return dayjs(date).fromNow()
+}
 
 export class Paginator {
     previousUntil: number | null;
