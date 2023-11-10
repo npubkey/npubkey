@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild, ElementRef } from '@angular/core';
 import { Event, getEventHash } from "nostr-tools";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NostrService } from '../../services/nostr.service';
@@ -12,7 +12,6 @@ import { Content } from 'src/app/types/post';
 import { NIP10Result } from 'nostr-tools/lib/nip10';
 import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { DBUser, User, dbUserToUser } from 'src/app/types/user';
-import { style } from '@angular/animations';
 
 interface Replacement {
     username: string;
@@ -25,7 +24,7 @@ interface Replacement {
   styleUrls: ['./create-event.component.css']
 })
 export class CreateEventComponent {
-
+    @ViewChild("note") noteField: ElementRef;
     user: User | undefined | null = undefined;
     showGifSearch: boolean = false;
     content: string = "";
@@ -52,6 +51,11 @@ export class CreateEventComponent {
         @Inject(MAT_BOTTOM_SHEET_DATA) public data: JSON,
     ) {
         this.getUser();
+    }
+
+    
+    ngAfterViewInit() {
+        this.noteField.nativeElement.focus();
     }
 
     updateContent(newContent: string) {

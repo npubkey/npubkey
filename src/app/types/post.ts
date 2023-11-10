@@ -323,25 +323,19 @@ export class Content {
     }
 
     hashtagContent(content: string): string {
-        let hashtags: string[] = content.match(/#\w+/gm) || []
-        hashtags = hashtags.sort((a,b) => b.length - a.length);
-        hashtags.forEach(tag => {
-            let tagId = tag.substring(1);  // remove #
-            let textWrap: TextWrap = {text: tag, addLink: `href="/feed/${tagId}"`}
-            content = content.replaceAll(tag, this.wrapTextInSpan(textWrap))
+        let hashtagRegex = /#\w+\S/gm;
+        return content.replace(hashtagRegex, function(tag) {
+            let textWrap: TextWrap = {text: tag, cssClass: "hashtag", addLink: `href="/feed/${tag.substring(1)}"`}
+            return `<a class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</a>`
         });
-        return content
     }
 
     styleUsername(content: string): string {
-        let names: string[] = content.match(/@\w+/gm) || []
-        names = names.sort((a,b) => b.length - a.length);
-        names.forEach(tag => {
-            let tagId = tag.substring(1);  // remove #
-            let textWrap: TextWrap = {text: tag, cssClass: "hashtag"}
-            content = content.replaceAll(tag, this.wrapTextInSpan(textWrap))
+        let usernameRegex = /@\w+/gm
+        return content.replace(usernameRegex, function(name) {
+            let textWrap: TextWrap = {text: name, cssClass: "hashtag"}
+            return `<a class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</a>`
         });
-        return content
     }
 
     linkify(content: string): string {

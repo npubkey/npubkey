@@ -210,6 +210,10 @@ export class PostComponent implements OnInit {
     likePost() {
         this.sendLikeEvent();
         this.post.setPostLikedByMe(true);
+        if (this.likes === undefined) {
+            this.likes = 0;
+        }
+        this.likes += 1;
         this.openSnackBar("Reaction Sent", "dismiss");
     }
 
