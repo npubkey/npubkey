@@ -493,7 +493,6 @@ export class NostrService {
             notifications.push(new Zap(e.id, e.kind, e.pubkey, e.created_at, e.sig, e.tags));
         });
         notifications.sort((a,b) => a.createdAt - b.createdAt).reverse();
-        console.log(notifications);
         this.storeNotificationsInDB(notifications);
         return notifications;
     }
@@ -501,8 +500,6 @@ export class NostrService {
     async sendEvent(event: Event) {
         const relay = await this.relayConnect()
         let pub = relay.publish(event)
-        console.log(pub);
-        console.log(event);
         pub.on('ok', () => {
             console.log(`${relay.url} has accepted our event`)
         })

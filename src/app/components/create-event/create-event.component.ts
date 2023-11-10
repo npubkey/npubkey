@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Event, getEventHash } from "nostr-tools";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NostrService } from '../../services/nostr.service';
@@ -23,8 +23,8 @@ interface Replacement {
   templateUrl: './create-event.component.html',
   styleUrls: ['./create-event.component.css']
 })
-export class CreateEventComponent {
-    @ViewChild("note") noteField: ElementRef;
+export class CreateEventComponent implements AfterViewInit{
+    @ViewChild("noteTextArea", {read: ElementRef, static: true}) noteField: ElementRef;
     user: User | undefined | null = undefined;
     showGifSearch: boolean = false;
     content: string = "";
@@ -55,7 +55,14 @@ export class CreateEventComponent {
 
     
     ngAfterViewInit() {
-        this.noteField.nativeElement.focus();
+        this.focusOnTextField();
+    }
+
+    focusOnTextField() {
+        // setTimeout sort of makes this work
+        setTimeout(() => {
+            this.noteField.nativeElement.focus();
+        }, 500);
     }
 
     updateContent(newContent: string) {
@@ -115,10 +122,6 @@ export class CreateEventComponent {
 
     stylizeContent() {
         this.contentHTML = new Content(1, this.content, this.emptyNIP10).parseCreateNote();
-    }
-
-    onFocus() {
-        this.showPlaceholder = false;
     }
 
     openSnackBar(message: string, action: string) {

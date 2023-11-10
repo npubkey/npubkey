@@ -1,10 +1,13 @@
-<div *ngIf="user">
+<div [hidden]="!user">
     <mat-card-subtitle *ngIf="!data">New Note</mat-card-subtitle>
     <mat-card-subtitle *ngIf="data">Replying to {{data['replyingTo']|username|ellipsis}}</mat-card-subtitle>
-    <div *ngIf="!showGifSearch">
-        <div tabindex="0" (focus)="onFocus()" contenteditable="true" class="createNote" #note [innerHTML]="contentHTML" (input)="updateContent(note.innerText)">
-            <mat-card-subtitle *ngIf="showPlaceholder">whats up?</mat-card-subtitle>
-        </div>
+    <div [hidden]="showGifSearch">
+        <div #noteTextArea
+            tabindex="0"
+            contenteditable="true"
+            class="createNote"
+            [innerHTML]="contentHTML"
+            (input)="updateContent(noteTextArea.innerText)"></div>
         <mat-divider></mat-divider>
         <div>
             <img *ngFor="let preview of previews" [src]="preview" class="preview">
@@ -53,7 +56,7 @@
             </div>
         </div>
     </div>
-    <div *ngIf="showGifSearch">
+    <div [hidden]="!showGifSearch">
         <p>
             <mat-form-field appearance="outline">
                 <mat-label>GIF search</mat-label>

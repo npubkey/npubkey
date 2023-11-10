@@ -5,10 +5,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import {
-    MatBottomSheet,
-    MatBottomSheetModule,
-} from '@angular/material/bottom-sheet';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { CreateEventComponent } from '../create-event/create-event.component';
 
 
@@ -36,6 +33,8 @@ export class HeaderComponent implements OnInit {
     pubkey: string;
     userImage: string;
     notificationCount: number = 0;
+    currentRoute: string = "feed";
+
     readonly breakpoint$ = this.breakpointObserver
         .observe([Breakpoints.XLarge, Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, Breakpoints.XSmall])
         .pipe(
@@ -63,6 +62,9 @@ export class HeaderComponent implements OnInit {
         router.events.pipe(
             filter(event => event instanceof NavigationEnd)  
         ).subscribe((event: NavigationEnd) => {
+            console.log("navigated...")
+            console.log(event.url);
+            this.currentRoute = event.url.substring(1);
             // refresh user image on change to ensure its shown in header
             if (event.url === "/login") {
                 this.userImage = "";

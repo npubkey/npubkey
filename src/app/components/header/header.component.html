@@ -9,31 +9,31 @@
                 </div>
                 <div>
                     <button mat-icon-button routerLink="/search">
-                        <mat-icon>{{ search_icon }}</mat-icon>
+                        <mat-icon [color]="currentRoute === 'search' ? 'accent' : ''">{{ search_icon }}</mat-icon>
                     </button>
                     <button mat-icon-button routerLink="/feed">
-                        <mat-icon>{{ explore_icon }}</mat-icon>
+                        <mat-icon [color]="currentRoute === 'feed' ? 'accent' : ''">{{ explore_icon }}</mat-icon>
                     </button>
                     <button mat-icon-button routerLink="/trending">
-                        <mat-icon>{{ trending_icon }}</mat-icon>
+                        <mat-icon [color]="currentRoute === 'trending' ? 'accent' : ''">{{ trending_icon }}</mat-icon>
                     </button>
                     <button mat-icon-button routerLink='/users'>
-                        <mat-icon>{{ users_icon }}</mat-icon>
+                        <mat-icon [color]="currentRoute === 'users' ? 'accent' : ''">{{ users_icon }}</mat-icon>
                     </button>
                     <button mat-icon-button routerLink="/messages">
-                        <mat-icon>{{ messages_icon }}</mat-icon>
+                        <mat-icon [color]="currentRoute === 'messages' ? 'accent' : ''">{{ messages_icon }}</mat-icon>
                     </button>
                     <button mat-icon-button (click)="openBottomSheet()">
                         <mat-icon>{{ create_icon }}</mat-icon>
                     </button>
                     <span *ngIf="notificationCount">
                         <button mat-icon-button routerLink='/notifications'>
-                            <mat-icon>{{ notifications_icon }}</mat-icon>
+                            <mat-icon [color]="currentRoute === 'notifications' ? 'accent' : ''">{{ notifications_icon }}</mat-icon>
                         </button>
                     </span>
                     <span *ngIf="notificationCount === 0">
                         <button mat-icon-button routerLink='/notifications'>
-                            <mat-icon>{{ notifications_icon }}</mat-icon>
+                            <mat-icon [color]="currentRoute === 'notifications' ? 'accent' : ''">{{ notifications_icon }}</mat-icon>
                         </button>
                     </span>
                     <button mat-icon-button routerLink='/profile'>
@@ -56,19 +56,19 @@
                 </div>
                 <div>
                     <button mat-icon-button routerLink='/users'>
-                        <mat-icon>{{ users_icon }}</mat-icon>
+                        <mat-icon [color]="currentRoute === 'users' ? 'accent' : ''">{{ users_icon }}</mat-icon>
                     </button>
                     <button mat-icon-button routerLink='/messages'>
-                        <mat-icon>{{ messages_icon }}</mat-icon>
+                        <mat-icon [color]="currentRoute === 'messages' ? 'accent' : ''">{{ messages_icon }}</mat-icon>
                     </button>
                     <span *ngIf="notificationCount">
                         <button mat-icon-button routerLink='/notifications'>
-                            <mat-icon>{{ notifications_icon }}</mat-icon>
+                            <mat-icon [color]="currentRoute === 'notifications' ? 'accent' : ''">{{ notifications_icon }}</mat-icon>
                         </button>
                     </span>
                     <span *ngIf="notificationCount === 0">
                         <button mat-icon-button routerLink='/notifications'>
-                            <mat-icon>{{ notifications_icon }}</mat-icon>
+                            <mat-icon [color]="currentRoute === 'notifications' ? 'accent' : ''">{{ notifications_icon }}</mat-icon>
                         </button>
                     </span>
                 </div>
@@ -77,13 +77,13 @@
         <mat-toolbar color="primary" class="footer-nav-bar">
             <mat-toolbar-row fxLayoutAlign='space-evenly center'>
                 <button mat-icon-button routerLink='/feed'>
-                    <mat-icon>{{ explore_icon }}</mat-icon>
+                    <mat-icon [color]="currentRoute === 'feed' ? 'accent' : ''">{{ explore_icon }}</mat-icon>
                 </button>
                 <button mat-icon-button routerLink="/trending">
-                    <mat-icon>{{ trending_icon }}</mat-icon>
+                    <mat-icon [color]="currentRoute === 'trending' ? 'accent' : ''">{{ trending_icon }}</mat-icon>
                 </button>
                 <button mat-icon-button routerLink="/search">
-                    <mat-icon>{{ search_icon }}</mat-icon>
+                    <mat-icon [color]="currentRoute === 'search' ? 'accent' : ''">{{ search_icon }}</mat-icon>
                 </button>
                 <button mat-icon-button (click)="openBottomSheet()">
                     <mat-icon>{{ create_icon }}</mat-icon>
