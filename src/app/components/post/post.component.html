@@ -8,7 +8,7 @@
         <img 
             *ngIf="post.picture"
             class="header-image"
-            routerLink="/users/{{post.pubkey|npub}}"
+            (click)="openUserBottomSheet()"
             mat-card-avatar
             src="{{post.picture}}"/>
         <mat-card-subtitle routerLink="/users/{{post.pubkey|npub}}">

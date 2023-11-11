@@ -93,7 +93,7 @@ export class CreateEventComponent implements AfterViewInit{
                 if (u === undefined) {
                     continue;
                 }
-                if (u.username.includes(username)) {
+                if (u.username.includes(username) || u.displayName.includes(username)) {
                     const foundU = dbUserToUser(u);
                     if (!this.potentialUsers.includes(foundU)) {
                         this.potentialUsers.push(foundU);
@@ -104,7 +104,6 @@ export class CreateEventComponent implements AfterViewInit{
     }
 
     addUserToContent(user: User) {
-        console.log(user);
         const r: Replacement = {
             username: `@${user.username}`,
             npub: `nostr:${user.npub}`
@@ -112,8 +111,6 @@ export class CreateEventComponent implements AfterViewInit{
         this.usernameReplacements.push(r);
         this.potentialUsers = [];
         let last = this.lastWord(this.content)
-        console.log(last);
-        console.log(user.username);
         this.content = this.content.replace(last, `@${user.username}`);
         this.stylizeContent();
         // adding no-break space allows subsequent text to avoid being styled

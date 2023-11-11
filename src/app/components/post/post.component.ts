@@ -22,6 +22,7 @@ import {
     MatBottomSheet,
     MatBottomSheetModule,
 } from '@angular/material/bottom-sheet';
+import { UserBottomSheetComponent } from '../user-bottom-sheet/user-bottom-sheet.component';
 
 @Component({
   selector: 'app-post',
@@ -461,6 +462,14 @@ export class PostComponent implements OnInit {
                     pubkey: this.post.pubkey
                 },
                 replyingTo: this.post.username
+            }
+        });
+    }
+
+    openUserBottomSheet(): void {
+        this._bottomSheet.open(UserBottomSheetComponent, {
+            data: {
+                pubkey: this.post.pubkey
             }
         });
     }

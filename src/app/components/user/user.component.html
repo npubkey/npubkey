@@ -15,7 +15,7 @@
     </mat-card-header>
     <mat-card-content>
         <div fxLayout="row" fxLayoutAlign="space-between center"> 
-            <mat-card-title>{{user.displayName}}</mat-card-title>
+            <mat-card-title>{{user.displayName|truncate}}</mat-card-title>
             <div fxLayout="row" fxLayoutAlign="space-between center">
                 <button *ngIf="nsec && isMyProfile" mat-icon-button color="warn" (click)="showNsec()">
                     <mat-icon>{{nsecButton}}</mat-icon>

@@ -1,0 +1,19 @@
+
+<div *ngIf="!loading">
+    <div *ngIf="user">
+        <app-user [user]="user" [nip05Verified]="nip05Verified" [canEnlarge]="false"></app-user>
+        <div fxLayout="row" fxLayoutAlign="space-evenly center">
+            <button mat-stroked-button color="warn" (click)="closeBottomSheet()">Close</button>
+            <button mat-stroked-button color="primary" (click)="closeBottomSheet()" routerLink="/users/{{user.pubkey|npub}}">View Full Profile</button>
+        </div>
+    </div>
+    <div *ngIf="!user">
+        <h4>Unable to find user - likely on different relay (will fix later)</h4>
+        <div fxLayout="row" fxLayoutAlign="space-evenly center">
+            <button mat-stroked-button color="warn" (click)="closeBottomSheet()">Close</button>
+        </div>
+    </div>
+</div>
+<div *ngIf="loading">
+    <app-loading></app-loading>
+</div>

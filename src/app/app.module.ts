@@ -78,6 +78,7 @@ import { ListedUserComponent } from './components/listed-user/listed-user.compon
 import { TrendingComponent } from './components/trending/trending.component';
 import { ZapFeedComponent } from './components/zap-feed/zap-feed.component';
 import { HomeFeedComponent } from './components/home-feed/home-feed.component';
+import { UserBottomSheetComponent } from './components/user-bottom-sheet/user-bottom-sheet.component';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -189,8 +190,9 @@ const dbConfig: DBConfig  = {
     TrendingComponent,
     ZapFeedComponent,
     HomeFeedComponent,
+    UserBottomSheetComponent,
   ],
-  entryComponents: [ImageDialogComponent, CreateEventComponent],
+  entryComponents: [ImageDialogComponent, CreateEventComponent, UserBottomSheetComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

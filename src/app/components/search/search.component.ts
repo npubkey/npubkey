@@ -41,14 +41,17 @@ export class SearchComponent implements OnInit {
 
     getFilter(): Filter {
         let filter: Filter = {};
-        // explore
-        filter.kinds = [1];
-        filter.limit = 100;
-        filter.since = this.paginator.since;
-        filter.until = this.paginator.until;
+        //search
         if (this.search) {
             let tags = this.search.split(' ');
             filter["#t"] = tags
+            filter.limit = 100;
+        } else {
+            // global recent feed
+            filter.kinds = [1];
+            filter.limit = 100;
+            filter.since = this.paginator.since;
+            filter.until = this.paginator.until;
         }
         return filter;
     }
