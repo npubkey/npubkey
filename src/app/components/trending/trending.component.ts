@@ -5,6 +5,12 @@ import { User } from 'src/app/types/user';
 import { Post } from 'src/app/types/post';
 import { Event, nip10 } from 'nostr-tools';
 
+interface Chip {
+    color?: string;
+    selected?: string;
+    name: string;
+}
+
 @Component({
   selector: 'app-trending',
   templateUrl: './trending.component.html',
@@ -15,19 +21,40 @@ export class TrendingComponent implements OnInit {
     users: User[] = [];
     posts: Post[] = [];
     loading: boolean = true;
+
+    // chip stuff
+    selectedChip: Chip;
+    chips: Chip[] = [
+        {name: "Notes", color: "primary"},
+        {name: "Profiles", color: "accent"},
+    ]
+
     constructor(
         private apiService: NostrBandApiService,
         private nostrService: NostrService
     ) {}
 
     ngOnInit() {
+        this.selectedChip = this.chips[0];
         this.getTrendingPosts();
         this.getTrendingProfiles();
     }
 
+    switchFeed(chipName: string) {
+        if (chipName === "Notes") {
+            this.posts = [];
+            this.selectedChip = this.chips[0];
+        } else if (chipName === "Profiles") {
+            this.posts = []
+            this.selectedChip = this.chips[1];
+        }
+    }
+
     async getTrendingProfiles() {
         const response = this.apiService.getTrendingProfiles();
+        console.log(response);
         response.subscribe(response => {
+            console.log(response);
             let trendingUsers = [];
             const profiles = response['profiles'];
             profiles.forEach(item => {
@@ -63,6 +90,7 @@ export class TrendingComponent implements OnInit {
         let trendingPosts: Array<Post> = [];
         let authorPubkeys: Array<string> = [];
         response.subscribe(response => {
+            console.log(response);
             const notes = response['notes'];
             notes.forEach(item => {
                 const authorPubkey = item['author']['pubkey'];

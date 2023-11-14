@@ -175,6 +175,14 @@ export class UserComponent implements OnInit {
         }
     }
 
+    copyLink() {
+        if (this.user) {
+            const url = `https://npubkey.github.io/#/users/${this.user.npub}`;
+            this.clipboard.copy(url);
+            this.openSnackBar("Link to profile copied", "dismiss");
+        }
+    }
+
     enlargeUserPicture() {
         if (this.canEnlarge) {
             this.dialog.open(ImageDialogComponent, {data: {picture: this.user.picture}});
