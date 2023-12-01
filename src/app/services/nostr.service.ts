@@ -6,7 +6,8 @@ import { Post, Zap } from '../types/post';
 import { SignerService } from './signer.service';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { DBUser, dbUserToUser } from '../types/user';
-import { NostrNotification } from '../types/notification';
+import { SimplePool } from 'nostr-tools'
+
 
 @Injectable({
   providedIn: 'root'
@@ -188,6 +189,14 @@ export class NostrService {
             });
         }
         return following
+    }
+
+    async getContactListEvent(pubkey: string) {
+        let filter: Filter = {kinds: [3], authors: [pubkey], limit: 1}
+        const relay = await this.relayConnect();
+        const response = await relay.get(filter);
+        console.log(response)
+        return response
     }
 
     // count do count here as well ...

@@ -183,6 +183,13 @@ export class UserComponent implements OnInit {
         }
     }
 
+    async setFollowingListAsYours() {
+        if (this.user) {
+            let contactList = await this.nostrService.getContactListEvent(this.user.pubkey);
+            this.signerService.setFollowingListFromTags(contactList.tags);
+        }
+    }
+
     enlargeUserPicture() {
         if (this.canEnlarge) {
             this.dialog.open(ImageDialogComponent, {data: {picture: this.user.picture}});

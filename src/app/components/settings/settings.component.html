@@ -48,6 +48,22 @@
             <span>Blur Images if not following user</span>
             <mat-checkbox class="example-margin" [(ngModel)]="blurChecked" (click)="setBlurImages()"></mat-checkbox>
         </p>
+        <p>
+            <mat-divider></mat-divider>
+        </p>
+        <p>Debug</p>
+        <p>
+            <button mat-fab extended color="primary" (click)="showDebug()">Show Debug Stuff</button>
+        </p>
+        <div *ngIf="showDebugUI">
+            <div>
+                <p>Profile Event</p>
+                <pre>{{ debugProfileEvent | json}}</pre>
+            </div>
+            <div>
+                <p>Following List Event</p>
+                <pre>{{ debugFollowingList | json}}</pre>
+            </div>
+        </div>
     </div>
 </div>
-

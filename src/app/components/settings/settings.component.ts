@@ -18,6 +18,9 @@ export class SettingsComponent {
     relay: string;
     zap: string;
     blurChecked: any;
+    debugProfileEvent: any;
+    debugFollowingList: any;
+    showDebugUI: boolean = false;
 
     constructor(
         private signerService: SignerService,
@@ -35,14 +38,23 @@ export class SettingsComponent {
     }
 
     async saveRelay() {
-        this.openSnackBar("Publishing profile to new relay...", "dismiss");
+        this.openSnackBar("Publishing profile and following list..", "dismiss");
         let kind0 = await this.nostrService.getUser(this.signerService.getPublicKey());
         if (kind0) {
             await this.publishSelfToNewRelay(kind0);
+            await this.publishFollowingList(kind0);
             this.setRelay()
         } else {
             this.setRelay();
         }
+    }
+
+    async showDebug() {
+        this.showDebugUI = !this.showDebugUI;
+        // show profile event and following list event on current relay
+        const pubkey = this.signerService.getPublicKey();
+        this.debugProfileEvent = await this.nostrService.getUser(pubkey);
+        this.debugFollowingList = await this.nostrService.getFollowing(pubkey);
     }
 
     setBlurImages() {
@@ -100,6 +112,22 @@ export class SettingsComponent {
             this.nostrService.sendEvent(signedEvent);
         }
     }
+
+    async publishFollowingList(user: User) {
+        let tags: string[][] = this.signerService.getFollowingListAsTags()
+        tags.push(["p", user.pubkey, "wss://relay.damus.io/", user.username]);
+        let unsignedEvent = this.nostrService.getUnsignedEvent(3, tags, "");
+        let signedEvent: Event;
+        const privateKey = this.signerService.getPrivateKey();
+        if (privateKey !== "") {
+            let eventId = getEventHash(unsignedEvent)
+            signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
+        } else {
+            signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+        }
+        this.nostrService.sendEvent(signedEvent);
+    }
+
 
     getUnsignedEvent(kind: number, tags: any, content: string) {
         const eventUnsigned: UnsignedEvent = {
