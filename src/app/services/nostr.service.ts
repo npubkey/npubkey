@@ -199,6 +199,50 @@ export class NostrService {
         return response
     }
 
+    async getMyLikes(): Promise<string[]> {
+        let myLikesFilter: Filter = {
+            kinds: [7], "authors": [this.signerService.getPublicKey()]
+        }
+        let myLikes = await this.getKind7(myLikesFilter);
+        let myLikedNoteIds = [];
+        myLikes.forEach(like => {
+            try {
+                let tag = like.tags[like.tags.length - 2]
+                if (tag[0] == "e") {
+                    let id = tag[1]
+                    myLikedNoteIds.push(id);
+                }
+
+            } catch {
+                console.log("err")
+            }
+        });
+        return myLikedNoteIds
+    }
+
+    async getEventLikes(eventPubkeys: string[]): Promise<string[]> {
+        let myLikesFilter: Filter = {
+            kinds: [7],
+            "authors": [this.signerService.getPublicKey()],
+            "#p": eventPubkeys,
+        }
+        let myLikes = await this.getKind7(myLikesFilter);
+        let myLikedNoteIds = [];
+        myLikes.forEach(like => {
+            try {
+                let tag = like.tags[like.tags.length - 2]
+                if (tag[0] == "e") {
+                    let id = tag[1]
+                    myLikedNoteIds.push(id);
+                }
+
+            } catch {
+                console.log("err")
+            }
+        });
+        return myLikedNoteIds
+    }
+
     // count do count here as well ...
     async getFollowers(pubkey: string, limit: number = 100): Promise<string[]> {
         let filter: Filter = {kinds: [3], "#p": [pubkey], limit: limit}

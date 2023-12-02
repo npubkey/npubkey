@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CreateEventComponent } from './components/create-event/create-event.component';
 import { UsersComponent } from './components/users/users.component';
-import { FeedComponent } from './components/feed/feed.component';
 import { HomeFeedComponent } from './components/home-feed/home-feed.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { LoginComponent } from './components/login/login.component';
@@ -18,6 +17,7 @@ import { authGuard } from './auth.guard';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { TrendingComponent } from './components/trending/trending.component';
 import { ZapFeedComponent } from './components/zap-feed/zap-feed.component';
+import { WalletComponent } from './components/wallet/wallet.component';
 
 const routes: Routes = [
     { path: '', component: LoginComponent },
@@ -38,6 +38,7 @@ const routes: Routes = [
     { path: 'profile-edit', component: ProfileEditComponent, canActivate: [authGuard]},
     { path: 'search', component: SearchComponent},
     { path: 'settings', component: SettingsComponent, canActivate: [authGuard]},
+    { path: 'wallet', component: WalletComponent, canActivate: [authGuard]},
     { path: 'zaps', component: ZapFeedComponent},
 ];
 

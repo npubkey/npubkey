@@ -21,6 +21,7 @@ export class TrendingComponent implements OnInit {
     users: User[] = [];
     posts: Post[] = [];
     loading: boolean = true;
+    myLikedNotes: string[] = [];
 
     // chip stuff
     selectedChip: Chip;
@@ -53,7 +54,7 @@ export class TrendingComponent implements OnInit {
         }
     }
 
-    async getTrendingProfiles() {
+    getTrendingProfiles() {
         const response = this.apiService.getTrendingProfiles();
         response.subscribe(response => {
             let trendingUsers = [];
@@ -84,10 +85,11 @@ export class TrendingComponent implements OnInit {
         return await this.nostrService.getKind0({kinds: [0], authors: pubkeys})
     }
 
-    getTrendingPosts() {
+    async getTrendingPosts() {
         const response = this.apiService.getTrendingNotes();
         let trendingPosts: Array<Post> = [];
         let authorPubkeys: Array<string> = [];
+        let eventPubkeys: Array<string> = [];
         response.subscribe(response => {
             console.log(response);
             const notes = response['notes'];
@@ -96,6 +98,7 @@ export class TrendingComponent implements OnInit {
                 authorPubkeys.push(authorPubkey)
                 const event: Event = item['event']
                 let nip10Result = nip10.parse(event);
+                eventPubkeys.push(event.pubkey);
                 const post = new Post(
                     event.kind,
                     event.pubkey,
@@ -110,6 +113,19 @@ export class TrendingComponent implements OnInit {
             this.getAndStoreNostrProfiles(authorPubkeys);
             this.posts = trendingPosts;
             this.loading = false;
+            this.getLikedPosts(eventPubkeys);
         });
+    }
+
+    async getLikedPosts(eventPubkeys: string[]) {
+        this.myLikedNotes = await this.nostrService.getEventLikes(eventPubkeys);
+        console.log(this.myLikedNotes);
+        if (this.posts) {
+            this.posts.forEach(p => {
+                if (this.myLikedNotes.includes(p.noteId)) {
+                    p.setPostLikedByMe(true);
+                }
+            });
+        }
     }
 }

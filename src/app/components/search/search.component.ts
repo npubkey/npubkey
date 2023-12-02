@@ -3,6 +3,7 @@ import { Filter } from 'nostr-tools';
 import { Post } from 'src/app/types/post';
 import { NostrService } from 'src/app/services/nostr.service';
 import { Paginator } from 'src/app/utils';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-search',
@@ -17,7 +18,8 @@ export class SearchComponent implements OnInit {
     paginator: Paginator;
 
     constructor(
-        private nostrService: NostrService
+        private nostrService: NostrService,
+        private router: Router
     ) {
         let baseTimeDiff = 60;
         let since = 60;
@@ -66,6 +68,9 @@ export class SearchComponent implements OnInit {
     }
 
     async searchForPosts() {
+        if (this.search.startsWith("nevent")) {
+            this.router.navigate([`/posts/${this.search}`])
+        }
         let filter = this.getFilter();
         this.posts = [];
         this.posts = await this.nostrService.getKind1(filter);

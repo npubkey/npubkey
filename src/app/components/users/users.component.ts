@@ -7,6 +7,7 @@ import { DBUser } from '../../types/user';
 import { Paginator } from '../../utils';
 import { SearchUser } from '../../types/user';
 import { nip19 } from 'nostr-tools';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-users',
@@ -25,7 +26,8 @@ export class UsersComponent implements OnInit {
 
     constructor(
         private nostrService: NostrService,
-        private dbService: NgxIndexedDBService
+        private dbService: NgxIndexedDBService,
+        private router: Router
     ) {
         this.paginator = new Paginator(0, 60, 60);
     }
@@ -37,6 +39,9 @@ export class UsersComponent implements OnInit {
     }
 
     submit() {
+        if (this.search.startsWith("npub")) {
+            this.router.navigate([`/users/${this.search}`])
+        }
         this.users = [];
         this.toggleLoading();
         this.searchForUsers();

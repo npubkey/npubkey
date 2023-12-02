@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { Nip05Service } from 'src/app/services/nip05.service';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-
+import { Filter, Event } from 'nostr-tools';
 
 @Component({
   selector: 'app-user-detail',
@@ -31,6 +31,7 @@ export class UserDetailComponent implements OnInit {
     paginator: Paginator;
     viewingSelf: boolean = false;
     nip05Verified: boolean = false;
+    myLikedNoteIds: string[] = [];
 
     constructor(
         private route: ActivatedRoute,
@@ -133,17 +134,74 @@ export class UserDetailComponent implements OnInit {
             this.paginator.since,
             this.paginator.until
         );
-        this.queryForMorePostInfo(user, posts)
+        await this.queryForMorePostInfo(user, posts)
+    }
+
+    async getMyLikes(pubkeys: string[]) {
+        this.myLikedNoteIds = await this.nostrService.getEventLikes(pubkeys);
     }
 
     async queryForMorePostInfo(user: User, posts: Post[]) {
-        this.paginator.incrementFilterTimes(this.posts);
-        this.posts.push(...posts);
-        this.posts = this.posts.filter((value, index, self) =>
+
+        let pubkeys: string[] = [];
+        let noteIds: string[] = [];
+        posts.forEach(p => {
+            pubkeys.push(p.pubkey);
+            noteIds.push(p.noteId)
+        });
+        await this.getMyLikes(noteIds);
+        await this.nostrService.getKind0({kinds: [0], authors: pubkeys})
+        // join new posts and sort without ruining UI
+        let waitPosts = this.posts // existing posts
+        waitPosts = waitPosts.concat(posts) // incoming posts
+        waitPosts = waitPosts.filter((value, index, self) =>
             index === self.findIndex((t) => (
                 t.noteId === value.noteId
             ))
         )
+        waitPosts.sort((a,b) => a.createdAt - b.createdAt).reverse();
+        this.posts = waitPosts;
+        this.paginator.incrementFilterTimes(this.posts);
+        let replyFilter: Filter = {
+            kinds: [1], "#e": noteIds,
+        }
+        let replies = await this.nostrService.getKind1(replyFilter)
+        let likesFilter: Filter = {
+            kinds: [7], "#e": noteIds
+        }
+        let likes = await this.nostrService.getKind7(likesFilter);
+        this.patchPostsWithMoreInfo(posts, replies, likes);
+        // filter out dupes
         this.loading = false;
+    }
+
+    patchPostsWithMoreInfo(posts: Post[], replies: Post[], likes: Event[]) {
+        let counts: {[id: string]: number} = {}
+        for (const r of replies) {
+            if (r.nip10Result?.reply?.id) {
+                counts[r.nip10Result.reply.id] = counts[r.nip10Result.reply.id] ? counts[r.nip10Result.reply.id] + 1 : 1;
+            }
+        }
+        let likeCounts: {[id: string]: number} = {}
+        
+        for (const like of likes) {
+            let noteId = null;
+            like.tags.slice().reverse().forEach(x => {
+                if (x[0] == "e" && noteId === null) {
+                    noteId = x[1];
+                }
+            });
+            likeCounts[noteId] = likeCounts[noteId] ? likeCounts[noteId] + 1 : 1;
+        }
+
+        posts.forEach(p => {
+            p.setPicture(p.pubkey);
+            p.setUsername(p.pubkey);
+            p.setReplyCount(counts[p.noteId]);
+            p.setLikeCount(likeCounts[p.noteId]);
+            if (this.myLikedNoteIds.includes(p.noteId)) {
+                p.setPostLikedByMe(true);
+            }
+        });
     }
 }

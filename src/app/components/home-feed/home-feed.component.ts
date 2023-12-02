@@ -30,23 +30,8 @@ export class HomeFeedComponent implements OnInit {
         this.getPosts();
     }
 
-    async getMyLikes() {
-        let myLikesFilter: Filter = {
-            kinds: [7], "authors": [this.signerService.getPublicKey()]
-        }
-        this.myLikes = await this.nostrService.getKind7(myLikesFilter);
-        this.myLikes.forEach(like => {
-            try {
-                let tag = like.tags[like.tags.length - 2]
-                if (tag[0] == "e") {
-                    let id = tag[1]
-                    this.myLikedNoteIds.push(id);
-                }
-
-            } catch {
-                console.log("err")
-            }
-        });
+    async getMyLikes(pubkeys: string[]) {
+        this.myLikedNoteIds = await this.nostrService.getEventLikes(pubkeys);
     }
 
     toggleLoading = () => this.loading = !this.loading;
@@ -83,13 +68,13 @@ export class HomeFeedComponent implements OnInit {
     }
 
     async queryForMorePostInfo(posts: Post[]) {
-        await this.getMyLikes();
         let pubkeys: string[] = [];
         let noteIds: string[] = [];
         posts.forEach(p => {
             pubkeys.push(p.pubkey);
             noteIds.push(p.noteId)
         });
+        await this.getMyLikes(noteIds);
         await this.nostrService.getKind0({kinds: [0], authors: pubkeys})
         // join new posts and sort without ruining UI
         let waitPosts = this.posts // existing posts
