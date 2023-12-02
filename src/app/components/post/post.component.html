@@ -4,7 +4,7 @@
             {{post.repostingPubkey | username | ellipsis}} reposted
         </p>
     </div>
-    <mat-card-header>
+    <mat-card-header class="note-header">
         <img 
             *ngIf="post.picture"
             class="header-image"
@@ -35,7 +35,7 @@
         </div>
         <mat-card-subtitle>{{post.fromNow}}</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content class="note-content">
         <div>
             <span class="extras" routerLink="/posts/{{post.nostrEventId}}">id: {{post.nostrEventId|ellipsis}}</span>
         </div>
@@ -69,42 +69,40 @@
             <p class="post-content" [innerHTML]="post.content | safe" (click)="processLinks($event)"></p>
         </div>
     </mat-card-content>
-    <div fxLayout="row" fxLayoutAlign="space-around center">
+    <div class="post-buttons" fxLayout="row" fxLayoutAlign="space-around center">
         <div fxLayout="row" class="click-icon" fxLayoutAlign="space-around center">
-            <mat-icon (click)="clickShowReplyForm()">mode_comment</mat-icon>
+            <mat-icon class="icon-display" (click)="clickShowReplyForm()">mode_comment</mat-icon>
             <span *ngIf="post.replyCount > 0">{{post.replyCount}}</span>
         </div>
         <div (click)="repost()" class="click-icon">
-            <mat-icon>autorenew</mat-icon>
+            <mat-icon class="icon-display">autorenew</mat-icon>
         </div>
         <div fxLayout="row" (click)="zap()" class="click-icon" fxLayoutAlign="space-around center">
-            <mat-icon>bolt</mat-icon>
+            <mat-icon class="icon-display">bolt</mat-icon>
             <span *ngIf="zapsCount">{{zapsCount}}</span>
         </div>
         <div *ngIf="!post.likedByMe" fxLayout="row" (click)="likePost()" class="click-icon" fxLayoutAlign="space-around center">
-            <mat-icon >favorite_outline</mat-icon>
+            <mat-icon class="icon-display">favorite_outline</mat-icon>
             <span *ngIf="likes">{{likes}}</span>
         </div>
         <div *ngIf="post.likedByMe" fxLayout="row" class="click-icon" fxLayoutAlign="space-around center">
-            <mat-icon color="warn">favorite</mat-icon>
+            <mat-icon class="icon-display" color="warn">favorite</mat-icon>
             <span *ngIf="likes">{{likes}}</span>
         </div>
         <div *ngIf="!inPostDetail" routerLink="/posts/{{post.noteId|nevent}}" class="click-icon">
-            <mat-icon>open_in_full</mat-icon>
+            <mat-icon class="icon-display">open_in_full</mat-icon>
         </div>
     </div>
     <div *ngIf="showZapForm">
-        <p>
-            <mat-card-content fxLayout="row" fxLayoutAlign="space-evenly">
-                <mat-form-field appearance="outline">
-                    <mat-label>Sats</mat-label>
-                    <input matInput [(ngModel)]="sats" placeholder="sats">
-                </mat-form-field>
-                <button mat-fab (click)="sendZap()">
-                    <mat-icon>bolt</mat-icon>
-                </button>
-            </mat-card-content>
-        </p>
+        <mat-card-content class="zap-form-container" fxLayout="row" fxLayoutAlign="space-evenly">
+            <mat-form-field appearance="outline">
+                <mat-label>Sats</mat-label>
+                <input type="number" matInput [(ngModel)]="sats" placeholder="sats">
+            </mat-form-field>
+            <button mat-fab (click)="sendZap()">
+                <mat-icon>bolt</mat-icon>
+            </button>
+        </mat-card-content>
     </div>
     <div *ngIf="paymentInvoice && showInvoiceSection" class="invoice">
         <div class="invoice-title">

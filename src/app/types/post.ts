@@ -355,10 +355,10 @@ export class Content {
                 url.toLowerCase().endsWith(".gif") ||
                 url.toLowerCase().endsWith(".gifv")
             ) {
-                return `<p><img src="${url}" /></p>`
+                return `<p class='post-image'><img src="${url}" /></p>`
             }
             if (url.toLowerCase().endsWith("mp4") || url.toLowerCase().endsWith("mov")) {
-                return `<p><video controls><source src="${url}#t=0.1" type="video/mp4"></video></p>`;
+                return `<p class='post-video'><video controls><source src="${url}#t=0.1" type="video/mp4"></video></p>`;
             }
             if (isYoutubeVideo(url)) {
                 // kinda hacky but works

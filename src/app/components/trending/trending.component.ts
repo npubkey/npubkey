@@ -42,19 +42,20 @@ export class TrendingComponent implements OnInit {
 
     switchFeed(chipName: string) {
         if (chipName === "Notes") {
-            this.posts = [];
             this.selectedChip = this.chips[0];
-        } else if (chipName === "Profiles") {
-            this.posts = []
+            this.users = [];
+            this.getTrendingPosts();
+        }
+        if (chipName === "Profiles") {
             this.selectedChip = this.chips[1];
+            this.posts = [];
+            this.getTrendingProfiles();
         }
     }
 
     async getTrendingProfiles() {
         const response = this.apiService.getTrendingProfiles();
-        console.log(response);
         response.subscribe(response => {
-            console.log(response);
             let trendingUsers = [];
             const profiles = response['profiles'];
             profiles.forEach(item => {
@@ -66,7 +67,6 @@ export class TrendingComponent implements OnInit {
                 trendingUsers.push(user);
             });
             this.joinUsersWithNostrUsers(trendingUsers)
-
         });
     }
 
@@ -77,7 +77,6 @@ export class TrendingComponent implements OnInit {
         });
         let nostrUsers = await this.getAndStoreNostrProfiles(pubkeys)
         this.users = trendingUsers.map(obj => nostrUsers.find(o => o.pubkey === obj.pubkey) || obj);
-        console.log(this.users);
         this.loading = false;
     }
 

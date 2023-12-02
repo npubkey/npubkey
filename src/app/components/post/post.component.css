@@ -2,6 +2,34 @@ mat-card {
     box-shadow: none !important;
 }
 
+.note-header {
+    padding-top: 0 !important;
+}
+
+.note-content {
+    padding-bottom: 0 !important;
+}
+
+.post-buttons {
+    padding-top: .5em;
+}
+
+.icon-display {
+    transform: scale(0.8);
+}
+
+.post-image {
+    margin-bottom: .5em;
+}
+
+.post-video {
+    margin-bottom: .5em;
+}
+
+.zap-form-container {
+    padding-bottom: 0 !important;
+}
+
 .mat-input-element {
     font-size: medium;
     font-weight: 200;
@@ -61,8 +89,8 @@ mat-card-header img {
     font-size: medium;
     font-weight: lighter;
     overflow-wrap: break-word;
-    padding-bottom: 1em;
     white-space: pre-wrap;
+    margin-bottom: 0 !important;
 }
 
 .extras {
