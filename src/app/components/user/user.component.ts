@@ -9,7 +9,7 @@ import { bech32 } from '@scure/base'
 import { decode } from "@gandlaf21/bolt11-decode";
 import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
-import { webln } from 'alby-js-sdk';
+import { webln } from "@getalby/sdk";
 import { NostrService } from 'src/app/services/nostr.service';
 
 

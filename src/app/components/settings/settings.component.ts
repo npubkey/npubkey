@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NostrService } from 'src/app/services/nostr.service';
 import { signEvent, getEventHash, UnsignedEvent, Event } from 'nostr-tools';
 import { User } from 'src/app/types/user';
-import { webln } from "alby-js-sdk";
+import { webln } from "@getalby/sdk";
 
 
 @Component({

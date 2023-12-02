@@ -16,7 +16,7 @@ import { GifService } from 'src/app/services/gif.service';
 import { ImageServiceService } from 'src/app/services/image-service.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
-import { webln } from 'alby-js-sdk';
+import { webln } from "@getalby/sdk";
 import { CreateEventComponent } from '../create-event/create-event.component';
 import {
     MatBottomSheet,

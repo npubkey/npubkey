@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of} from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { LightningResponse, LightningInvoice } from '../types/post';
-import { WebLN } from 'src/app/types/webln';
 import { Event } from 'nostr-tools';
 
 
