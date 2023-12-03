@@ -24,3 +24,15 @@ button {
 .bottom-div {
     text-align: right;
 }
+
+.bottom-buttons {
+    text-align: center;
+}
+
+.invoice-paid {
+    text-align: center;
+}
+
+.invoice-paid-text {
+    font-size: 35px;
+}

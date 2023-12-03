@@ -1,16 +1,26 @@
 <div>
-    <div class="qr-code-container">
-        <qrcode [qrdata]="paymentRequest" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
-        <div class="payment-info">
-            <div>{{amount}} sats</div>
-        </div>
-    </div>
-    <div class="message">
-        <p>Scan to pay <span class="username">{{username}}</span> in bitcoin</p>
-    </div>
     <div class="bottom-div">
         <button mat-icon-button (click)="exitBottomSheet()">
             <mat-icon color="warn">close</mat-icon>
         </button>
+    </div>
+    <div *ngIf="!invoicePaid">
+        <div class="qr-code-container">
+            <qrcode [qrdata]="paymentRequest" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+            <div class="payment-info">
+                <div>{{amount}} sats</div>
+            </div>
+        </div>
+        <div class="message">
+            <p>Scan to pay <span class="username">{{username}}</span> in bitcoin</p>
+        </div>
+        <div class="bottom-buttons">
+            <button mat-fab extended color="primary" (click)="copyInvoice()">Copy Invoice</button>
+        </div>
+    </div>
+    <div *ngIf="invoicePaid">
+        <div class="invoice-paid">
+            <p class="invoice-paid-text">Paid!</p>
+        </div>
     </div>
 </div>

@@ -3,7 +3,10 @@ import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { WalletComponent } from '../wallet/wallet.component';
 import { decode } from "@gandlaf21/bolt11-decode";
-
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { webln } from "@getalby/sdk";
+import { SignerService } from 'src/app/services/signer.service';
 
 @Component({
   selector: 'app-payment-request',
@@ -15,8 +18,14 @@ export class PaymentRequestComponent implements AfterViewInit {
     paymentRequest: string;
     amount: number;
     username: string;
+    loopCounter: number;
+    intervalId: any;
+    invoicePaid: boolean = false;
 
     constructor(
+        private signerService: SignerService,
+        private clipboard: Clipboard,
+        private snackBar: MatSnackBar,
         private _bottomSheetRef: MatBottomSheetRef<WalletComponent>,
         @Inject(MAT_BOTTOM_SHEET_DATA) public data: JSON,
     ) {
@@ -26,7 +35,35 @@ export class PaymentRequestComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        console.log(this.paymentRequest);
+        this.checkPaymentComplete();
+    }
+
+    async checkPaymentComplete(): Promise<void> {
+        this.loopCounter = 0;
+        const nwcURI = this.signerService.getNostrWalletConnectURI()
+        const nwc = new webln.NWC({ nostrWalletConnectUrl: nwcURI });
+        const paymentRequest = this.paymentRequest;
+        await nwc.enable();
+        let counter = 0;
+        // checks for payment every 7 seconds -- for 15 tries.
+        const intervalId = setInterval(async () => {
+            counter++;
+            if (counter >= 15) {
+                clearInterval(intervalId);
+            }
+            const response = await nwc.lookupInvoice({
+                invoice: paymentRequest
+            });
+            if (response.paid === true) {
+                clearInterval(intervalId);
+                console.log("PAID");
+                this.setInvoicePaid();
+            }
+        }, 7000);
+    }
+
+    setInvoicePaid() {
+        this.invoicePaid = true;
     }
 
     exitBottomSheet() {
@@ -43,4 +80,14 @@ export class PaymentRequestComponent implements AfterViewInit {
             }
         }
     }
+
+    copyInvoice() {
+        this.clipboard.copy(this.paymentRequest);
+        this.openSnackBar("Invoice copied!", "dismiss");
+    }
+
+    openSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {duration: 1300});
+    }
+
 }
