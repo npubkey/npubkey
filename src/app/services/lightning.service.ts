@@ -62,7 +62,7 @@ export class LightningService {
     }
 
     async login(): Promise<boolean> {
-        if (window.webln && !window.webln.enabled) {
+        if (window.webln && !window.webln.isEnabled()) {
             await window.webln.enable();
         }
         return true;

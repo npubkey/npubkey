@@ -550,13 +550,7 @@ export class NostrService {
 
     async sendEvent(event: Event) {
         const relay = await this.relayConnect()
-        let pub = relay.publish(event)
-        pub.on('ok', () => {
-            console.log(`${relay.url} has accepted our event`)
-        })
-        pub.on('failed', (reason: any) => {
-            console.log(`failed to publish to ${relay.url}: ${reason}`)
-        })
+        relay.publish(event)
         relay.close();
     }
 }

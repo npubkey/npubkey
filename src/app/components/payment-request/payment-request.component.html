@@ -1,0 +1,16 @@
+<div>
+    <div class="qr-code-container">
+        <qrcode [qrdata]="paymentRequest" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+        <div class="payment-info">
+            <div>{{amount}} sats</div>
+        </div>
+    </div>
+    <div class="message">
+        <p>Scan to pay <span class="username">{{username}}</span> in bitcoin</p>
+    </div>
+    <div class="bottom-div">
+        <button mat-icon-button (click)="exitBottomSheet()">
+            <mat-icon color="warn">close</mat-icon>
+        </button>
+    </div>
+</div>

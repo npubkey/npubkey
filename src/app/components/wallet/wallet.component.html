@@ -1,15 +1,36 @@
-<div class="router-container">
-    <div class="page-header">
-        <h1>Wallet</h1>
-        <mat-divider></mat-divider>
-    </div>
-    <!-- <div *ngIf="loading">
-        <app-loading></app-loading>
-    </div>
-    <div *ngIf="!loading">
-        <div class="feed" *ngFor="let zap of zaps">
-            <app-zap [zap]="zap"></app-zap>
-            <mat-divider class="add-padding"></mat-divider>
+<div class="wallet-input">
+    <div>
+        <!-- <div class="current-balance">{{balance.balance}} {{balance.currency}}</div> -->
+        <div class="keypad-container">
+            <div class="current-input">
+                {{currentInput | keyboard}} sats
+            </div>
+            <div class="keypad">
+                <div class="keypad-row" fxLayout="row" fxLayoutAlign="space-evenly center">
+                    <button mat-button (click)="changeNumber('1')">1</button>
+                    <button mat-button (click)="changeNumber('2')">2</button>
+                    <button mat-button (click)="changeNumber('3')">3</button>
+                </div>
+                <div class="keypad-row" fxLayout="row" fxLayoutAlign="space-evenly center">
+                    <button mat-button (click)="changeNumber('4')">4</button>
+                    <button mat-button (click)="changeNumber('5')">5</button>
+                    <button mat-button (click)="changeNumber('6')">6</button>
+                </div>
+                <div class="keypad-row" fxLayout="row" fxLayoutAlign="space-evenly center">
+                    <button mat-button (click)="changeNumber('7')">7</button>
+                    <button mat-button (click)="changeNumber('8')">8</button>
+                    <button mat-button (click)="changeNumber('9')">9</button>
+                </div>
+                <div class="keypad-row" fxLayout="row" fxLayoutAlign="space-evenly center">
+                    <button mat-button (click)="changeNumber('.')">.</button>
+                    <button mat-button (click)="changeNumber('0')">0</button>
+                    <button mat-button (click)="changeNumber('backspace')">&lsaquo;</button>
+                </div>
+            </div>
+            <div class="action-buttons" fxLayout="row" fxLayoutAlign="space-evenly center">
+                <button mat-stroked-button (click)="recieve()">Receive</button>
+                <button mat-stroked-button (click)="send()">&nbsp;&nbsp;Send&nbsp;&nbsp;</button>
+            </div>
         </div>
-    </div> -->
+    </div>
 </div>

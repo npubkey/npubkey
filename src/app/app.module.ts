@@ -72,7 +72,7 @@ import { NotificationsComponent } from './components/notifications/notifications
 import { NotificationComponent } from './components/notification/notification.component';
 
 // webln and nostr window
-import { WebLN } from 'src/app/types/webln';
+import { WebLNProvider } from '@webbtc/webln-types';
 import { NostrWindow } from './types/nostr';
 import { ListedUserComponent } from './components/listed-user/listed-user.component';
 import { TrendingComponent } from './components/trending/trending.component';
@@ -80,6 +80,8 @@ import { ZapFeedComponent } from './components/zap-feed/zap-feed.component';
 import { HomeFeedComponent } from './components/home-feed/home-feed.component';
 import { UserBottomSheetComponent } from './components/user-bottom-sheet/user-bottom-sheet.component';
 import { WalletComponent } from './components/wallet/wallet.component';
+import { KeyboardPipe } from './pipes/keyboard.pipe';
+import { PaymentRequestComponent } from './components/payment-request/payment-request.component';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -193,8 +195,10 @@ const dbConfig: DBConfig  = {
     HomeFeedComponent,
     UserBottomSheetComponent,
     WalletComponent,
+    KeyboardPipe,
+    PaymentRequestComponent,
   ],
-  entryComponents: [ImageDialogComponent, CreateEventComponent, UserBottomSheetComponent],
+  //entryComponents: [ImageDialogComponent, CreateEventComponent, UserBottomSheetComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -238,7 +242,7 @@ export class AppModule { }
 
 declare global {
     interface Window {
-      webln?: WebLN;
+      webln?: WebLNProvider;
       nostr?: NostrWindow;
     }
 }

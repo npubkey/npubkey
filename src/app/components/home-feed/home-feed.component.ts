@@ -4,6 +4,8 @@ import { NostrService } from 'src/app/services/nostr.service';
 import { SignerService } from 'src/app/services/signer.service';
 import { Post } from '../../types/post';
 import { Paginator } from 'src/app/utils';
+import { CreateEventComponent } from '../create-event/create-event.component';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 @Component({
   selector: 'app-feed',
@@ -20,6 +22,7 @@ export class HomeFeedComponent implements OnInit {
     constructor(
         private nostrService: NostrService,
         private signerService: SignerService,
+        private _bottomSheet: MatBottomSheet
     ) {
         let baseTimeDiff = 120;
         let since = 120;
@@ -28,6 +31,10 @@ export class HomeFeedComponent implements OnInit {
 
     ngOnInit() {
         this.getPosts();
+    }
+
+    openBottomSheet(): void {
+        this._bottomSheet.open(CreateEventComponent);
     }
 
     async getMyLikes(pubkeys: string[]) {

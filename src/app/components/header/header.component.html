@@ -26,9 +26,6 @@
                     <button mat-icon-button routerLink="/messages">
                         <mat-icon [color]="currentRoute === 'messages' ? 'accent' : ''">{{ messages_icon }}</mat-icon>
                     </button>
-                    <button mat-icon-button (click)="openBottomSheet()">
-                        <mat-icon>{{ create_icon }}</mat-icon>
-                    </button>
                     <span *ngIf="notificationCount">
                         <button mat-icon-button routerLink='/notifications'>
                             <mat-icon [color]="currentRoute === 'notifications' ? 'accent' : ''">{{ notifications_icon }}</mat-icon>
@@ -61,9 +58,6 @@
                     </span>
                 </div>
                 <div>
-                    <button mat-icon-button routerLink="/search">
-                        <mat-icon [color]="currentRoute === 'search' ? 'accent' : ''">{{ search_icon }}</mat-icon>
-                    </button>
                     <button mat-icon-button routerLink='/zaps'>
                         <mat-icon [color]="currentRoute === 'zaps' ? 'accent' : ''">{{ zap_icon }}</mat-icon>
                     </button>
@@ -94,8 +88,8 @@
                 <button mat-icon-button routerLink="/trending">
                     <mat-icon [color]="currentRoute === 'trending' ? 'accent' : ''">{{ trending_icon }}</mat-icon>
                 </button>
-                <button mat-icon-button (click)="openBottomSheet()">
-                    <mat-icon>{{ create_icon }}</mat-icon>
+                <button mat-icon-button routerLink="/search">
+                    <mat-icon [color]="currentRoute === 'search' ? 'accent' : ''">{{ search_icon }}</mat-icon>
                 </button>
                 <button mat-icon-button routerLink="/wallet">
                     <mat-icon [color]="currentRoute === 'wallet' ? 'accent' : ''">currency_bitcoin</mat-icon>

@@ -1,0 +1,22 @@
+.qr-code-container {
+    text-align: center;
+}
+
+.payment-info {
+    text-align: center;
+    font-size: 30px;
+    margin-top: 0.5em !important;
+    margin-block-start: 0.5em;
+}
+
+.message {
+    text-align: center;
+}
+
+.username {
+    color:cornflowerblue;
+}
+
+.bottom-div {
+    text-align: right;
+}

@@ -1,0 +1,15 @@
+.current-input {
+    font-size: 30px;
+    text-align: center;
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+.keypad-row {
+    padding-bottom: 1em;
+}
+
+.wallet-input {
+    padding-top: 2em;
+    overflow: hidden !important;
+}

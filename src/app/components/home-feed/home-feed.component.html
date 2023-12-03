@@ -11,6 +11,11 @@
             <app-post *ngIf="!post.isAReply" [post]="post" [likes]="post.likeCount"></app-post>
         </div>
     </div>
+    <div class="floating-create-button">
+        <button mat-fab color="primary" (click)="openBottomSheet()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
     <div *ngIf="loading">
         <app-loading></app-loading>
     </div>

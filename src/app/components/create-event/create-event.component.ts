@@ -23,7 +23,7 @@ interface Replacement {
   templateUrl: './create-event.component.html',
   styleUrls: ['./create-event.component.css']
 })
-export class CreateEventComponent implements AfterViewInit{
+export class CreateEventComponent implements AfterViewInit {
     @ViewChild("noteTextArea", {read: ElementRef, static: true}) noteField: ElementRef;
     user: User | undefined | null = undefined;
     showGifSearch: boolean = false;
