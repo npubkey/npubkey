@@ -1,3 +1,7 @@
+button {
+    touch-action: manipulation;
+}
+
 .qr-code-container {
     text-align: center;
 }
