@@ -3,10 +3,8 @@ import { SignerService } from 'src/app/services/signer.service';
 import { NostrService } from 'src/app/services/nostr.service';
 
 import { Filter } from 'nostr-tools';
-import { User, dbUserToUser } from 'src/app/types/user';
-import { filter } from 'rxjs';
+import { User, dbUserToUser, DBUser } from 'src/app/types/user';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { DBUser } from '../../types/user';
 
 @Component({
   selector: 'app-contact-list',

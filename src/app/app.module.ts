@@ -82,6 +82,7 @@ import { UserBottomSheetComponent } from './components/user-bottom-sheet/user-bo
 import { WalletComponent } from './components/wallet/wallet.component';
 import { KeyboardPipe } from './pipes/keyboard.pipe';
 import { PaymentRequestComponent } from './components/payment-request/payment-request.component';
+import { SendPaymentComponent } from './components/send-payment/send-payment.component';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -197,6 +198,7 @@ const dbConfig: DBConfig  = {
     WalletComponent,
     KeyboardPipe,
     PaymentRequestComponent,
+    SendPaymentComponent,
   ],
   //entryComponents: [ImageDialogComponent, CreateEventComponent, UserBottomSheetComponent],
   imports: [

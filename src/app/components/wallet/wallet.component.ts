@@ -3,6 +3,7 @@ import { webln } from "@getalby/sdk";
 import { SignerService } from 'src/app/services/signer.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { PaymentRequestComponent } from '../payment-request/payment-request.component';
+import { SendPaymentComponent } from '../send-payment/send-payment.component';
 
 interface Balance {
     balance: number;
@@ -73,5 +74,11 @@ export class WalletComponent implements OnInit {
         });
     }
 
-    async send(){}
+    send(){
+        this._bottomSheet.open(SendPaymentComponent, {
+            data: {
+                sats: Number(this.currentInput)
+            }
+        });
+    }
 }

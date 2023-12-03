@@ -6,7 +6,7 @@
     </div>
     <div *ngIf="!invoicePaid">
         <div class="qr-code-container">
-            <qrcode [qrdata]="paymentRequest" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+            <qrcode [qrdata]="paymentRequest" [width]="256" [errorCorrectionLevel]="'L'"></qrcode>
             <div class="payment-info">
                 <div>{{amount}} sats</div>
             </div>

@@ -1,0 +1,24 @@
+<div>
+    <div class="bottom-div">
+        <button mat-icon-button (click)="exitBottomSheet()">
+            <mat-icon color="warn">close</mat-icon>
+        </button>
+    </div>
+    <div class="search-header">
+        <div class="search-div" fxLayout="row">
+            <mat-form-field appearance="outline" fxFlex="90">
+                <mat-label>Search users..</mat-label>
+                <input matInput placeholder="search" [(ngModel)]="filterText">
+            </mat-form-field>
+            <button mat-fab color="primary" (click)="filterContacts()">
+                <mat-icon>search</mat-icon>
+            </button>
+        </div>
+    </div>
+    <p *ngFor="let user of displayedUsers">
+        <app-listed-user [user]="user" (click)="sendPayment(user)"></app-listed-user>
+    </p>
+    <div *ngIf="loading">
+        <app-loading></app-loading>
+    </div>
+</div>
