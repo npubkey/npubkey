@@ -18,11 +18,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { webln } from "@getalby/sdk";
 import { CreateEventComponent } from '../create-event/create-event.component';
-import {
-    MatBottomSheet,
-    MatBottomSheetModule,
-} from '@angular/material/bottom-sheet';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { UserBottomSheetComponent } from '../user-bottom-sheet/user-bottom-sheet.component';
+import { nip19 } from 'nostr-tools';
+import { PostDetailComponent } from '../post-detail/post-detail.component';
+import { PostQuickComponent } from '../post-quick/post-quick.component';
+
 
 @Component({
   selector: 'app-post',
@@ -470,6 +471,15 @@ export class PostComponent implements OnInit {
         this._bottomSheet.open(UserBottomSheetComponent, {
             data: {
                 pubkey: this.post.pubkey
+            }
+        });
+    }
+
+    openPostDetail(): void {
+        let event: nip19.EventPointer = {id: this.post.noteId}
+        this._bottomSheet.open(PostQuickComponent, {
+            data: {
+                nevent: nip19.neventEncode(event)
             }
         });
     }

@@ -89,7 +89,7 @@
             <mat-icon class="icon-display" color="warn">favorite</mat-icon>
             <span *ngIf="likes">{{likes}}</span>
         </div>
-        <div *ngIf="!inPostDetail" routerLink="/posts/{{post.noteId|nevent}}" class="click-icon">
+        <div *ngIf="!inPostDetail"  class="click-icon" (click)="openPostDetail()">
             <mat-icon class="icon-display">open_in_full</mat-icon>
         </div>
     </div>

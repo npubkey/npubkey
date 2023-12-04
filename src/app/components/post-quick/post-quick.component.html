@@ -1,0 +1,30 @@
+<div class="bottom-div">
+    <button mat-icon-button (click)="exitBottomSheet()">
+        <mat-icon color="warn">close</mat-icon>
+    </button>
+</div>
+<div *ngIf="!loading">
+    <div *ngIf="root">
+        <app-post [post]="root" [zaps]="postZaps" [zapsCount]="postZapsCount" [inPostDetail]="true" [likes]="postLikesCount"></app-post>
+    </div>
+    <mat-tab-group>
+        <mat-tab label="Replies ({{replies.length}})">
+            <div *ngFor="let reply of replies">
+                <app-post [post]="reply" [root]="post" [inPostDetail]="true"></app-post>
+            </div>
+        </mat-tab>
+        <mat-tab label="Zaps ({{postZaps.length}})">
+            <div *ngFor="let zap of postZaps">
+                <app-zap [zap]="zap"></app-zap>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>
+<div *ngIf="loading">
+    <app-loading></app-loading>
+</div>
+<mat-card class="post" *ngIf="postNotFound">
+    <mat-card-header>
+        <mat-card-title>Post Not Found</mat-card-title>
+    </mat-card-header>
+</mat-card>
