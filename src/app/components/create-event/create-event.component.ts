@@ -7,10 +7,10 @@ import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { GifService } from 'src/app/services/gif.service';
 import { ImageServiceService } from 'src/app/services/image-service.service';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { HeaderComponent } from '../header/header.component';
 import { Content } from 'src/app/types/post';
 import { NIP10Result } from 'nostr-tools/lib/nip10';
-import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { DBUser, User, dbUserToUser } from 'src/app/types/user';
 
 interface Replacement {
@@ -46,8 +46,8 @@ export class CreateEventComponent implements AfterViewInit {
         private snackBar: MatSnackBar,
         private gifService: GifService,
         private imageService: ImageServiceService,
-        private _bottomSheetRef: MatBottomSheetRef<HeaderComponent>,
         private dbService: NgxIndexedDBService,
+        private _bottomSheetRef: MatBottomSheetRef<HeaderComponent>,
         @Inject(MAT_BOTTOM_SHEET_DATA) public data: JSON,
     ) {
         this.getUser();

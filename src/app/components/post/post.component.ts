@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { SignerService } from 'src/app/services/signer.service';
-import { Post, LightningResponse, LightningInvoice, Zap, ZapRequest } from '../../types/post';
+import { Post, LightningResponse, LightningInvoice, Zap } from '../../types/post';
 import { NostrService } from 'src/app/services/nostr.service';
 import { getEventHash, Event } from 'nostr-tools';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -12,8 +12,6 @@ import { LightningService } from 'src/app/services/lightning.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { decode } from "@gandlaf21/bolt11-decode";
-import { GifService } from 'src/app/services/gif.service';
-import { ImageServiceService } from 'src/app/services/image-service.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { webln } from "@getalby/sdk";
@@ -21,7 +19,6 @@ import { CreateEventComponent } from '../create-event/create-event.component';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { UserBottomSheetComponent } from '../user-bottom-sheet/user-bottom-sheet.component';
 import { nip19 } from 'nostr-tools';
-import { PostDetailComponent } from '../post-detail/post-detail.component';
 import { PostQuickComponent } from '../post-quick/post-quick.component';
 
 
@@ -81,8 +78,6 @@ export class PostComponent implements OnInit {
         private router: Router,
         private lightning: LightningService,
         private breakpointObserver: BreakpointObserver,
-        private gifService: GifService,
-        private imageService: ImageServiceService,
         private dialog: MatDialog,
         private _bottomSheet: MatBottomSheet
     ) {

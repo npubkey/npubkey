@@ -22,3 +22,7 @@ mat-form-field {
     width: 100%;
     margin-right: 1.5em;
 }
+
+.tradingview-widget-container {
+    padding-bottom: 1em;
+}
