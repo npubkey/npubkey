@@ -20,7 +20,7 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { UserBottomSheetComponent } from '../user-bottom-sheet/user-bottom-sheet.component';
 import { nip19 } from 'nostr-tools';
 import { PostQuickComponent } from '../post-quick/post-quick.component';
-
+import { HashtagQuickComponent } from 'src/app/compontents/hashtag-quick/hashtag-quick.component';
 
 @Component({
   selector: 'app-post',
@@ -171,6 +171,18 @@ export class PostComponent implements OnInit {
         // needed when we generate html from incoming text to
         // route a link without getting a 404
         const element: HTMLElement = e.target;
+        console.log(element.dataset)
+        if (element.nodeName === 'SPAN') {
+            if ('npub' in element.dataset) {
+                this.openUserBottomSheetFromLink(element.dataset['npub']);
+            } else if ('nevent' in element.dataset) {
+                this.openNEventBottomSheetFromLink(element.dataset['nevent']);
+            } else if ('note' in element.dataset) {
+                this.openNEventBottomSheetFromLink(element.dataset['note']);
+            } else if ('hashtag' in element.dataset) {
+                this.openHashtagFeed(element.dataset['hashtag']);
+            }
+        }
         if (element.nodeName === 'A') {
             e.preventDefault();
             const link = element.getAttribute('href');
@@ -470,11 +482,36 @@ export class PostComponent implements OnInit {
         });
     }
 
+    openUserBottomSheetFromLink(npub: string) {
+        this._bottomSheet.open(UserBottomSheetComponent, {
+            data: {
+                pubkey: nip19.decode(npub).data
+            }
+        });
+    }
+
     openPostDetail(): void {
         let event: nip19.EventPointer = {id: this.post.noteId}
         this._bottomSheet.open(PostQuickComponent, {
             data: {
                 nevent: nip19.neventEncode(event)
+            }
+        });
+    }
+
+    openNEventBottomSheetFromLink(nevent: string): void {
+        let event: nip19.EventPointer = nip19.decode(nevent).data as nip19.EventPointer
+        this._bottomSheet.open(PostQuickComponent, {
+            data: {
+                nevent: nip19.neventEncode(event)
+            }
+        });
+    }
+
+    openHashtagFeed(hashtag: string) {
+        this._bottomSheet.open(HashtagQuickComponent, {
+            data: {
+                hashtag: hashtag
             }
         });
     }

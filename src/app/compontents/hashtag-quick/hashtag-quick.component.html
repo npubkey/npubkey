@@ -1,0 +1,14 @@
+<div class="bottom-div">
+    <button mat-icon-button (click)="exitBottomSheet()">
+        <mat-icon color="warn">close</mat-icon>
+    </button>
+</div>
+<div class="hashtag-header">
+    <strong>#{{hashtag}}</strong>
+</div>
+<div class="feed" *ngFor="let post of posts">
+    <app-post [post]="post"></app-post>
+</div>
+<div *ngIf="posts.length === 0">
+    <app-loading></app-loading>
+</div>

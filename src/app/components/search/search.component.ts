@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
-export class SearchComponent implements OnInit, AfterViewInit {
+export class SearchComponent implements OnInit {
     @ViewChild('tradingview') tradingview?: ElementRef;
     loading: boolean = false;
     search: string = "";
@@ -22,7 +22,8 @@ export class SearchComponent implements OnInit, AfterViewInit {
     constructor(
         private nostrService: NostrService,
         private router: Router,
-        private _renderer2: Renderer2
+        private _renderer2: Renderer2,
+        private el: ElementRef
     ) {
         let baseTimeDiff = 60;
         let since = 60;
@@ -31,27 +32,6 @@ export class SearchComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.getPosts();
-    }
-
-    ngAfterViewInit(): void {
-        let script = this._renderer2.createElement('script');
-        script.type = `text/javascript`;
-        script.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
-        script.text = `
-            {
-                "symbol": "COINBASE:BTCUSD",
-                "width": "100%",
-                "height": "100%",
-                "locale": "en",
-                "dateRange": "1M",
-                "colorTheme": "dark",
-                "isTransparent": false,
-                "autosize": true,
-                "largeChartUrl": "",
-                "noTimeScale": false,
-                "chartOnly": false
-            }`;
-        this.tradingview?.nativeElement.appendChild(script);
     }
 
     async getPosts() {
@@ -89,15 +69,54 @@ export class SearchComponent implements OnInit, AfterViewInit {
     }
 
     setSearchCanHaveChart() {
-        console.log("CHECKING FOR CHART");
         const ok = this.search.toLowerCase()
         console.log(ok)
         console.log(ok.includes("bitcoin"));
-        if (ok.includes("bitcoin")) {
+        if (ok.startsWith("$") || ok.includes("bitcoin")) {
+            let symbol = this.getSymbol(ok);
+            this.injectTradingViewChart(symbol)
             this.searchCanHaveChart = true;
         } else {
             this.searchCanHaveChart = false;
         }
+    }
+
+    getSymbol(value: string): string {
+        if (value.includes("bitcoin") || value.includes("btc")) {
+            return "BITSTAMP:BTCUSD";
+        }
+        if (value.startsWith("$")) {
+            console.log('maybe stock');
+            return `NASDAQ:${value.substring(1)}`;
+        }
+        return value;
+    }
+
+    injectTradingViewChart(symbol: string) {
+        // idk why this works but I don't care
+        Array.from(this.tradingview.nativeElement.children).forEach(child => {
+            console.log('children.length=' + this.tradingview.nativeElement.children.length);
+            this._renderer2.removeChild(this.tradingview.nativeElement, child);
+       }); 
+        //this._renderer2.removeChild(this.tradingview.nativeElement, 'script');
+        let script = this._renderer2.createElement('script');
+        script.type = `text/javascript`;
+        script.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
+        script.text = `
+            {
+                "symbol": "${symbol}",
+                "width": "100%",
+                "height": "100%",
+                "locale": "en",
+                "dateRange": "1D",
+                "colorTheme": "light",
+                "isTransparent": false,
+                "autosize": true,
+                "largeChartUrl": "",
+                "noTimeScale": false,
+                "chartOnly": false
+            }`;
+        this.tradingview?.nativeElement.appendChild(script);
     }
 
     getPictureFromPublicKey(pubkey: string): string {

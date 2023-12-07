@@ -84,6 +84,7 @@ import { KeyboardPipe } from './pipes/keyboard.pipe';
 import { PaymentRequestComponent } from './components/payment-request/payment-request.component';
 import { SendPaymentComponent } from './components/send-payment/send-payment.component';
 import { PostQuickComponent } from './components/post-quick/post-quick.component';
+import { HashtagQuickComponent } from './compontents/hashtag-quick/hashtag-quick.component';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -201,6 +202,7 @@ const dbConfig: DBConfig  = {
     PaymentRequestComponent,
     SendPaymentComponent,
     PostQuickComponent,
+    HashtagQuickComponent,
   ],
   //entryComponents: [ImageDialogComponent, CreateEventComponent, UserBottomSheetComponent],
   imports: [

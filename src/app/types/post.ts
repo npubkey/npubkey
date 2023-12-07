@@ -10,6 +10,9 @@ export interface TextWrap {
     text: string;
     cssClass?: string;
     addLink?: string;
+    npub?: string;
+    nevent?: string;
+    hashtag?: string;
 }
 
 export interface LightningResponse {
@@ -259,7 +262,13 @@ export class Content {
         if (textWrap.cssClass === undefined) {
             textWrap.cssClass = "hashtag"
         }
-        if (this.addHash && textWrap.addLink) {
+        if (textWrap.npub) {
+            return `<span class="${textWrap.cssClass}" data-npub=${textWrap.npub}>${textWrap.text}</span>`;
+        } else if (textWrap.nevent) {
+            return `<span class="${textWrap.cssClass}" data-nevent=${textWrap.nevent}>${textWrap.text}</span>`;
+        } else if (textWrap.hashtag) {
+            return `<span class="${textWrap.cssClass}" data-hashtag=${textWrap.hashtag}>${textWrap.text}</span>`;
+        } else if (this.addHash && textWrap.addLink) {
             // this fixes an issue in user about not redirecting properly
             textWrap.addLink = textWrap.addLink.replace('href="', 'href="/#/')
             return `<a class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</a>`
@@ -330,8 +339,8 @@ export class Content {
     hashtagContent(content: string): string {
         let hashtagRegex = /#\w+\S/gm;
         return content.replace(hashtagRegex, function(tag) {
-            let textWrap: TextWrap = {text: tag, cssClass: "hashtag", addLink: `href="/feed/${tag.substring(1)}"`}
-            return `<a class="${textWrap.cssClass}" ${textWrap.addLink}>${textWrap.text}</a>`
+            let textWrap: TextWrap = {text: tag, cssClass: "hashtag", hashtag: `${tag.substring(1)}`}
+            return `<span class="${textWrap.cssClass}" data-hashtag=${textWrap.hashtag}>${textWrap.text}</span>`;
         });
     }
 
@@ -389,18 +398,18 @@ export class Content {
                 if (match.startsWith("nostr:npub")) {
                     let npub = match.substring(6)
                     let username = this.getUsername(npub)
-                    let textWrap: TextWrap = {text: this.ellipsis(username), addLink: `href="/users/${npub}"`, cssClass: "user-at"}
+                    let textWrap: TextWrap = {text: this.ellipsis(username), npub: npub, cssClass: "user-at"}
                     let htmlSpan = this.wrapTextInSpan(textWrap)
                     content = content.replace(match, htmlSpan);
                 }
                 if (match.startsWith("nostr:nevent")) {
                     let nevent = match.substring(6)
-                    let textWrap: TextWrap = {text: this.ellipsis(nevent), addLink: `href="/posts/${nevent}"`}
+                    let textWrap: TextWrap = {text: this.ellipsis(nevent), nevent: nevent}
                     content = content.replace(match, this.wrapTextInSpan(textWrap));
                 }
                 if (match.startsWith("nostr:note")) {
                     let note = match.substring(6);
-                    let textWrap: TextWrap = {text: this.ellipsis(note), addLink: `href="/posts/${this.encodeNoteAsEvent(note)}"`}
+                    let textWrap: TextWrap = {text: this.ellipsis(note), nevent: this.encodeNoteAsEvent(note)}
                     content = content.replace(match, this.wrapTextInSpan(textWrap));
                 }
             } catch (e) {

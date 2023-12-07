@@ -53,7 +53,6 @@ export class CreateEventComponent implements AfterViewInit {
         this.getUser();
     }
 
-    
     ngAfterViewInit() {
         this.focusOnTextField();
     }
