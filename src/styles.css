@@ -21,8 +21,10 @@ body { margin: 0; font-family: 'Courier New', Courier, monospace; }
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
-    .router-container { 
+    .router-container {
+        overflow-x: hidden;
         width: 100%;
+        max-width: 100%;
         margin-top: 50px;
         padding-bottom: 5em;
     }
@@ -35,8 +37,10 @@ body { margin: 0; font-family: 'Courier New', Courier, monospace; }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
-    .router-container { 
+    .router-container {
+        overflow-x: hidden;
         width: 100%;
+        max-width: 100%;
         margin-top: 50px;
         padding-bottom: 5em;
     }
@@ -49,8 +53,10 @@ body { margin: 0; font-family: 'Courier New', Courier, monospace; }
 
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
-    .router-container { 
+    .router-container {
+        overflow-x: hidden;
         width: 100%;
+        max-width: 100%;
         margin-top: 50px;
         padding-bottom: 5em;
     }

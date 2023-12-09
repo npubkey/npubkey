@@ -26,3 +26,7 @@ mat-form-field {
 .tradingview-widget-container {
     padding-bottom: 1em;
 }
+
+.widget-container {
+    height: 280px;
+}
