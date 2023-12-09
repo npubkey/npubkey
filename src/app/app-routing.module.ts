@@ -10,7 +10,7 @@ import { ProfileEditComponent } from './components/profile-edit/profile-edit.com
 import { SearchComponent } from './components/search/search.component';
 import { FollowingComponent } from './components/following/following.component';
 import { PostDetailComponent } from './components/post-detail/post-detail.component';
-import { ContactListComponent } from './components/contact-list/contact-list.component';
+import { MessagesListComponent } from './components/messages-list/messages-list.component';
 import { HashtagFeedComponent } from './components/hashtag-feed/hashtag-feed.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { authGuard } from './auth.guard';
@@ -18,6 +18,8 @@ import { NotificationsComponent } from './components/notifications/notifications
 import { TrendingComponent } from './components/trending/trending.component';
 import { ZapFeedComponent } from './components/zap-feed/zap-feed.component';
 import { WalletComponent } from './components/wallet/wallet.component';
+import { ContactListComponent } from './components/contact-list/contact-list.component';
+
 
 const routes: Routes = [
     { path: '', component: LoginComponent },
@@ -28,7 +30,8 @@ const routes: Routes = [
     { path: 'feed/:hashtag', component: HashtagFeedComponent},
     { path: 'feed', component: HomeFeedComponent },
     { path: 'trending', component: TrendingComponent },
-    { path: 'messages', component: ContactListComponent, canActivate: [authGuard]},
+    { path: 'messages', component: MessagesListComponent, canActivate: [authGuard]},
+    { path: 'new-message', component: ContactListComponent, canActivate: [authGuard]},
     { path: 'notifications', component: NotificationsComponent, canActivate: [authGuard]},
     { path: 'users/:npub/following', component: FollowingComponent},
     { path: 'users/:npub/followers', component: FollowingComponent},

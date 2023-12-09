@@ -4,21 +4,40 @@
             <mat-icon color="warn">close</mat-icon>
         </button>
     </div>
-    <div class="search-header">
-        <div class="search-div" fxLayout="row">
-            <mat-form-field appearance="outline" fxFlex="90">
-                <mat-label>Search users..</mat-label>
-                <input matInput placeholder="search" [(ngModel)]="filterText">
-            </mat-form-field>
-            <button mat-fab color="primary" (click)="filterContacts()">
-                <mat-icon>search</mat-icon>
-            </button>
+    <div *ngIf="!showConfirmPayment">
+        <div class="search-header">
+            <div class="search-div" fxLayout="row">
+                <mat-form-field appearance="outline" fxFlex="90">
+                    <mat-label>Search users..</mat-label>
+                    <input matInput placeholder="search" [(ngModel)]="filterText">
+                </mat-form-field>
+                <button mat-fab color="primary" (click)="filterContacts()">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </div>
+        </div>
+        <p *ngFor="let user of displayedUsers">
+            <app-listed-user [user]="user" [showBio]="false" [showPayButton]="true" (click)="openPaymentConfirm(user)"></app-listed-user>
+        </p>
+        <div *ngIf="loading">
+            <app-loading></app-loading>
         </div>
     </div>
-    <p *ngFor="let user of displayedUsers">
-        <app-listed-user [user]="user" (click)="sendPayment(user)"></app-listed-user>
-    </p>
-    <div *ngIf="loading">
-        <app-loading></app-loading>
+    <div *ngIf="showConfirmPayment" class="show-payment-confirm">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+            <mat-card-header class="header-container">
+                <img 
+                *ngIf="user.picture"
+                class="header-image"
+                mat-card-avatar
+                src="{{user.picture}}"
+                />
+            </mat-card-header>
+        </div>
+        <div class="confirm-text">
+            <p class="large-name">{{user.displayName|truncate}}</p>
+            <p class="confirm-text-words">Confirm Payment of {{satsAmount/1000}} sats</p>
+            <button mat-flat-button color="primary" (click)="sendPayment(user)">Send</button>
+        </div>
     </div>
 </div>

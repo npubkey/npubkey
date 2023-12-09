@@ -8,4 +8,6 @@ import { User } from 'src/app/types/user';
 })
 export class ListedUserComponent {
     @Input() user?: User;
+    @Input() showBio?: boolean = true;
+    @Input() showPayButton?: boolean = false;
 }

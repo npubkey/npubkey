@@ -4,6 +4,7 @@ import { SignerService } from 'src/app/services/signer.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { PaymentRequestComponent } from '../payment-request/payment-request.component';
 import { SendPaymentComponent } from '../send-payment/send-payment.component';
+import { BarcodeFormat } from '@zxing/library';
 
 interface Balance {
     balance: number;
@@ -26,6 +27,9 @@ export class WalletComponent implements OnInit {
     currentInput: string = "";
     paymentRequest: PaymentRequest;
     username: string;
+    allowedFormats = [ BarcodeFormat.QR_CODE ]
+    scanQR: boolean = false;
+
     constructor(
         private signerService: SignerService,
         private _bottomSheet: MatBottomSheet
@@ -80,5 +84,13 @@ export class WalletComponent implements OnInit {
                 sats: Number(this.currentInput)
             }
         });
+    }
+
+    openQRScanner() {
+        if (this.scanQR) {
+            this.scanQR = false;
+        } else {
+            this.scanQR = true;
+        }
     }
 }

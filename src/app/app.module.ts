@@ -10,6 +10,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpCacheInterceptorModule } from '@ngneat/cashew';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
 // Material
 import { MatDialogModule } from '@angular/material/dialog';
@@ -85,6 +86,7 @@ import { PaymentRequestComponent } from './components/payment-request/payment-re
 import { SendPaymentComponent } from './components/send-payment/send-payment.component';
 import { PostQuickComponent } from './components/post-quick/post-quick.component';
 import { HashtagQuickComponent } from './compontents/hashtag-quick/hashtag-quick.component';
+import { MessagesListComponent } from './components/messages-list/messages-list.component';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -203,6 +205,7 @@ const dbConfig: DBConfig  = {
     SendPaymentComponent,
     PostQuickComponent,
     HashtagQuickComponent,
+    MessagesListComponent,
   ],
   //entryComponents: [ImageDialogComponent, CreateEventComponent, UserBottomSheetComponent],
   imports: [
@@ -239,6 +242,7 @@ const dbConfig: DBConfig  = {
     InfiniteScrollModule,
     NgxIndexedDBModule.forRoot(dbConfig),
     ReactiveFormsModule,
+    ZXingScannerModule,
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
   bootstrap: [AppComponent]

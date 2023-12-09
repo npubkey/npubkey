@@ -1,0 +1,14 @@
+<div class="router-container">
+    <div class="page-header">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+            <h4>Messages</h4>
+            <button mat-mini-fab color="primary" routerLink="/new-message">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+        <mat-divider></mat-divider>
+    </div>
+    <div *ngFor="let user of messagedUsers" class="direct-message">
+        <app-listed-user [user]="user" routerLink="/messages/{{user.npub}}"></app-listed-user>
+    </div>
+</div>

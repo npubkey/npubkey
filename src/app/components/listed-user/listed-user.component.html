@@ -1,12 +1,17 @@
 <mat-card class="listed-user">
-    <mat-card-header>
-        <img 
-            *ngIf="user.picture"
-            class="header-image"
-            mat-card-avatar
-            src="{{user.picture}}"/>
-      <mat-card-title>{{user.displayName|ellipsis}}</mat-card-title>
-      <mat-card-subtitle class="npub" >{{user.npub|ellipsis}}</mat-card-subtitle>
-      <mat-card-subtitle>{{user.about|truncate}}</mat-card-subtitle>
-    </mat-card-header>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+        <mat-card-header>
+            <img 
+                *ngIf="user.picture"
+                class="header-image"
+                mat-card-avatar
+                src="{{user.picture}}"/>
+          <mat-card-title>{{user.displayName|ellipsis}}</mat-card-title>
+          <mat-card-subtitle class="npub" >{{user.npub|ellipsis}}</mat-card-subtitle>
+          <mat-card-subtitle *ngIf="showBio">{{user.about|truncate}}</mat-card-subtitle>
+        </mat-card-header>
+        <div *ngIf="showPayButton" class="pay-button">
+            <button mat-button color="primary">Pay</button>
+        </div>
+    </div>
 </mat-card>

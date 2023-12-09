@@ -393,6 +393,21 @@ export class NostrService {
         return await relay.list([filter1, filter2]);
     }
 
+    async getKind4MessagesToMe(): Promise<Event[]> {
+        const filter: Filter = {
+            kinds: [4],
+            "#p": [this.signerService.getPublicKey()],
+            limit: 50
+        }
+        const filter2: Filter = {
+            kinds: [4],
+            authors: [this.signerService.getPublicKey()],
+            limit: 50
+        }
+        const relay = await this.relayConnect();
+        return await relay.list([filter, filter2]);
+    }
+
     async getPostLikeCount(filter: Filter): Promise<number> {
         const relay = await this.relayConnect();
         let likes = await relay.list([filter]);

@@ -17,3 +17,12 @@
 .balance-container {
     text-align: center;
 }
+
+.qr-code-container {
+    text-align: center;
+    padding-top: 2em;
+}
+
+.icon-display {
+    transform: scale(2);
+}

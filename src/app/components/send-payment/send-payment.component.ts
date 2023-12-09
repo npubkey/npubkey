@@ -33,6 +33,7 @@ export class SendPaymentComponent implements AfterViewInit {
     lightningInvoice: LightningInvoice | null = null;
     paymentInvoice: string = "";
     invoiceAmount: string = "?";
+    showConfirmPayment: boolean = false;
 
     constructor(
         private signerService: SignerService,
@@ -48,6 +49,11 @@ export class SendPaymentComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.getFollowingUsers();
+    }
+
+    openPaymentConfirm(user: User) {
+        this.showConfirmPayment = true;
+        this.user = user;
     }
 
     async sendPayment(user: User) {
