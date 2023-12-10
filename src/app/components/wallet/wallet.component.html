@@ -33,16 +33,20 @@
         </div>
         <div class="balance-container">
             <p>Available Balance</p>
-            <div class="current-balance">{{balance.balance}} {{balance.currency}}</div>
+            <div *ngIf="balance" class="current-balance">{{balance.balance}} {{balance.currency}}</div>
         </div>
     </div>
     <div class="qr-code-container">
+        <p *ngIf="qrResultString">{{qrResultString}}</p>
         <button mat-icon-button color="primary" (click)="openQRScanner()">
             <mat-icon class="icon-display">qr_code_scanner</mat-icon>
         </button>
         <p>scan QR code</p>
     </div>
     <div *ngIf="scanQR" class="qr-code-scanner">
-        <zxing-scanner [formats]="allowedFormats"></zxing-scanner>
+        <zxing-scanner
+        [formats]="allowedFormats"
+        (scanSuccess)="scanSuccessHandler($event)"
+        ></zxing-scanner>
     </div>
 </div>

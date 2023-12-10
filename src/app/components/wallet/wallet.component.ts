@@ -29,6 +29,7 @@ export class WalletComponent implements OnInit {
     username: string;
     allowedFormats = [ BarcodeFormat.QR_CODE ]
     scanQR: boolean = false;
+    qrResultString: string = "";
 
     constructor(
         private signerService: SignerService,
@@ -93,4 +94,20 @@ export class WalletComponent implements OnInit {
             this.scanQR = true;
         }
     }
+
+    // scanSuccessHandler(event) {
+    //     console.log(event);
+    // }
+
+    scanSuccessHandler(resultString: string) {
+        this.qrResultString = resultString;
+    }
+
+    // scanErrorHandler($event) {
+    //     console.log($event);
+    // }
+    
+    // scanFailureHandler($event) {
+    //     console.log($event);
+    // }
 }
