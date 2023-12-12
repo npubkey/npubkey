@@ -304,7 +304,7 @@ export class PostComponent implements OnInit {
             this.openSnackBar("user can receive zaps", "dismiss");
             this.getLightningInfo();
         } else {
-            this.openSnackBar("user can't recieve zaps", "dismiss");
+            this.openSnackBar("user can't receive zaps", "dismiss");
         }
     }
 

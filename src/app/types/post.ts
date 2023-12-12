@@ -387,6 +387,11 @@ export class Content {
         return nip19.neventEncode(eventP);
     }
 
+    npubFromNProfile(nprofile: string): string {
+        const decodedNProfile: nip19.ProfilePointer = nip19.decode(nprofile).data as nip19.ProfilePointer;
+        return nip19.npubEncode(decodedNProfile.pubkey);
+    }
+
     replaceNostrThing(content: string) {
         if (!this.hasEventPointer(content)) {
             return content;
@@ -410,6 +415,12 @@ export class Content {
                 if (match.startsWith("nostr:note")) {
                     let note = match.substring(6);
                     let textWrap: TextWrap = {text: this.ellipsis(note), nevent: this.encodeNoteAsEvent(note)}
+                    content = content.replace(match, this.wrapTextInSpan(textWrap));
+                }
+                if (match.startsWith("nostr:nprofile")) {
+                    const nprofile = match.substring(6);
+                    const npub = this.npubFromNProfile(nprofile);
+                    let textWrap: TextWrap = {text: this.ellipsis(npub), npub: npub, cssClass: "user-at"}
                     content = content.replace(match, this.wrapTextInSpan(textWrap));
                 }
             } catch (e) {

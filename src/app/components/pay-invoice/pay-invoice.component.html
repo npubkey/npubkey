@@ -1,0 +1,22 @@
+<div>
+    <div class="bottom-div">
+        <button mat-icon-button (click)="exitBottomSheet()">
+            <mat-icon color="warn">close</mat-icon>
+        </button>
+    </div>
+    <div *ngIf="!error" class="show-payment-confirm">
+        <div class="confirm-text">
+            <p class="large-name">Send Lightning Payment</p>
+            <p class="confirm-text-words">Confirm Payment of {{invoiceAmount}} sats</p>
+            <button mat-flat-button color="primary" (click)="sendPayment()">Send</button>
+            <div *ngIf="sending">
+                <app-loading></app-loading>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="error" class="show-payment-confirm">
+        <div class="confirm-text">
+            <p class="large-name">{{error}}</p>
+        </div>
+    </div>
+</div>

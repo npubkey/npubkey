@@ -83,7 +83,7 @@ export class UserComponent implements OnInit {
             if (this.user && (this.user.lud06 || this.user.lud16)) {
                 this.getLightningInfo();
             } else {
-                this.openSnackBar("user can't recieve zaps", "dismiss");
+                this.openSnackBar("user can't receive zaps", "dismiss");
             }
         }
     }

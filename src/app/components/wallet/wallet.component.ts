@@ -5,6 +5,7 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { PaymentRequestComponent } from '../payment-request/payment-request.component';
 import { SendPaymentComponent } from '../send-payment/send-payment.component';
 import { BarcodeFormat } from '@zxing/library';
+import { PayInvoiceComponent } from '../pay-invoice/pay-invoice.component';
 
 interface Balance {
     balance: number;
@@ -30,6 +31,7 @@ export class WalletComponent implements OnInit {
     allowedFormats = [ BarcodeFormat.QR_CODE ]
     scanQR: boolean = false;
     qrResultString: string = "";
+    qrCodeScannerButton: string = "qr_code_scanner";
 
     constructor(
         private signerService: SignerService,
@@ -62,7 +64,7 @@ export class WalletComponent implements OnInit {
         }
     }
 
-    async recieve(): Promise<void> {
+    async receive(): Promise<void> {
         // this._bottomSheet.open();
         const ok = await this.nwc.makeInvoice({
             amount: Number(this.currentInput), // in sats
@@ -90,8 +92,10 @@ export class WalletComponent implements OnInit {
     openQRScanner() {
         if (this.scanQR) {
             this.scanQR = false;
+            this.qrCodeScannerButton = "qr_code_scanner";
         } else {
             this.scanQR = true;
+            this.qrCodeScannerButton = "close";
         }
     }
 
@@ -99,8 +103,35 @@ export class WalletComponent implements OnInit {
     //     console.log(event);
     // }
 
+    async pasteInvoice() {
+        const text = await navigator.clipboard.readText();
+        this.qrResultString = text;
+        if (this.isValidPaymentInvoice(this.qrResultString)) {
+            this._bottomSheet.open(PayInvoiceComponent, {
+                data: {
+                    invoice: this.qrResultString
+                }
+            });
+        } else {
+            console.log("INVALID");
+        }
+    }
+
     scanSuccessHandler(resultString: string) {
         this.qrResultString = resultString;
+        if (this.isValidPaymentInvoice(this.qrResultString)) {
+            this._bottomSheet.open(PayInvoiceComponent, {
+                data: {
+                    invoice: this.qrResultString
+                }
+            });
+        } else {
+            console.log("INVALID");
+        }
+    }
+
+    isValidPaymentInvoice(value: string) {
+        return true;
     }
 
     // scanErrorHandler($event) {

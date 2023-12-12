@@ -34,6 +34,7 @@ export class SendPaymentComponent implements AfterViewInit {
     paymentInvoice: string = "";
     invoiceAmount: string = "?";
     showConfirmPayment: boolean = false;
+    sending: boolean = false;
 
     constructor(
         private signerService: SignerService,
@@ -57,9 +58,8 @@ export class SendPaymentComponent implements AfterViewInit {
     }
 
     async sendPayment(user: User) {
-        console.log(user);
         this.user = user;
-        console.log(this.user);
+        this.sending = true;
         await this.getLightningInfo();
     }
 
@@ -205,6 +205,4 @@ export class SendPaymentComponent implements AfterViewInit {
     openSnackBar(message: string, action: string) {
         this.snackBar.open(message, action, {duration: 1300});
     }
-
-    
 }

@@ -32,6 +32,7 @@
     "angularx-qrcode": "^15.0.1",
     "blurhash": "^2.0.5",
     "dayjs": "^1.11.7",
+    "lnd-grpc": "^0.5.4",
     "ngx-indexed-db": "^16.0.0",
     "ngx-infinite-scroll": "^15.0.0",
     "nostr-tools": "^1.17.0",

@@ -87,6 +87,7 @@ import { SendPaymentComponent } from './components/send-payment/send-payment.com
 import { PostQuickComponent } from './components/post-quick/post-quick.component';
 import { HashtagQuickComponent } from './compontents/hashtag-quick/hashtag-quick.component';
 import { MessagesListComponent } from './components/messages-list/messages-list.component';
+import { PayInvoiceComponent } from './components/pay-invoice/pay-invoice.component';
 
 // Ahead of time compiles requires an exported function for factories
 export function migrationFactory() {
@@ -206,6 +207,7 @@ const dbConfig: DBConfig  = {
     PostQuickComponent,
     HashtagQuickComponent,
     MessagesListComponent,
+    PayInvoiceComponent,
   ],
   //entryComponents: [ImageDialogComponent, CreateEventComponent, UserBottomSheetComponent],
   imports: [

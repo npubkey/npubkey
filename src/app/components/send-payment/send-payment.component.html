@@ -38,6 +38,9 @@
             <p class="large-name">{{user.displayName|truncate}}</p>
             <p class="confirm-text-words">Confirm Payment of {{satsAmount/1000}} sats</p>
             <button mat-flat-button color="primary" (click)="sendPayment(user)">Send</button>
+            <div *ngIf="sending">
+                <app-loading></app-loading>
+            </div>
         </div>
     </div>
 </div>

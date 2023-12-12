@@ -1,12 +1,16 @@
 .current-input {
     font-size: 30px;
     text-align: center;
-    padding-top: 2em;
-    padding-bottom: 2em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .keypad-row {
     padding-bottom: 1em;
+}
+
+.wallet-info {
+    padding-top: 1.5em;
 }
 
 .wallet-input {
@@ -18,11 +22,26 @@
     text-align: center;
 }
 
-.qr-code-container {
+.balance {
+    color: #000000;
+    font-size: 25px;
+    font-weight: bold;
+    font-family: Helvetica, sans-serif;
+}
+
+.button-container {
     text-align: center;
     padding-top: 2em;
 }
 
 .icon-display {
     transform: scale(2);
+}
+
+.button-number {
+    font-size: 20px;
+}
+
+.keypad-button {
+    margin-bottom: 1em;
 }

@@ -1,4 +1,19 @@
 <div class="wallet-input">
+    <div class="wallet-info">
+        <div class="balance-container">
+            <div *ngIf="balance" class="current-balance">
+                <span class="balance">{{balance.balance | number}} sats</span>
+            </div>
+        </div>
+    </div>
+    <div class="button-container" fxLayout="row" fxLayoutAlign="space-evenly center">
+        <button mat-icon-button color="primary" (click)="openQRScanner()">
+            <mat-icon class="icon-display">{{qrCodeScannerButton}}</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" (click)="pasteInvoice()">
+            <mat-icon class="icon-display">content_paste</mat-icon>
+        </button>
+    </div>
     <div *ngIf="!scanQR">
         <div class="keypad-container">
             <div class="current-input">
@@ -6,47 +21,37 @@
             </div>
             <div class="keypad">
                 <div class="keypad-row" fxLayout="row" fxLayoutAlign="space-evenly center">
-                    <button mat-button (click)="changeNumber('1')">1</button>
-                    <button mat-button (click)="changeNumber('2')">2</button>
-                    <button mat-button (click)="changeNumber('3')">3</button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('1')"><span class="button-number">1</span></button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('2')"><span class="button-number">2</span></button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('3')"><span class="button-number">3</span></button>
                 </div>
                 <div class="keypad-row" fxLayout="row" fxLayoutAlign="space-evenly center">
-                    <button mat-button (click)="changeNumber('4')">4</button>
-                    <button mat-button (click)="changeNumber('5')">5</button>
-                    <button mat-button (click)="changeNumber('6')">6</button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('4')"><span class="button-number">4</span></button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('5')"><span class="button-number">5</span></button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('6')"><span class="button-number">6</span></button>
                 </div>
                 <div class="keypad-row" fxLayout="row" fxLayoutAlign="space-evenly center">
-                    <button mat-button (click)="changeNumber('7')">7</button>
-                    <button mat-button (click)="changeNumber('8')">8</button>
-                    <button mat-button (click)="changeNumber('9')">9</button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('7')"><span class="button-number">7</span></button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('8')"><span class="button-number">8</span></button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('9')"><span class="button-number">9</span></button>
                 </div>
                 <div class="keypad-row" fxLayout="row" fxLayoutAlign="space-evenly center">
-                    <button mat-button (click)="changeNumber('.')">.</button>
-                    <button mat-button (click)="changeNumber('0')">0</button>
-                    <button mat-button (click)="changeNumber('backspace')">&lsaquo;</button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('.')"><span class="button-number">.</span></button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('0')"><span class="button-number">0</span></button>
+                    <button class="keypad-button" mat-button (click)="changeNumber('backspace')"><span class="button-number">&lsaquo;</span></button>
                 </div>
             </div>
             <div class="action-buttons" fxLayout="row" fxLayoutAlign="space-evenly center">
-                <button mat-stroked-button (click)="recieve()">Receive</button>
+                <button mat-stroked-button (click)="receive()">Receive</button>
                 <button mat-stroked-button (click)="send()">&nbsp;&nbsp;Send&nbsp;&nbsp;</button>
             </div>
         </div>
-        <div class="balance-container">
-            <p>Available Balance</p>
-            <div *ngIf="balance" class="current-balance">{{balance.balance}} {{balance.currency}}</div>
-        </div>
-    </div>
-    <div class="qr-code-container">
-        <p *ngIf="qrResultString">{{qrResultString}}</p>
-        <button mat-icon-button color="primary" (click)="openQRScanner()">
-            <mat-icon class="icon-display">qr_code_scanner</mat-icon>
-        </button>
-        <p>scan QR code</p>
     </div>
     <div *ngIf="scanQR" class="qr-code-scanner">
         <zxing-scanner
         [formats]="allowedFormats"
         (scanSuccess)="scanSuccessHandler($event)"
+        [tryHarder]="true"
         ></zxing-scanner>
     </div>
 </div>
