@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { webln } from "@getalby/sdk";
 import { NostrService } from 'src/app/services/nostr.service';
+import { signEvent, getEventHash, UnsignedEvent, Event } from 'nostr-tools';
 
 
 @Component({
@@ -187,7 +188,23 @@ export class UserComponent implements OnInit {
         if (this.user) {
             let contactList = await this.nostrService.getContactListEvent(this.user.pubkey);
             this.signerService.setFollowingListFromTags(contactList.tags);
+            await this.publishFollowingList(this.user);
         }
+    }
+
+    async publishFollowingList(user: User) {
+        let tags: string[][] = this.signerService.getFollowingListAsTags()
+        tags.push(["p", user.pubkey, "wss://relay.damus.io/", user.username]);
+        let unsignedEvent = this.nostrService.getUnsignedEvent(3, tags, "");
+        let signedEvent: Event;
+        const privateKey = this.signerService.getPrivateKey();
+        if (privateKey !== "") {
+            let eventId = getEventHash(unsignedEvent)
+            signedEvent = this.nostrService.getSignedEvent(eventId, privateKey, unsignedEvent);
+        } else {
+            signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
+        }
+        this.nostrService.sendEvent(signedEvent);
     }
 
     enlargeUserPicture() {

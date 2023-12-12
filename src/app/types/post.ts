@@ -392,7 +392,7 @@ export class Content {
     }
 
     encodeNoteAsEvent(note: string): string {
-        let decodedNote = nip19.decode(note).data.toString()
+        let decodedNote = nip19.decode(note).data.toString();
         let eventP: nip19.EventPointer = {id: decodedNote}
         return nip19.neventEncode(eventP);
     }
@@ -434,10 +434,13 @@ export class Content {
                     content = content.replace(match, this.wrapTextInSpan(textWrap));
                 }
                 if (match.startsWith("nostr:naddr")) {
-                    // might need updates i just copied note here
-                    let note = match.substring(6);
-                    let textWrap: TextWrap = {text: this.ellipsis(note), nevent: this.encodeNoteAsEvent(note)}
-                    content = content.replace(match, this.wrapTextInSpan(textWrap));
+                    // these are editable posts i think means long form
+                    // so we will link to habla.news for now
+                    // https://habla.news/a/naddr1qqxnzdesxg6rzdp4xu6nzwpnqgsf03c2gsmx5ef4c9zmxvlew04gdh7u94afnknp33qvv3c94kvwxgsrqsqqqa280a30ar
+                    const naddr = match.substring(6);
+                    //let textWrap: TextWrap = {text: this.ellipsis(naddr), nevent: this.encodeNAddrAsEvent(naddr)}
+                    content = content.replace(naddr, `https://habla.news/a/${naddr}`)
+                    content = this.linkify(content);
                 }
             } catch (e) {
                 console.log(e);
