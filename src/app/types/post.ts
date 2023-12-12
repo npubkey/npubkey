@@ -222,6 +222,7 @@ export class Content {
         }
         this.content = this.parseLightningInvoice(this.content);
         this.content = this.hashtagContent(this.content);
+        this.content = this.cashtagContent(this.content);
         this.content = this.linkify(this.content);
         this.content = this.replaceNostrThing(this.content);
         return this.content;
@@ -229,6 +230,7 @@ export class Content {
 
     parseCreateNote() {
         this.content = this.hashtagContent(this.content);
+        this.content = this.cashtagContent(this.content);
         this.content = this.styleUsername(this.content);
         return this.content;
     }
@@ -344,6 +346,14 @@ export class Content {
         });
     }
 
+    cashtagContent(content: string): string {
+        let cashtagRegex = /\$\w+\S/gm;
+        return content.replace(cashtagRegex, function(tag) {
+            let textWrap: TextWrap = {text: tag, cssClass: "hashtag", hashtag: `${tag.substring(1)}`}
+            return `<span class="${textWrap.cssClass}" data-hashtag=${textWrap.hashtag}>${textWrap.text}</span>`;
+        });
+    }
+
     styleUsername(content: string): string {
         let usernameRegex = /@\w+/gm
         return content.replace(usernameRegex, function(name) {
@@ -421,6 +431,12 @@ export class Content {
                     const nprofile = match.substring(6);
                     const npub = this.npubFromNProfile(nprofile);
                     let textWrap: TextWrap = {text: this.ellipsis(npub), npub: npub, cssClass: "user-at"}
+                    content = content.replace(match, this.wrapTextInSpan(textWrap));
+                }
+                if (match.startsWith("nostr:naddr")) {
+                    // might need updates i just copied note here
+                    let note = match.substring(6);
+                    let textWrap: TextWrap = {text: this.ellipsis(note), nevent: this.encodeNoteAsEvent(note)}
                     content = content.replace(match, this.wrapTextInSpan(textWrap));
                 }
             } catch (e) {
