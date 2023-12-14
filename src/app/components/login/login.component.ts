@@ -166,7 +166,7 @@ export class LoginComponent {
     //         signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
     //     }
     //     if (signedEvent) {
-    //         this.nostrService.sendEvent(signedEvent);
+    //         this.nostrService.publishEventToPool(signedEvent);
     //     }
     // }
 }

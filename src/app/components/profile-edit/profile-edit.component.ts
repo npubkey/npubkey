@@ -95,7 +95,7 @@ export class ProfileEditComponent {
             console.log('using extension');
             signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
         }
-        this.nostrService.sendEvent(signedEvent);
+        this.nostrService.publishEventToPool(signedEvent);
         this.signerService.setLoggedInUserImage(x.picture);
         this.openSnackBar("Profile Updated!", "dismiss");
         this.router.navigate([`/users/${this.signerService.npub()}`])

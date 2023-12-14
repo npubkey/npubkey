@@ -6,6 +6,7 @@ import { PaymentRequestComponent } from '../payment-request/payment-request.comp
 import { SendPaymentComponent } from '../send-payment/send-payment.component';
 import { BarcodeFormat } from '@zxing/library';
 import { PayInvoiceComponent } from '../pay-invoice/pay-invoice.component';
+import { decode } from '@gandlaf21/bolt11-decode';
 
 interface Balance {
     balance: number;
@@ -32,6 +33,7 @@ export class WalletComponent implements OnInit {
     scanQR: boolean = false;
     qrResultString: string = "";
     qrCodeScannerButton: string = "qr_code_scanner";
+    error: string = "";
 
     constructor(
         private signerService: SignerService,
@@ -113,7 +115,7 @@ export class WalletComponent implements OnInit {
                 }
             });
         } else {
-            console.log("INVALID");
+            this.error = `Unable to decode invoice: ${this.qrResultString}`;
         }
     }
 
@@ -126,11 +128,22 @@ export class WalletComponent implements OnInit {
                 }
             });
         } else {
-            console.log("INVALID");
+            this.error = `Unable to decode invoice: ${this.qrResultString}`;
         }
     }
 
     isValidPaymentInvoice(value: string) {
+        try {
+            const decodedInvoice = decode(value);
+            for (let s of decodedInvoice.sections) {
+                if (s.name === "amount") {
+                    String(Number(s.value)/1000);
+                    break;
+                }
+            }
+        } catch {
+            return false;
+        }
         return true;
     }
 

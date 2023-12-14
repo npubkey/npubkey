@@ -56,7 +56,7 @@ export class FollowComponent implements OnInit {
             } else {
                 signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
             }
-            this.nostrService.sendEvent(signedEvent);
+            this.nostrService.publishEventToPool(signedEvent);
         }
     }
 

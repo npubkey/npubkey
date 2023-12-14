@@ -110,12 +110,35 @@ export class SignerService {
         }
     }
 
-    getRelay() {
+    getRelay(): string {
         return localStorage.getItem("relay") || "wss://relay.damus.io/";
     }
 
-    setRelay(relay: string) {
+    getRelays(): string[] {
+        const relaysString = localStorage.getItem("relays") || "";
+        let relays = relaysString.split(",").map((item) => {
+            return item.trim();
+        });
+        if (relays.length === 0 || relays[0] === "") {
+            relays = [
+                "wss://relay.damus.io/",
+                "wss://nostr.fmt.wiz.biz/",
+                "wss://relay.nostr.band/",
+                "wss://relay.snort.social/",
+                "wss://nostr.mom",
+                "wss://relayable.org",
+                "wss://purplepag.es",
+           ]
+        }
+        return relays
+    }
+
+    setRelay(relay: string): void {
         localStorage.setItem("relay", relay);
+    }
+
+    setRelays(relays: string[]): void {
+        localStorage.setItem("relays", relays.join(","));
     }
 
     getDefaultZap() {

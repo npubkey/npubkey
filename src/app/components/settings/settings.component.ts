@@ -15,7 +15,7 @@ import { webln } from "@getalby/sdk";
 })
 export class SettingsComponent {
 
-    relay: string;
+    relays: string[];
     zap: string;
     blurChecked: any;
     debugProfileEvent: any;
@@ -28,7 +28,8 @@ export class SettingsComponent {
         private snackBar: MatSnackBar,
         private nostrService: NostrService
     ) {
-        this.relay = this.signerService.getRelay();
+        this.relays = this.signerService.getRelays();
+        console.log(this.relays);
         this.zap = this.signerService.getDefaultZap();
         let pubkey = this.signerService.getPublicKey()
         this.blurChecked = this.signerService.getBlurImagesIfNotFollowing();
@@ -37,11 +38,11 @@ export class SettingsComponent {
         }
     }
 
-    async saveRelay() {
+    async saveRelays() {
         this.openSnackBar("Publishing profile and following list..", "dismiss");
         let kind0 = await this.nostrService.getUser(this.signerService.getPublicKey());
         if (kind0) {
-            await this.publishSelfToNewRelay(kind0);
+            await this.publishSelfToNewRelays(kind0);
             await this.publishFollowingList(kind0);
             this.setRelay()
         } else {
@@ -62,7 +63,7 @@ export class SettingsComponent {
     }
 
     setRelay() {
-        this.signerService.setRelay(this.relay);
+        this.signerService.setRelays(this.relays);
         this.openSnackBar("Relay Set!", "dismiss");
     }
 
@@ -72,6 +73,7 @@ export class SettingsComponent {
     }
 
     async nostrWalletConnect() {
+        // TODO need to check if prompt closed without connecting
         const nwc = webln.NostrWebLNProvider.withNewSecret();
         try {
             await nwc.initNWC({name: 'npubkey'});
@@ -84,7 +86,7 @@ export class SettingsComponent {
         this.openSnackBar("Get Alby Wallet Connected!", "dismiss");
     }
 
-    async publishSelfToNewRelay(kind0: User) {
+    async publishSelfToNewRelays(kind0: User) {
         // if we are changing relays -- publish our profile there
         if (kind0) {
             let x = {
@@ -109,7 +111,7 @@ export class SettingsComponent {
             } else {
                 signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
             }
-            this.nostrService.sendEvent(signedEvent);
+            this.nostrService.publishEventToPool(signedEvent);
         }
     }
 
@@ -125,7 +127,7 @@ export class SettingsComponent {
         } else {
             signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
         }
-        this.nostrService.sendEvent(signedEvent);
+        this.nostrService.publishEventToPool(signedEvent);
     }
 
 

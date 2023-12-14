@@ -216,7 +216,7 @@ export class CreateEventComponent implements AfterViewInit {
             } else {
                 signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
             }
-            this.nostrService.sendEvent(signedEvent);
+            this.nostrService.publishEventToPool(signedEvent);
             this.openSnackBar("Message Sent!", "dismiss")
             this.content = "";
             this.gifsFound = [];
@@ -247,7 +247,7 @@ export class CreateEventComponent implements AfterViewInit {
             } else {
                 signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
             }
-            this.nostrService.sendEvent(signedEvent);
+            this.nostrService.publishEventToPool(signedEvent);
             this.content = "";
             this.openSnackBar("Reply Sent!", "Dismiss");
             this.gifsFound = [];

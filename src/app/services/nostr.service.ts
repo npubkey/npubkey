@@ -19,49 +19,7 @@ export class NostrService {
     private dbService: NgxIndexedDBService
   ) { }
 
-    async relayConnect() {
-        const relay = relayInit(this.signerService.getRelay());
-        relay.on('connect', () => {
-            console.log(`connected to ${relay.url}`)
-        })
-        relay.on('error', () => {
-            console.log(`failed to connect to ${relay.url}`)
-        })
-
-        await relay.connect()
-        return relay
-    }
-
-    async getEvents(filter: Filter) {
-        const relay = await this.relayConnect();
-        return await relay.list([filter])
-    }
-
-    async getKind0(filter: Filter, followingList: boolean = false): Promise<User[]> {
-        // user metadata
-        filter.kinds = [0];  // force this regardless
-        const relay = await this.relayConnect();
-        const response = await relay.list([filter])
-        let users: User[] = [];
-        let content: any;  // json parsed
-        let user: User;
-        response.forEach(e => {
-            try {
-                content = JSON.parse(e.content)
-                user = new User(content, e.created_at, e.pubkey)
-                if (followingList) {
-                    user.setFollowing(followingList);
-                }
-                users.push(user)
-                this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture)
-            } catch (e) {
-                console.log(e);
-            }
-        });
-        this.storeUsersInDB(users);
-        return users;
-    }
-
+    // db stuff idk why its in this file -- todo fix
     storeUsersInDB(users: User[]) {
         this.dbService.bulkAdd('users', users);
     }
@@ -87,16 +45,66 @@ export class NostrService {
         return user;
     }
 
+
+    // nostr stuff
+    async relayConnect() {
+        /* Connects to One Relay */
+        const relay = relayInit(this.signerService.getRelay());
+        relay.on('connect', () => {
+            console.log(`connected to ${relay.url}`)
+        })
+        relay.on('error', () => {
+            console.log(`failed to connect to ${relay.url}`)
+        })
+        await relay.connect()
+        return relay
+    }
+
+    relays(): string[] {
+        return this.signerService.getRelays();
+    }
+
+    getPool(): SimplePool {
+        return new SimplePool()
+    }
+
+    async poolList(filters: Filter[]): Promise<Event[]> {
+        return this.getPool().list(this.relays(), filters)
+    }
+
+    async poolGet(filter: Filter): Promise<Event> {
+        return this.getPool().get(this.relays(), filter)
+    }
+
+    async getKind0(filter: Filter, followingList: boolean = false): Promise<User[]> {
+        // user metadata
+        filter.kinds = [0];  // force this regardless
+        const response = await this.poolList([filter])
+        let users: User[] = [];
+        let content: any;  // json parsed
+        let user: User;
+        response.forEach(e => {
+            try {
+                content = JSON.parse(e.content)
+                user = new User(content, e.created_at, e.pubkey)
+                if (followingList) {
+                    user.setFollowing(followingList);
+                }
+                users.push(user)
+                this.storeUserInLocalStorage(e.pubkey, user.displayName, user.picture)
+            } catch (e) {
+                console.log(e);
+            }
+        });
+        this.storeUsersInDB(users);
+        return users;
+    }
+
     async getUser(pubkey: string): Promise<User | null> {
         // user metadata
-        let user = this.getUserFromDB(pubkey);
-        if (user) {
-            console.log('user found in db');
-            return user;
-        }
+        let user = null;
         const filter: Filter = {kinds: [0], authors: [pubkey], limit: 1}
-        const relay = await this.relayConnect();
-        const response = await relay.get(filter)
+        const response = await this.poolGet(filter)
         if (!response) {
             return null;
         }
@@ -140,8 +148,7 @@ export class NostrService {
             since: since,
             until: until
         }
-        const relay = await this.relayConnect();
-        const response = await relay.list([kind6, kind1])
+        const response = await this.poolList([kind6, kind1])
         let posts: Post[] = [];
         let repostIds: string[] = [];
         response.forEach(e => {
@@ -162,7 +169,7 @@ export class NostrService {
 
     async getFollowingCount(pubkey: string): Promise<number> {
         // let filter: Filter = {kinds: [3], authors: [pubkey]}
-        // const relay = await this.relayConnect();
+        // 
         // const response = await relay.count([filter]);
         let following = await this.getFollowing(pubkey, 6969)
         return following.length
@@ -170,7 +177,7 @@ export class NostrService {
 
     async getFollowerCount(pubkey: string): Promise<number> {
         // let filter: Filter = {kinds: [3], "#p": [pubkey]}
-        // const relay = await this.relayConnect();
+        // 
         // const response = await relay.count([filter]);
         // console.log(response)
         // return 10;
@@ -180,8 +187,8 @@ export class NostrService {
 
     async getFollowing(pubkey: string, limit: number = 100): Promise<string[]> {
         let filter: Filter = {kinds: [3], authors: [pubkey], limit: limit}
-        const relay = await this.relayConnect();
-        const response = await relay.get(filter);
+        
+        const response = await this.poolGet(filter);
         let following: string[] = []
         if (response) {
             response.tags.forEach(tag => {
@@ -193,8 +200,8 @@ export class NostrService {
 
     async getContactListEvent(pubkey: string) {
         let filter: Filter = {kinds: [3], authors: [pubkey], limit: 1}
-        const relay = await this.relayConnect();
-        const response = await relay.get(filter);
+        
+        const response = await this.poolGet(filter);
         console.log(response)
         return response
     }
@@ -246,8 +253,8 @@ export class NostrService {
     // count do count here as well ...
     async getFollowers(pubkey: string, limit: number = 100): Promise<string[]> {
         let filter: Filter = {kinds: [3], "#p": [pubkey], limit: limit}
-        const relay = await this.relayConnect();
-        const response = await relay.list([filter]);
+        
+        const response = await this.poolList([filter]);
         let followers: string[] = []
         if (response) {
             response.forEach(r => {
@@ -263,8 +270,8 @@ export class NostrService {
             limit: 1,
             ids: [id]
         }
-        const relay = await this.relayConnect();
-        const response = await relay.get(filter)
+        
+        const response = await this.poolGet(filter)
         if (response) {
             return this.getPostFromResponse(response);
         }
@@ -274,8 +281,8 @@ export class NostrService {
     async getKind1(filter: Filter, repostingPubkey: string = ""): Promise<Post[]>{
         // text notes
         filter.kinds = [1];
-        const relay = await this.relayConnect();
-        const response = await relay.list([filter])
+        
+        const response = await this.poolList([filter])
         let posts: Post[] = [];
         const muteList: string[] = this.signerService.getMuteList();
         response.forEach(e => {
@@ -292,8 +299,8 @@ export class NostrService {
         let filter: Filter = {
             kinds: [0],
         }
-        const relay = await this.relayConnect();
-        const response = await relay.list([filter])
+        
+        const response = await this.poolList([filter])
         let users: User[] = [];
         let content;
         let user;
@@ -321,8 +328,8 @@ export class NostrService {
     async getKind1and6(filter: Filter): Promise<Post[]>{
         // text notes
         filter.kinds = [1, 6];
-        const relay = await this.relayConnect();
-        const response = await relay.list([filter])
+        
+        const response = await this.poolList([filter])
         let posts: Post[] = [];
         response.forEach(e => {
             posts.push(this.getPostFromResponse(e));
@@ -337,8 +344,8 @@ export class NostrService {
         let replyFilter: Filter = {
             kinds: [1], "#e": [id]
         }
-        const relay = await this.relayConnect();
-        const response = await relay.list([postFilter, replyFilter])
+        
+        const response = await this.poolList([postFilter, replyFilter])
         let posts: Post[] = [];
         response.forEach(e => {
             posts.push(this.getPostFromResponse(e));
@@ -347,8 +354,8 @@ export class NostrService {
     }
 
     async getReplyCounts(filters: Filter[]): Promise<Post[]>{
-        const relay = await this.relayConnect();
-        const response = await relay.list(filters)
+        
+        const response = await this.poolList(filters)
         let posts: Post[] = [];
         response.forEach(e => {
             posts.push(this.getPostFromResponse(e));
@@ -358,8 +365,8 @@ export class NostrService {
 
     async getFeed(filters: Filter[]): Promise<Post[]>{
         // text notes
-        const relay = await this.relayConnect();
-        const response = await relay.list(filters)
+        
+        const response = await this.poolList(filters)
         let posts: Post[] = [];
         response.forEach(e => {
             posts.push(this.getPostFromResponse(e));
@@ -370,15 +377,15 @@ export class NostrService {
     async getKind2(filter: Filter) {
         // recommend server / relay
         filter.kinds = [2];
-        const relay = await this.relayConnect();
-        return await relay.list([filter]);
+        
+        return await this.poolList([filter]);
     }
 
     async getKind3(filter: Filter): Promise<string[]> {
         // contact lists
         filter.kinds = [3];
-        const relay = await this.relayConnect();
-        const response = await relay.get(filter);
+        
+        const response = await this.poolGet(filter);
         let following: string[] = []
         if (response) {
             response.tags.forEach(tag => {
@@ -389,8 +396,8 @@ export class NostrService {
     }
 
     async getKind4(filter1: Filter, filter2: Filter): Promise<Event[]> {
-        const relay = await this.relayConnect();
-        return await relay.list([filter1, filter2]);
+        
+        return await this.poolList([filter1, filter2]);
     }
 
     async getKind4MessagesToMe(): Promise<Event[]> {
@@ -404,31 +411,31 @@ export class NostrService {
             authors: [this.signerService.getPublicKey()],
             limit: 50
         }
-        const relay = await this.relayConnect();
-        return await relay.list([filter, filter2]);
+        
+        return await this.poolList([filter, filter2]);
     }
 
     async getPostLikeCount(filter: Filter): Promise<number> {
-        const relay = await this.relayConnect();
-        let likes = await relay.list([filter]);
+        
+        let likes = await this.poolList([filter]);
         return likes.length
     }
 
     async getKind11(limit: number) {
         // server meta data (what types of NIPs a server is supporting)
-        const relay = await this.relayConnect();
-        return await relay.list([{kinds: [11], limit: limit}]);
+        
+        return await this.poolList([{kinds: [11], limit: limit}]);
     }
 
     async getKind7(filter: Filter): Promise<Event[]> {
         filter.kinds = [7];
-        const relay = await this.relayConnect();
-        return await relay.list([filter]);
+        
+        return await this.poolList([filter]);
     }
 
     async getZaps(filter: Filter) {
-        const relay = await this.relayConnect();
-        const response = await relay.list([filter])
+        
+        const response = await this.poolList([filter])
         console.log(response);
         let zaps: Zap[] = [];
         response.forEach(e => {
@@ -440,8 +447,8 @@ export class NostrService {
 
     async getContactList(pubkey: string) {
         let filter: Filter = {kinds: [3], authors: [pubkey], limit: 1}
-        const relay = await this.relayConnect();
-        const response = await relay.get(filter);
+        
+        const response = await this.poolGet(filter);
         let following: string[] = []
         if (response) {
             response.tags.forEach(tag => {
@@ -467,8 +474,8 @@ export class NostrService {
             "kinds": [10000],
             "limit": 1
         }
-        const relay = await this.relayConnect();
-        const response = await relay.get(filter)
+        
+        const response = await this.poolGet(filter)
         if (response) {
             this.signerService.setMuteListFromTags(response.tags);
         } else {
@@ -493,7 +500,7 @@ export class NostrService {
         } else {
             signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
         }
-        this.sendEvent(signedEvent);
+        this.publishEventToPool(signedEvent);
         await this.getMuteList(this.signerService.getPublicKey());
     }
 
@@ -509,8 +516,8 @@ export class NostrService {
             "#t": tags,
             limit: 50
         }
-        const relay = await this.relayConnect();
-        const response = await relay.list([filter3]);
+        
+        const response = await this.poolList([filter3]);
         let posts: Post[] = [];
         response.forEach(e => {
             const post = this.getPostFromResponse(e);
@@ -552,8 +559,8 @@ export class NostrService {
         // check for mentions?
         // check for new followers
         const zapFilter: Filter = {kinds: [9735], "#p": [pubkey]}
-        const relay = await this.relayConnect();
-        const response = await relay.list([zapFilter])
+        
+        const response = await this.poolList([zapFilter])
         let notifications: Zap[] = [];
         response.forEach(e => {
             notifications.push(new Zap(e.id, e.kind, e.pubkey, e.created_at, e.sig, e.tags));
@@ -567,5 +574,12 @@ export class NostrService {
         const relay = await this.relayConnect()
         relay.publish(event)
         relay.close();
+    }
+
+    async publishEventToPool(event: Event): Promise<void> {
+        const relays: string[] = this.signerService.getRelays();
+        const pool = new SimplePool()
+        let pubs = pool.publish(relays, event)
+        await Promise.all(pubs)
     }
 }

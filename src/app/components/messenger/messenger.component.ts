@@ -222,7 +222,7 @@ export class MessengerComponent implements OnInit, OnDestroy, AfterViewInit {
             toFriendSignedEvent = await this.signerService.signEventWithExtension(toFriendUnsignedEvent);
         }
         if (toFriendSignedEvent) {
-            this.nostrService.sendEvent(toFriendSignedEvent);
+            this.nostrService.publishEventToPool(toFriendSignedEvent);
             this.openSnackBar("Message Sent!", "dismiss");
             this.content = "";
         } else {

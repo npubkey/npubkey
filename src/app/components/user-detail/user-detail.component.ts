@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NostrService } from 'src/app/services/nostr.service';
-import { User } from '../../types/user';
+import { User, dbUserToUser, DBUser  } from '../../types/user';
 import { Post } from '../../types/post';
 import { nip19 } from 'nostr-tools';
 import { Paginator } from 'src/app/utils';
@@ -12,6 +12,7 @@ import { Nip05Service } from 'src/app/services/nip05.service';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Filter, Event } from 'nostr-tools';
+import { NgxIndexedDBService } from 'ngx-indexed-db';
 
 @Component({
   selector: 'app-user-detail',
@@ -40,7 +41,8 @@ export class UserDetailComponent implements OnInit {
         private snackBar: MatSnackBar,
         private router: Router,
         private nip05: Nip05Service,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private dbService: NgxIndexedDBService,
     ) {
         this.npub = this.route.snapshot.paramMap.get('npub') || "";
         if (this.npub === "") {
@@ -103,15 +105,31 @@ export class UserDetailComponent implements OnInit {
             this.npub = this.signerService.npub();
         }
         const pubkey: string = nip19.decode(this.npub).data.toString();
-        this.user = await this.nostrService.getUser(pubkey);
-        if (this.user) {
-            this.verifyNIP05(this.user);
-            await this.getUserPosts(this.user);
-            //this.user = waitUser;
-        } else {
-            this.userNotFound = true;
-            this.loading = false;
-        }
+        this.dbService.getAll("users")
+            .subscribe(async (results: DBUser[]) => {
+                for(const u of results) {
+                    console.log(u)
+                    if (u === undefined) {
+                        continue;
+                    }
+                    if (u.pubkey === pubkey) {
+                        console.log("FOUND!")
+                        this.user = dbUserToUser(u);
+                        break;
+                    }
+                }
+                if (this.user === null) {
+                    this.user = await this.nostrService.getUser(pubkey);
+                    if (this.user) {
+                        this.verifyNIP05(this.user);
+                        await this.getUserPosts(this.user);
+                        //this.user = waitUser;
+                    } else {
+                        this.userNotFound = true;
+                        this.loading = false;
+                    }
+                }
+            });
     }
 
     verifyNIP05(user: User) {

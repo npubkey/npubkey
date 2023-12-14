@@ -20,17 +20,20 @@
         <p>
             <mat-divider></mat-divider>
         </p>
-        <p>Relays and Zaps</p>
+        <p>Relays</p>
         <p>
-            <mat-form-field appearance="outline">
-                <mat-label>Relay</mat-label>
-                <input matInput [(ngModel)]="relay">
+            <mat-form-field *ngFor="let relay of relays; let i = index;" appearance="outline">
+                <mat-label>{{relay}}</mat-label>
+                <input matInput [(ngModel)]="relays[i]">
             </mat-form-field>
         </p>
         <p>
-            <button mat-fab extended color="accent" (click)="saveRelay()">Save Relay</button>
+            <button mat-fab extended color="accent" (click)="saveRelays()">Save Relays</button>
         </p>
-        <br>
+        <p>
+            <mat-divider></mat-divider>
+        </p>
+        <p>Zaps</p>
         <p>
             <mat-form-field appearance="outline">
                 <mat-label>Default Zap Amount</mat-label>

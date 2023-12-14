@@ -204,7 +204,7 @@ export class UserComponent implements OnInit {
         } else {
             signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
         }
-        this.nostrService.sendEvent(signedEvent);
+        this.nostrService.publishEventToPool(signedEvent);
     }
 
     enlargeUserPicture() {

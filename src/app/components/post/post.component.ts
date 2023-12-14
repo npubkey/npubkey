@@ -260,7 +260,7 @@ export class PostComponent implements OnInit {
             } else {
                 signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
             }
-            this.nostrService.sendEvent(signedEvent);
+            this.nostrService.publishEventToPool(signedEvent);
         }
     }
 
@@ -277,7 +277,7 @@ export class PostComponent implements OnInit {
             } else {
                 signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
             }
-            this.nostrService.sendEvent(signedEvent);
+            this.nostrService.publishEventToPool(signedEvent);
         }
     }
 
@@ -535,7 +535,7 @@ export class PostComponent implements OnInit {
             } else {
                 signedEvent = await this.signerService.signEventWithExtension(unsignedEvent);
             }
-            this.nostrService.sendEvent(signedEvent);
+            this.nostrService.publishEventToPool(signedEvent);
             this.openSnackBar("Repost Sent!", "Dismiss");
             this.showReplyForm = false;
         }
