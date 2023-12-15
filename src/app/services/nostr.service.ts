@@ -69,11 +69,19 @@ export class NostrService {
     }
 
     async poolList(filters: Filter[]): Promise<Event[]> {
-        return this.getPool().list(this.relays(), filters)
+        const pool = this.getPool()
+        const relays = this.relays()
+        const response = await pool.list(relays, filters)
+        pool.close(relays)
+        return response
     }
 
     async poolGet(filter: Filter): Promise<Event> {
-        return this.getPool().get(this.relays(), filter)
+        const pool = this.getPool()
+        const relays = this.relays()
+        const response = await pool.get(relays, filter)
+        pool.close(relays)
+        return response
     }
 
     async getKind0(filter: Filter, followingList: boolean = false): Promise<User[]> {
@@ -581,5 +589,6 @@ export class NostrService {
         const pool = new SimplePool()
         let pubs = pool.publish(relays, event)
         await Promise.all(pubs)
+        pool.close(relays)
     }
 }
