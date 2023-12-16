@@ -157,22 +157,18 @@ export class SendPaymentComponent implements AfterViewInit {
         }
         this.displayedUsers = [];
         this.users.forEach((user) => {
+            console.log(user)
             if (user.displayName.toLowerCase().includes(this.filterText.toLowerCase()) ||
-                user.npub.toLowerCase().includes(this.filterText.toLowerCase())) {
+                user.npub.toLowerCase().includes(this.filterText.toLowerCase()) ||
+                user.username.toLowerCase().includes(this.filterText.toLowerCase())) {
                 this.displayedUsers.push(user);
             }
         })
     }
 
-    async getFollowingUsers() {
-        if (this.signerService.getFollowingList().length === 0) {
-            await this.getFollowingUsersFromNostr();
-        } else {
-            this.getFollowingUsersFromDB();
-            if (this.users.length === 0) {
-                await this.getFollowingUsersFromNostr();
-            }
-        }
+    getFollowingUsers() {
+         this.getFollowingUsersFromDB();
+         this.getFollowingUsersFromNostr();
     }
 
     getFollowingUsersFromDB() {
@@ -182,6 +178,7 @@ export class SendPaymentComponent implements AfterViewInit {
                 if (u === undefined) {
                     continue;
                 }
+                console.log(u)
                 if (u.following) {
                     this.users.push(dbUserToUser(u));
                 }
@@ -193,7 +190,7 @@ export class SendPaymentComponent implements AfterViewInit {
     async getFollowingUsersFromNostr() {
         let contactList: string[] = this.signerService.getFollowingList()
         let filter: Filter = {authors: contactList}
-        this.users = await this.nostrService.getKind0(filter);
+        this.users.push(...await this.nostrService.getKind0(filter));
         this.displayedUsers = this.users;
         this.loading = false;
     }

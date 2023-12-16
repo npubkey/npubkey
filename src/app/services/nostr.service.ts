@@ -330,6 +330,7 @@ export class NostrService {
                 console.log(e);
             }
         });
+        this.storeUsersInDB(users);
         return users;
     }
 
